@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
     
     steps:
       - name: Checkout code
@@ -16,7 +17,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
       
       - name: Install dependencies
         run: |
@@ -27,6 +28,7 @@ jobs:
         run: |
           python validate_frontend.py
           node test_translations.js
+        continue-on-error: false
       
       - name: Login to Azure
         uses: azure/login@v2
