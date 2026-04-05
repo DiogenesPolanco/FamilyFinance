@@ -28,6 +28,19 @@ jobs:
           python validate_frontend.py
           node test_translations.js
       
+      - name: Deploy via FTP
+        run: |
+          zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py -x "*.pyc"
+          
+          FTP_HOST="waws-prod-dm1-209.ftp.azurewebsites.net"
+          USERNAME="$MyFamilyFinance\$MyFamilyFinance"
+          PASSWORD="ERNhgS1byc7jGSGZbBayvkAKmHhrQRtw8m30klfNdlgqGPifNzFyqXWqYTpA"
+          
+          echo "Uploading via FTP..."
+          curl --ftp-ssl -T package.zip -u "$USERNAME:$PASSWORD" "ftp://$FTP_HOST/site/wwwroot/"
+          
+          echo "Upload complete!"
+
       - name: Azure Login
         uses: azure/login@v2
         with:
