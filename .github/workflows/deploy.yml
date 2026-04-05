@@ -28,44 +28,35 @@ jobs:
           python validate_frontend.py
           node test_translations.js
       
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      
-      - name: Deploy to Azure using ZIP
+      - name: Upload to Azure Web App via FTP
         run: |
-          # Create ZIP package
+          # Create package
           zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py -x "*.pyc"
           
-          # Upload and deploy using REST API
-          AZURE_WEBAPP_NAME="${{ secrets.AZURE_WEBAPP_NAME }}"
-          RESOURCE_GROUP="RGPersonalSinope"
-          SUBSCRIPTION_ID="e698d0af-e4dc-403f-9849-4b3f4e86082d"
+          # Azure credentials from secrets
+          AZURE_CRED=${{ secrets.AZURE_CREDENTIALS }}
           
-          # Get publishing credentials
-          echo "Getting deployment credentials..."
-          CREDS=$(az webapp deployment list-publishing-credentials \
-            --name "$AZURE_WEBAPP_NAME" \
-            --resource-group "$RESOURCE_GROUP")
+          # Extract subscription ID
+          SUB_ID=$(echo $AZURE_CREDENTIALS | jq -r '.subscriptionId')
           
-          USERNAME=$(echo $CREDS | jq -r '.publishingUserName')
-          PASSWORD=$(echo $CREDS | jq -r '.publishingPassword')
+          # Get deployment credentials via API
+          TOKEN=$(curl -s -X POST "https://login.microsoftonline.com/$(echo $AZURE_CREDENTIALS | jq -r '.tenantId')/oauth2/v2.0/token" \
+            -H "Content-Type=application/x-www-form-urlencoded" \
+            -d "client_id=$(echo $AZURE_CREDENTIALS | jq -r '.clientId')" \
+            -d "scope=https://management.azure.com/.default" \
+            -d "client_secret=$(echo $AZURE_CREDENTIALS | jq -r '.clientSecret')" \
+            -d "grant_type=client_credentials" | jq -r '.access_token')
           
-          # Upload ZIP via FTP
+          # Get publishing profile
+          PROFILE=$(curl -s -X GET "https://management.azure.com/subscriptions/$SUB_ID/resourceGroups/RGPersonalSinope/providers/Microsoft.Web/sites/${{ secrets.AZURE_WEBAPP_NAME }}/publishingprofile?api-version=2022-03-01" \
+            -H "Authorization: Bearer $TOKEN")
+          
+          FTP_URL=$(echo $PROFILE | jq -r '.publishingProfile.ftpPublishing.url')
+          USERNAME=$(echo $PROFILE | jq -r '.publishingProfile.ftpPublishing.username')
+          PASSWORD=$(echo $PROFILE | jq -r '.publishingProfile.ftpPublishing.password')
+          
+          # Upload via FTP
           echo "Uploading files via FTP..."
-          curl -T package.zip -u "$USERNAME:$PASSWORD" https://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/package.zip
+          curl -T package.zip -u "$USERNAME:$PASSWORD" "$FTP_URL/site/wwwroot/package.zip"
           
-          # Run deployment
-          echo "Running deployment..."
-          az webapp deployment source config-zip \
-            --name "$AZURE_WEBAPP_NAME" \
-            --resource-group "$RESOURCE_GROUP" \
-            --src package.zip
-          
-          # Set startup command
-          echo "Configuring startup command..."
-          az webapp config set \
-            --name "$AZURE_WEBAPP_NAME" \
-            --resource-group "$RESOURCE_GROUP" \
-            --startup-command "uvicorn main:app --host 0.0.0.0 --port 8000"
+          echo "Deployment complete!"
