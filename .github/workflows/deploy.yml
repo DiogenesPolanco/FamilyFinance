@@ -35,9 +35,29 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          startup-command: "uvicorn main:app --host 0.0.0.0 --port 8000"
-          package: .
+      - name: Deploy using Azure CLI
+        run: |
+          echo "Deploying to Azure Web App..."
+          az webapp deployment source config-local-git \
+            --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
+            --resource-group "RGPersonalSinope" \
+            --query "url" \
+            --output tsv
+          
+          # Get deployment credentials
+          DEPLOY_CREDENTIALS=$(az webapp deployment list-publishing-profiles \
+            --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
+            --resource-group "RGPersonalSinope" \
+            --query "[?publishMethod=='MSDeploy'].publishPassword" \
+            --output tsv)
+          
+          # Deploy using Git
+          git remote add azure https://$DEPLOY_CREDENTIALS@myfamilyfinance.scm.azurewebsites.net/myfamilyfinance.git
+          git push azure main:master --force
+      
+      - name: Set startup command
+        run: |
+          az webapp config set \
+            --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
+            --resource-group "RGPersonalSinope" \
+            --startup-command "uvicorn main:app --host 0.0.0.0 --port 8000"
