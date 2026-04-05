@@ -1832,12 +1832,24 @@
                 }
                 
                 if (data.schedule && data.schedule.length) {
+                    const total = data.schedule.length;
+                    const perPage = 6;
+                    const pages = Math.ceil(total / perPage);
+                    window[`cardSched_${cardId}`] = { data: data.schedule, page: 1, pages, perPage };
                     html += `<div class="mt-2 pt-2 border-t border-[var(--border)]">
-                        <p class="text-xs text-[var(--text-secondary)] mb-1">Proximo ano:</p>
-                        <div class="space-y-1">`;
-                    data.schedule.slice(0, 6).forEach(s => {
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs text-[var(--text-secondary)]">Pagos (${total} meses)</span>`;
+                    if (pages > 1) {
+                        html += `<div class="flex gap-1 items-center">
+                            <button onclick="cardSchedNav(${cardId}, -1)" class="px-2 py-1 text-xs bg-[var(--bg-secondary)] rounded hover:bg-[var(--border)]">&#8592;</button>
+                            <span class="px-2 py-1 text-xs" id="card-page-${cardId}">1/${pages}</span>
+                            <button onclick="cardSchedNav(${cardId}, 1)" class="px-2 py-1 text-xs bg-[var(--bg-secondary)] rounded hover:bg-[var(--border)]">&#8594;</button>
+                        </div>`;
+                    }
+                    html += `</div><div class="space-y-1" id="card-sched-list-${cardId}">`;
+                    data.schedule.slice(0, perPage).forEach(s => {
                         html += `<div class="flex justify-between text-xs">
-                            <span>${s.month}</span>
+                            <span>Mes ${s.month}</span>
                             <span>Saldo: ${formatMoney(s.balance)}</span>
                             <span>Interes: ${formatMoney(s.interest)}</span>
                         </div>`;
@@ -1849,6 +1861,23 @@
                 container.innerHTML = html;
             } catch (e) {
                 container.innerHTML = '<p class="text-[var(--accent-coral)]">Error al cargar proyeccion</p>';
+            }
+        }
+
+        function cardSchedNav(cardId, dir) {
+            const sched = window[`cardSched_${cardId}`];
+            if (!sched) return;
+            const newPage = sched.page + dir;
+            if (newPage < 1 || newPage > sched.pages) return;
+            sched.page = newPage;
+            const start = (newPage - 1) * sched.perPage;
+            const list = document.getElementById(`card-sched-list-${cardId}`);
+            const pageInfo = document.getElementById(`card-page-${cardId}`);
+            if (list && pageInfo) {
+                list.innerHTML = sched.data.slice(start, start + sched.perPage).map(s => 
+                    `<div class="flex justify-between text-xs"><span>Mes ${s.month}</span><span>Saldo: ${formatMoney(s.balance)}</span><span>Interes: ${formatMoney(s.interest)}</span></div>`
+                ).join('');
+                pageInfo.textContent = `${newPage}/${sched.pages}`;
             }
         }
 
@@ -1868,11 +1897,24 @@
                 html += `<p>Total intereses: ${formatMoney(data.total_interest || 0)}</p>`;
                 
                 if (data.schedule && data.schedule.length) {
+                    const total = data.schedule.length;
+                    const perPage = 6;
+                    const pages = Math.ceil(total / perPage);
+                    window[`debtSched_${debtId}`] = { data: data.schedule, page: 1, pages, perPage };
                     html += `<div class="mt-2 pt-2 border-t border-[var(--border)]">
-                        <div class="space-y-1">`;
-                    data.schedule.slice(0, 6).forEach(s => {
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs text-[var(--text-secondary)]">Pagos (${total} meses)</span>`;
+                    if (pages > 1) {
+                        html += `<div class="flex gap-1 items-center">
+                            <button onclick="debtSchedNav(${debtId}, -1)" class="px-2 py-1 text-xs bg-[var(--bg-secondary)] rounded hover:bg-[var(--border)]">&#8592;</button>
+                            <span class="px-2 py-1 text-xs" id="debt-page-${debtId}">1/${pages}</span>
+                            <button onclick="debtSchedNav(${debtId}, 1)" class="px-2 py-1 text-xs bg-[var(--bg-secondary)] rounded hover:bg-[var(--border)]">&#8594;</button>
+                        </div>`;
+                    }
+                    html += `</div><div class="space-y-1" id="debt-sched-list-${debtId}">`;
+                    data.schedule.slice(0, perPage).forEach(s => {
                         html += `<div class="flex justify-between text-xs">
-                            <span>${s.month}</span>
+                            <span>Mes ${s.month}</span>
                             <span>Pago: ${formatMoney(s.payment)}</span>
                             <span>Interes: ${formatMoney(s.interest)}</span>
                             <span>Saldo: ${formatMoney(s.balance)}</span>
@@ -1885,6 +1927,23 @@
                 container.innerHTML = html;
             } catch (e) {
                 container.innerHTML = '<p class="text-[var(--accent-coral)]">Error al cargar proyeccion</p>';
+            }
+        }
+
+        function debtSchedNav(debtId, dir) {
+            const sched = window[`debtSched_${debtId}`];
+            if (!sched) return;
+            const newPage = sched.page + dir;
+            if (newPage < 1 || newPage > sched.pages) return;
+            sched.page = newPage;
+            const start = (newPage - 1) * sched.perPage;
+            const list = document.getElementById(`debt-sched-list-${debtId}`);
+            const pageInfo = document.getElementById(`debt-page-${debtId}`);
+            if (list && pageInfo) {
+                list.innerHTML = sched.data.slice(start, start + sched.perPage).map(s => 
+                    `<div class="flex justify-between text-xs"><span>Mes ${s.month}</span><span>Pago: ${formatMoney(s.payment)}</span><span>Interes: ${formatMoney(s.interest)}</span><span>Saldo: ${formatMoney(s.balance)}</span></div>`
+                ).join('');
+                pageInfo.textContent = `${newPage}/${sched.pages}`;
             }
         }
 
