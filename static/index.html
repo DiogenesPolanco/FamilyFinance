@@ -1893,11 +1893,11 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3 text-sm">
                         <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">Ingresos:</span>
+                            <span class="text-[var(--text-secondary)]">${t('income')}:</span>
                             <span class="font-medium text-[var(--accent-green)]">${formatMoney(cs.income)}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">Gastos:</span>
+                            <span class="text-[var(--text-secondary)]">${t('expenses')}:</span>
                             <span class="font-medium text-[var(--accent-coral)]">${formatMoney(cs.expenses)}</span>
                         </div>
                     </div>
@@ -1908,7 +1908,7 @@
                 const pr = insights.past_review;
                 html += `<div class="mb-4">
                     <h3 class="font-semibold text-sm mb-2 flex items-center gap-2">
-                        <i data-lucide="history" class="w-4 h-4"></i> Retroalimentacion del Pasado
+                        <i data-lucide="history" class="w-4 h-4"></i> ${t('past_feedback')}
                     </h3>
                     <p class="text-xs text-[var(--text-secondary)] mb-2">${pr.month}</p>
                     <div class="space-y-2">`;
@@ -1918,14 +1918,14 @@
                     if (comp.income_change_pct !== undefined) {
                         const color = comp.income_change_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
                         html += `<div class="flex justify-between text-sm p-2 bg-[var(--bg-tertiary)] rounded-lg">
-                            <span>Ingresos vs mes anterior:</span>
+                            <span>${t('income_vs_month')}:</span>
                             <span style="color: ${color}; font-weight: 600">${comp.income_change_pct >= 0 ? '+' : ''}${comp.income_change_pct}%</span>
                         </div>`;
                     }
                     if (comp.expense_change_pct !== undefined) {
                         const color = comp.expense_change_pct <= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
                         html += `<div class="flex justify-between text-sm p-2 bg-[var(--bg-tertiary)] rounded-lg">
-                            <span>Gastos vs mes anterior:</span>
+                            <span>${t('expenses_vs_month')}:</span>
                             <span style="color: ${color}; font-weight: 600">${comp.expense_change_pct >= 0 ? '+' : ''}${comp.expense_change_pct}%</span>
                         </div>`;
                     }
@@ -1947,7 +1947,7 @@
             if (insights.future_suggestions && insights.future_suggestions.length) {
                 html += `<div class="mb-4">
                     <h3 class="font-semibold text-sm mb-2 flex items-center gap-2">
-                        <i data-lucide="lightbulb" class="w-4 h-4"></i> Sugerencias a Futuro
+                        <i data-lucide="lightbulb" class="w-4 h-4"></i> ${t('future_suggestions')}
                     </h3>
                     <div class="space-y-2">`;
                 
@@ -1962,13 +1962,13 @@
                 html += '</div></div>';
             }
             
-            insightContainer.innerHTML = html || '<p class="text-[var(--text-secondary)]">No hay datos suficientes para generar insights</p>';
+            insightContainer.innerHTML = html || '<p class="text-[var(--text-secondary)]">' + t('no_sufficient_data') + '</p>';
 
             // Recommendations
             const recs = await fetch('/api/ai/recommendations').then(r => r.json());
             const recContainer = document.getElementById('ai-recommendations');
             if (!recs || !recs.length) {
-                recContainer.innerHTML = '<p class="text-[var(--text-secondary)]">No hay recomendaciones</p>';
+                recContainer.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('no_recommendations') + '</p>';
             } else {
                 const typeColors = {
                     'critical': 'var(--accent-coral)',
@@ -1993,7 +1993,7 @@
             const anomalies = await fetch('/api/ai/anomalies').then(r => r.json());
             const anomContainer = document.getElementById('ai-anomalies');
             if (!anomalies || !anomalies.length) {
-                anomContainer.innerHTML = '<p class="text-[var(--text-secondary)]">No se detectaron anomalias ni oportunidades</p>';
+                anomContainer.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('no_anomalies') + '</p>';
             } else {
                 const typeColors = {
                     'anomaly': 'var(--accent-coral)',
@@ -2002,12 +2002,12 @@
                 anomContainer.innerHTML = anomalies.map(a => {
                     const color = typeColors[a.type] || 'var(--accent-blue)';
                     const severityColor = a.severity === 'high' ? 'var(--accent-coral)' : a.severity === 'medium' ? 'var(--accent-yellow)' : 'var(--accent-blue)';
-                    const savings = a.potential_savings ? `<p class="text-xs mt-1" style="color: var(--accent-green)">Ahorro potencial: ${formatMoney(a.potential_savings)}</p>` : '';
+                    const savings = a.potential_savings ? `<p class="text-xs mt-1" style="color: var(--accent-green)">${t('potential_savings')}: ${formatMoney(a.potential_savings)}</p>` : '';
                     return `<div class="p-3 rounded-xl mb-2" style="border-left: 3px solid ${color}; background: var(--bg-tertiary)">
                         <div class="flex items-start gap-2">
                             <i data-lucide="${a.icon || 'alert-circle'}" class="w-4 h-4 mt-0.5" style="color: ${severityColor}"></i>
                             <div>
-                                <p class="text-sm font-medium">${a.title || 'Detectado'}</p>
+                                <p class="text-sm font-medium">${a.title || t('detected_label')}</p>
                                 <p class="text-sm text-[var(--text-secondary)]">${a.description}</p>
                                 ${savings}
                             </div>
@@ -2047,16 +2047,16 @@
         
         function renderFinancialReport(data, type) {
             if (!data.periods || !data.periods.length) {
-                return '<p class="text-[var(--text-secondary)]">No hay datos para este periodo</p>';
+                return '<p class="text-[var(--text-secondary)]">' + t('no_data_period') + '</p>';
             }
             
             let html = '<div class="space-y-4">';
             
             const typeLabels = {
-                fortnightly: 'Quincenal',
-                monthly: 'Mensual',
-                quarterly: 'Trimestral',
-                yearly: 'Anual'
+                fortnightly: t('fortnightly'),
+                monthly: t('monthly'),
+                quarterly: t('quarterly'),
+                yearly: t('yearly')
             };
             
             html += `<h3 class="font-semibold text-lg mb-4">${typeLabels[type] || type}</h3>`;
@@ -2074,11 +2074,11 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3 text-sm">
                         <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">Ingresos:</span>
+                            <span class="text-[var(--text-secondary)]">${t('income')}:</span>
                             <span class="text-[var(--accent-green)] font-medium">${formatMoney(p.total_income)}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">Gastos:</span>
+                            <span class="text-[var(--text-secondary)]">${t('expenses')}:</span>
                             <span class="text-[var(--accent-coral)] font-medium">${formatMoney(p.total_expenses)}</span>
                         </div>
                     </div>
@@ -2094,19 +2094,19 @@
                 const comp = data.comparison;
                 if (comp.income_change !== undefined || comp.expense_change !== undefined) {
                     html += `<div class="card p-4 mt-4">
-                        <h4 class="font-semibold mb-2">Comparacion con periodo anterior</h4>
+                        <h4 class="font-semibold mb-2">${t('comparison_prev')}</h4>
                         <div class="grid grid-cols-2 gap-3 text-sm">`;
                     if (comp.income_change !== undefined) {
                         const color = comp.income_change >= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
                         html += `<div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">Ingresos:</span>
+                            <span class="text-[var(--text-secondary)]">${t('income')}:</span>
                             <span style="color: ${color}">${comp.income_change >= 0 ? '+' : ''}${formatMoney(comp.income_change)}</span>
                         </div>`;
                     }
                     if (comp.expense_change !== undefined) {
                         const color = comp.expense_change <= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
                         html += `<div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">Gastos:</span>
+                            <span class="text-[var(--text-secondary)]">${t('expenses')}:</span>
                             <span style="color: ${color}">${comp.expense_change >= 0 ? '+' : ''}${formatMoney(comp.expense_change)}</span>
                         </div>`;
                     }
@@ -2116,14 +2116,14 @@
             
             if (data.averages) {
                 html += `<div class="card p-4 mt-4">
-                    <h4 class="font-semibold mb-2">Promedios</h4>
+                    <h4 class="font-semibold mb-2">${t('averages_label')}</h4>
                     <div class="grid grid-cols-2 gap-3 text-sm">
                         <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">Prom. Ingresos:</span>
+                            <span class="text-[var(--text-secondary)]">${t('avg_income_label')}:</span>
                             <span class="font-medium">${formatMoney(data.averages.income)}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">Prom. Gastos:</span>
+                            <span class="text-[var(--text-secondary)]">${t('avg_expenses_label')}:</span>
                             <span class="font-medium">${formatMoney(data.averages.expenses)}</span>
                         </div>
                     </div>
@@ -2136,15 +2136,15 @@
         
         function renderKakeboReport(data) {
             if (!data.by_category) {
-                return '<p class="text-[var(--text-secondary)]">No hay datos para este periodo</p>';
+                return '<p class="text-[var(--text-secondary)]">' + t('no_data_period') + '</p>';
             }
             
-            const catNames = { needs: 'Necesidades', wants: 'Deseos', culture: 'Cultura', unexpected: 'Inesperado' };
+            const catNames = { needs: t('needs'), wants: t('wants'), culture: t('culture'), unexpected: t('unexpected') };
             const catColors = { needs: 'var(--accent-blue)', wants: 'var(--accent-coral)', culture: 'var(--accent-purple)', unexpected: 'var(--accent-yellow)' };
             const catIcons = { needs: 'home', wants: 'shopping-bag', culture: 'book-open', unexpected: 'alert-triangle' };
             
             let html = '<div class="space-y-4">';
-            html += '<h3 class="font-semibold text-lg mb-4">Kakebo - Este Mes</h3>';
+            html += '<h3 class="font-semibold text-lg mb-4">' + t('kakebo_this_month') + '</h3>';
             
             html += `<div class="grid grid-cols-2 gap-4 mb-6">`;
             Object.keys(catNames).forEach(cat => {
@@ -2170,7 +2170,7 @@
             
             if (data.budget_recommendations) {
                 html += `<div class="card p-4">
-                    <h4 class="font-semibold mb-3">Presupuesto Recomendado (Regla 50/30/20)</h4>
+                    <h4 class="font-semibold mb-3">${t('recommended_budget')}</h4>
                     <div class="space-y-2 text-sm">`;
                 Object.keys(data.budget_recommendations).forEach(cat => {
                     const rec = data.budget_recommendations[cat];
@@ -2182,8 +2182,8 @@
                         <span class="font-medium">${formatMoney(rec)}</span>
                     </div>
                     <div class="flex justify-between text-xs text-[var(--text-secondary)]">
-                        <span>Gastado: ${formatMoney(spent)}</span>
-                        <span style="color: ${color}">${diff >= 0 ? 'Restante: ' + formatMoney(diff) : 'Excedido: ' + formatMoney(Math.abs(diff))}</span>
+                        <span>${t('spent_label')}: ${formatMoney(spent)}</span>
+                        <span style="color: ${color}">${diff >= 0 ? t('remaining_label') + ': ' + formatMoney(diff) : t('exceeded_label') + ': ' + formatMoney(Math.abs(diff))}</span>
                     </div>`;
                 });
                 html += '</div></div>';
@@ -2195,11 +2195,11 @@
         
         function renderDebtsReport(data) {
             if (!data.debts || !data.debts.length) {
-                return '<p class="text-[var(--text-secondary)]">No hay deudas registradas</p>';
+                return '<p class="text-[var(--text-secondary)]">' + t('no_debts') + '</p>';
             }
             
             let html = '<div class="space-y-4">';
-            html += '<h3 class="font-semibold text-lg mb-4">Historial de Deudas</h3>';
+            html += '<h3 class="font-semibold text-lg mb-4">' + t('debt_history') + '</h3>';
             
             data.debts.forEach(d => {
                 const isPaid = d.is_paid;
@@ -2209,21 +2209,21 @@
                     <div class="flex justify-between items-start mb-3">
                         <div>
                             <p class="font-semibold">${d.name}</p>
-                            <p class="text-sm text-[var(--text-secondary)]">Tasa: ${d.interest_rate}%</p>
+                            <p class="text-sm text-[var(--text-secondary)]">${t('rate_label')}: ${d.interest_rate}%</p>
                         </div>
-                        <span class="badge ${isPaid ? 'badge-green' : 'badge-coral'}">${isPaid ? 'PAGADA' : 'Activa'}</span>
+                        <span class="badge ${isPaid ? 'badge-green' : 'badge-coral'}">${isPaid ? t('paid').toUpperCase() : t('active')}</span>
                     </div>
                     <div class="grid grid-cols-3 gap-4 text-sm mb-3">
                         <div>
-                            <p class="text-xs text-[var(--text-secondary)]">Original</p>
+                            <p class="text-xs text-[var(--text-secondary)]">${t('original_label')}</p>
                             <p class="font-medium">${formatMoney(d.initial_amount)}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-[var(--text-secondary)]">Actual</p>
+                            <p class="text-xs text-[var(--text-secondary)]">${t('actual_label')}</p>
                             <p class="font-medium">${formatMoney(d.current_amount)}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-[var(--text-secondary)]">Progreso</p>
+                            <p class="text-xs text-[var(--text-secondary)]">${t('progress_label')}</p>
                             <p class="font-medium">${d.progress}%</p>
                         </div>
                     </div>
@@ -2235,18 +2235,18 @@
             
             if (data.totals) {
                 html += `<div class="card p-4 mt-4 bg-[var(--bg-tertiary)]">
-                    <h4 class="font-semibold mb-3">Resumen</h4>
+                    <h4 class="font-semibold mb-3">${t('summary_label')}</h4>
                     <div class="grid grid-cols-3 gap-4 text-sm">
                         <div>
-                            <p class="text-xs text-[var(--text-secondary)]">Total Original</p>
+                            <p class="text-xs text-[var(--text-secondary)]">${t('total_original_label')}</p>
                             <p class="font-bold text-lg">${formatMoney(data.totals.initial)}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-[var(--text-secondary)]">Total Pendiente</p>
+                            <p class="text-xs text-[var(--text-secondary)]">${t('total_pending_label')}</p>
                             <p class="font-bold text-lg text-[var(--accent-coral)]">${formatMoney(data.totals.current)}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-[var(--text-secondary)]">Total Pagado</p>
+                            <p class="text-xs text-[var(--text-secondary)]">${t('total_paid_label')}</p>
                             <p class="font-bold text-lg text-[var(--accent-green)]">${formatMoney(data.totals.paid)}</p>
                         </div>
                     </div>
@@ -2267,7 +2267,7 @@
         async function loadFullComparison() {
             const container = document.getElementById('debt-comparison');
             container.classList.remove('hidden');
-            container.innerHTML = '<div class="card p-6"><p class="text-[var(--text-secondary)]">Cargando...</p></div>';
+            container.innerHTML = '<div class="card p-6"><p class="text-[var(--text-secondary)]">' + t('loading') + '</p></div>';
             
             try {
                 const data = await fetch('/api/debt-compare/full').then(r => r.json());
@@ -2283,19 +2283,19 @@
                 // Summary cards
                 html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div class="card p-4 text-center">
-                        <p class="text-xs text-[var(--text-secondary)]">Total Deuda</p>
+                        <p class="text-xs text-[var(--text-secondary)]">${t('total_debt_label')}</p>
                         <p class="text-xl font-bold">${formatMoney(sum.total_principal)}</p>
                     </div>
                     <div class="card p-4 text-center">
-                        <p class="text-xs text-[var(--text-secondary)]">Total Intereses</p>
+                        <p class="text-xs text-[var(--text-secondary)]">${t('total_interest_label')}</p>
                         <p class="text-xl font-bold text-[var(--accent-coral)]">${formatMoney(sum.total_interest)}</p>
                     </div>
                     <div class="card p-4 text-center">
-                        <p class="text-xs text-[var(--text-secondary)]">Mayor Tasa</p>
+                        <p class="text-xs text-[var(--text-secondary)]">${t('higher_rate_label')}</p>
                         <p class="text-xl font-bold text-[var(--accent-coral)]">${sum.highest_rate_item ? sum.highest_rate_item.interest_rate + '%' : 'N/A'}</p>
                     </div>
                     <div class="card p-4 text-center">
-                        <p class="text-xs text-[var(--text-secondary)]">Menor Tasa</p>
+                        <p class="text-xs text-[var(--text-secondary)]">${t('lower_rate_label')}</p>
                         <p class="text-xl font-bold text-[var(--accent-green)]">${sum.lowest_rate_item ? sum.lowest_rate_item.interest_rate + '%' : 'N/A'}</p>
                     </div>
                 </div>`;
@@ -2305,32 +2305,33 @@
                     const item = sum.highest_rate_item;
                     html += `<div class="card p-4 mb-6" style="border-left: 4px solid var(--accent-coral)">
                         <div class="flex items-center gap-2 mb-2">
-                            <span class="badge badge-coral">PRIORIDAD</span>
-                            <span class="text-sm text-[var(--text-secondary)]">Mayor tasa de interes</span>
+                            <span class="badge badge-coral">${t('priority_badge')}</span>
+                            <span class="text-sm text-[var(--text-secondary)]">${t('higher_rate_interest')}</span>
                         </div>
                         <p class="font-semibold text-lg">${item.name}</p>
                         <p class="text-sm text-[var(--text-secondary)]">
-                            ${item.type === 'debt' ? 'Prestamo' : 'Tarjeta de Credito'} con ${item.interest_rate}% TNA
+                            ${item.type === 'debt' ? t('loan_label') : t('credit_card_label')} con ${item.interest_rate}% TNA
                         </p>
                         <div class="flex gap-4 mt-2 text-sm">
-                            <span>Saldo: <strong>${formatMoney(item.current_amount)}</strong></span>
-                            <span>Interes estimado: <strong class="text-[var(--accent-coral)]">${formatMoney(item.total_interest)}</strong></span>
+                            <span>${t('balance_label')}: <strong>${formatMoney(item.current_amount)}</strong></span>
+                            <span>${t('est_interest')}: <strong class="text-[var(--accent-coral)]">${formatMoney(item.total_interest)}</strong></span>
                         </div>
                         <p class="text-xs text-[var(--text-secondary)] mt-2">
-                            Recomendacion: Pagar este primero para ahorrar en intereses
+                            ${t('recommendation_pay_first')}
                         </p>
                     </div>`;
                 }
                 
                 // All items ranked
                 html += `<div class="card p-6 mb-6">
-                    <h3 class="font-semibold mb-4">Ranking por Tasa de Interes (Mayor a Menor)</h3>
+                    <h3 class="font-semibold mb-4">${t('ranking_rate')}</h3>
                     <div class="space-y-3">`;
                 
                 data.all_items.forEach((item, idx) => {
                     const riskColor = item.interest_rate > 30 ? 'var(--accent-coral)' : (item.interest_rate > 15 ? 'var(--accent-yellow)' : 'var(--accent-green)');
                     const riskBadge = item.interest_rate > 30 ? 'badge-coral' : (item.interest_rate > 15 ? 'badge-yellow' : 'badge-green');
-                    const typeLabel = item.type === 'debt' ? 'Prestamo' : 'Tarjeta';
+                    const typeLabel = item.type === 'debt' ? t('loan_label') : t('credit_card_label');
+                    const riskLabel = item.interest_rate > 30 ? t('high_risk') : (item.interest_rate > 15 ? t('medium_risk') : t('low_risk'));
                     
                     html += `<div class="p-4 bg-[var(--bg-tertiary)] rounded-xl">
                         <div class="flex items-center justify-between mb-2">
@@ -2343,24 +2344,24 @@
                             </div>
                             <div class="text-right">
                                 <p class="text-2xl font-bold" style="color: ${riskColor}">${item.interest_rate}%</p>
-                                <span class="badge ${riskBadge}">${item.interest_rate > 30 ? 'ALTO RIESGO' : (item.interest_rate > 15 ? 'MEDIO' : 'BAJO')}</span>
+                                <span class="badge ${riskBadge}">${riskLabel}</span>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
                             <div>
-                                <p class="text-xs text-[var(--text-secondary)]">Saldo</p>
+                                <p class="text-xs text-[var(--text-secondary)]">${t('balance_label')}</p>
                                 <p class="font-medium">${formatMoney(item.current_amount)}</p>
                             </div>
                             <div>
-                                <p class="text-xs text-[var(--text-secondary)]">Interes Est.</p>
+                                <p class="text-xs text-[var(--text-secondary)]">${t('est_interest')}</p>
                                 <p class="font-medium text-[var(--accent-coral)]">${formatMoney(item.total_interest)}</p>
                             </div>
                             <div>
-                                <p class="text-xs text-[var(--text-secondary)]">Costo Total</p>
+                                <p class="text-xs text-[var(--text-secondary)]">${t('total_cost_label')}</p>
                                 <p class="font-medium">${formatMoney(item.total_cost)}</p>
                             </div>
                             <div>
-                                <p class="text-xs text-[var(--text-secondary)]">Meses Est.</p>
+                                <p class="text-xs text-[var(--text-secondary)]">${t('est_months')}</p>
                                 <p class="font-medium">${item.months_to_payoff} meses</p>
                             </div>
                         </div>
@@ -2375,15 +2376,15 @@
                 // Separate tables for debts and cards
                 if (sum.total_debts > 0) {
                     html += `<div class="card p-6 mb-4">
-                        <h3 class="font-semibold mb-4">Prestamos</h3>
+                        <h3 class="font-semibold mb-4">${t('loans_label')}</h3>
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="text-left text-[var(--text-secondary)] border-b">
-                                    <th class="pb-2">Nombre</th>
-                                    <th class="pb-2 text-right">Saldo</th>
-                                    <th class="pb-2 text-right">Tasa</th>
-                                    <th class="pb-2 text-right">Interes</th>
-                                    <th class="pb-2 text-right">Costo Total</th>
+                                    <th class="pb-2">${t('name_label')}</th>
+                                    <th class="pb-2 text-right">${t('balance_label')}</th>
+                                    <th class="pb-2 text-right">${t('rate_label')}</th>
+                                    <th class="pb-2 text-right">${t('interest_label')}</th>
+                                    <th class="pb-2 text-right">${t('total_cost_label')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2399,7 +2400,7 @@
                             </tbody>
                             <tfoot class="font-semibold">
                                 <tr class="border-t-2">
-                                    <td class="pt-2">Total</td>
+                                    <td class="pt-2">${t('summary_label')}</td>
                                     <td class="pt-2 text-right">${formatMoney(sum.total_principal_debts)}</td>
                                     <td class="pt-2 text-right">-</td>
                                     <td class="pt-2 text-right text-[var(--accent-coral)]">${formatMoney(sum.total_interest_debts)}</td>
@@ -2412,16 +2413,16 @@
                 
                 if (sum.total_cards > 0) {
                     html += `<div class="card p-6">
-                        <h3 class="font-semibold mb-4">Tarjetas de Credito</h3>
+                        <h3 class="font-semibold mb-4">${t('credit_cards_label')}</h3>
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="text-left text-[var(--text-secondary)] border-b">
-                                    <th class="pb-2">Nombre</th>
-                                    <th class="pb-2 text-right">Saldo</th>
-                                    <th class="pb-2 text-right">Limite</th>
-                                    <th class="pb-2 text-right">Uso</th>
-                                    <th class="pb-2 text-right">Tasa</th>
-                                    <th class="pb-2 text-right">Interes Est.</th>
+                                    <th class="pb-2">${t('name_label')}</th>
+                                    <th class="pb-2 text-right">${t('balance_label')}</th>
+                                    <th class="pb-2 text-right">${t('limit_label')}</th>
+                                    <th class="pb-2 text-right">${t('used')}</th>
+                                    <th class="pb-2 text-right">${t('rate_label')}</th>
+                                    <th class="pb-2 text-right">${t('est_interest')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2470,12 +2471,12 @@
                 const data = await fetch(`/api/credit-card/${cardId}/projection`).then(r => r.json());
                 
                 let html = '<div class="mt-2 p-3 bg-[var(--bg-tertiary)] rounded-xl text-sm">';
-                html += `<p class="font-semibold mb-2">Proyeccion de Tarjeta</p>`;
+                html += `<p class="font-semibold mb-2">${t('card_projection')}</p>`;
                 
                 if (data.months_until_paidoff !== undefined) {
-                    html += `<p>Meses para pagar: ${data.months_until_paidoff}</p>`;
-                    html += `<p>Total intereses: ${formatMoney(data.total_interest)}</p>`;
-                    html += `<p>Costo total: ${formatMoney(data.total_cost)}</p>`;
+                    html += `<p>${t('months_to_pay_label')}: ${data.months_until_paidoff}</p>`;
+                    html += `<p>${t('total_interest_label')}: ${formatMoney(data.total_interest)}</p>`;
+                    html += `<p>${t('cost_total_label')}: ${formatMoney(data.total_cost)}</p>`;
                 }
                 
                 if (data.warning) {
@@ -2489,7 +2490,7 @@
                     window[`cardSched_${cardId}`] = { data: data.schedule, page: 1, pages, perPage };
                     html += `<div class="mt-2 pt-2 border-t border-[var(--border)]">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs text-[var(--text-secondary)]">Pagos (${total} meses)</span>`;
+                            <span class="text-xs text-[var(--text-secondary)]">${tr('payments_count', { total: total })}</span>`;
                     if (pages > 1) {
                         html += `<div class="flex gap-1 items-center">
                             <button onclick="cardSchedNav(${cardId}, -1)" class="px-2 py-1 text-xs bg-[var(--bg-secondary)] rounded hover:bg-[var(--border)]">&#8592;</button>
