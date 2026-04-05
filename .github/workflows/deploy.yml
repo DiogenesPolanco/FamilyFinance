@@ -8,7 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
     
     steps:
       - name: Checkout code
@@ -28,36 +27,41 @@ jobs:
         run: |
           python validate_frontend.py
           node test_translations.js
-        continue-on-error: false
       
-      - name: Login to Azure
+      - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
-      - name: Deploy using Azure CLI
+      - name: Deploy via SCM
         run: |
-          echo "Deploying to Azure Web App..."
-          az webapp deployment source config-local-git \
+          # Get publishing credentials
+          PUBLISH_CREDENTIALS=$(az webapp deployment list-publishing-profiles \
             --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
             --resource-group "RGPersonalSinope" \
-            --query "url" \
-            --output tsv
+            --query "[?publishMethod=='FTP'].publishPassword" \
+            --output tsv 2>/dev/null || echo "")
           
-          # Get deployment credentials
-          DEPLOY_CREDENTIALS=$(az webapp deployment list-publishing-profiles \
-            --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
-            --resource-group "RGPersonalSinope" \
-            --query "[?publishMethod=='MSDeploy'].publishPassword" \
-            --output tsv)
-          
-          # Deploy using Git
-          git remote add azure https://$DEPLOY_CREDENTIALS@myfamilyfinance.scm.azurewebsites.net/myfamilyfinance.git
-          git push azure main:master --force
-      
-      - name: Set startup command
-        run: |
-          az webapp config set \
-            --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
-            --resource-group "RGPersonalSinope" \
-            --startup-command "uvicorn main:app --host 0.0.0.0 --port 8000"
+          if [ -z "$PUBLISH_CREDENTIALS" ]; then
+            # Fallback: use deployment user
+            az webapp deployment list-publishing-credentials \
+              --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
+              --resource-group "RGPersonalSinope" | tee creds.json
+            
+            USERNAME=$(jq -r '.publishingUserName' creds.json)
+            PASSWORD=$(jq -r '.publishingPassword' creds.json)
+            
+            echo "Deploying via FTP..."
+            curl -T static/index.html -u "$USERNAME:$PASSWORD" https://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/static/index.html
+            curl -T main.py -u "$USERNAME:$PASSWORD" https://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/main.py
+            curl -T models.py -u "$USERNAME:$PASSWORD" https://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/models.py
+            curl -T requirements.txt -u "$USERNAME:$PASSWORD" https://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/requirements.txt
+            
+            echo "Setting startup command..."
+            az webapp config set \
+              --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
+              --resource-group "RGPersonalSinope" \
+              --startup-command "uvicorn main:app --host 0.0.0.0 --port 8000"
+          else
+            echo "Deployment profile found"
+          fi
