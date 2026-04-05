@@ -2227,27 +2227,6 @@
             
             container.innerHTML = html;
         }
-            
-            // Show steps/progress
-            if (data.steps && data.steps.length > 0) {
-                html += `<h4 class="font-semibold text-sm mb-2 mt-4">Progreso:</h4>`;
-                data.steps.forEach(s => {
-                    if (s.action === 'paid_off') {
-                        html += `<div class="card p-3 mb-2" style="border-left: 3px solid var(--accent-green)">
-                            <p class="font-semibold text-[var(--accent-green)]">✓ ${s.name} - PAGADA</p>
-                            <p class="text-sm text-[var(--text-secondary)]">Mes ${s.month}</p>
-                        </div>`;
-                    } else if (s.action === 'progress') {
-                        html += `<div class="card p-3 mb-2 bg-[var(--bg-tertiary)]">
-                            <p class="text-sm">Mes ${s.month}: Balance ${formatMoney(s.balance)}</p>
-                            <p class="text-xs text-[var(--text-tertiary)]">${s.message || ''}</p>
-                        </div>`;
-                    }
-                });
-            }
-            
-            container.innerHTML = html;
-        }
 
         async function runSimulation() {
             const simType = document.getElementById('sim-type').value;
