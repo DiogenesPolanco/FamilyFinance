@@ -414,7 +414,7 @@
                     <div class="flex items-center justify-between mb-6">
                         <h1 class="text-2xl font-semibold" data-i18n="debt">Deudas</h1>
                         <button onclick="loadFullComparison()" class="btn" style="background: var(--accent-yellow); color: #000;">
-                            <i data-lucide="bar-chart-2" class="w-4 h-4 inline mr-1"></i>Comparar Todo
+                            <i data-lucide="bar-chart-2" class="w-4 h-4 inline mr-1"></i><span data-i18n="compare_all">Comparar Todo</span>
                         </button>
                     </div>
                     <div id="debt-comparison" class="hidden mb-6"></div>
@@ -458,30 +458,30 @@
                 <!-- Reports -->
                 <section id="section-reports" class="fade-in hidden">
                     <div class="flex items-center justify-between mb-6">
-                        <h1 class="text-2xl font-semibold">Reportes</h1>
+                        <h1 class="text-2xl font-semibold" data-i18n="reports">Reportes</h1>
                         <button onclick="exportCSV()" class="btn btn-primary">
                             <i data-lucide="download" class="w-4 h-4 inline mr-1"></i>Exportar CSV
                         </button>
                     </div>
                     <div class="flex gap-2 mb-4 overflow-x-auto pb-2">
-                        <button onclick="loadReport('fortnightly')" class="tab-btn active whitespace-nowrap" id="tab-fortnightly">Quincenal</button>
-                        <button onclick="loadReport('monthly')" class="tab-btn whitespace-nowrap" id="tab-monthly">Mensual</button>
-                        <button onclick="loadReport('quarterly')" class="tab-btn whitespace-nowrap" id="tab-quarterly">Trimestral</button>
-                        <button onclick="loadReport('yearly')" class="tab-btn whitespace-nowrap" id="tab-yearly">Anual</button>
-                        <button onclick="loadReport('kakebo')" class="tab-btn whitespace-nowrap" id="tab-kakebo">Kakebo</button>
-                        <button onclick="loadReport('debts')" class="tab-btn whitespace-nowrap" id="tab-debts">Deudas</button>
+<button onclick="loadReport('fortnightly')" class="tab-btn active whitespace-nowrap" id="tab-fortnightly" data-i18n="fortnightly">Quincenal</button>
+                                <button onclick="loadReport('monthly')" class="tab-btn whitespace-nowrap" id="tab-monthly" data-i18n="monthly">Mensual</button>
+                                <button onclick="loadReport('quarterly')" class="tab-btn whitespace-nowrap" id="tab-quarterly" data-i18n="quarterly">Trimestral</button>
+                                <button onclick="loadReport('yearly')" class="tab-btn whitespace-nowrap" id="tab-yearly" data-i18n="yearly">Anual</button>
+                                <button onclick="loadReport('kakebo')" class="tab-btn whitespace-nowrap" id="tab-kakebo" data-i18n="kakebo">Kakebo</button>
+                                <button onclick="loadReport('debts')" class="tab-btn whitespace-nowrap" id="tab-debts" data-i18n="debts">Deudas</button>
                     </div>
                     <div id="report-content" class="card p-6">
-                        <p class="text-[var(--text-secondary)]">Selecciona un período</p>
+                        <p class="text-[var(--text-secondary)]" data-i18n="select_period">Selecciona un período</p>
                     </div>
                 </section>
 
                 <!-- Budget -->
                 <section id="section-budget" class="fade-in hidden">
-                    <h1 class="text-2xl font-semibold mb-6">Presupuestos</h1>
+                    <h1 class="text-2xl font-semibold mb-6" data-i18n="budgets">Presupuestos</h1>
                     <div id="budget-content" class="space-y-4">
                         <div class="card p-6">
-                            <p class="text-[var(--text-secondary)]">Cargando presupuestos...</p>
+                            <p class="text-[var(--text-secondary)]" data-i18n="loading_budgets">Cargando presupuestos...</p>
                         </div>
                     </div>
                 </section>
@@ -492,52 +492,52 @@
                         <div class="w-8 h-8 bg-[var(--accent-purple)] rounded-lg flex items-center justify-center">
                             <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
                         </div>
-                        <h1 class="text-2xl font-semibold">Asistente IA</h1>
+                        <h1 class="text-2xl font-semibold" data-i18n="ai_assistant">Asistente IA</h1>
                     </div>
 
                     <div class="card p-6 mb-6">
-                        <h2 class="text-lg font-semibold mb-4">Resumen Financiero</h2>
+                        <h2 class="text-lg font-semibold mb-4" data-i18n="financial_summary">Resumen Financiero</h2>
                         <div id="ai-insights" class="space-y-4">
-                            <p class="text-[var(--text-secondary)]">Cargando insights...</p>
+                            <p class="text-[var(--text-secondary)]" data-i18n="loading_insights">Cargando insights...</p>
                         </div>
                     </div>
 
                     <div class="card p-6 mb-6">
-                        <h2 class="text-lg font-semibold mb-4">Recomendaciones</h2>
+                        <h2 class="text-lg font-semibold mb-4" data-i18n="recommendations">Recomendaciones</h2>
                         <div id="ai-recommendations" class="space-y-3">
-                            <p class="text-[var(--text-secondary)]">Cargando recomendaciones...</p>
+                            <p class="text-[var(--text-secondary)]" data-i18n="loading_recommendations">Cargando recomendaciones...</p>
                         </div>
                     </div>
 
                     <div class="card p-6 mb-6">
-                        <h2 class="text-lg font-semibold mb-4">Detección de Anomalías</h2>
+                        <h2 class="text-lg font-semibold mb-4" data-i18n="anomaly_detection">Detección de Anomalías</h2>
                         <div id="ai-anomalies" class="space-y-3">
-                            <p class="text-[var(--text-secondary)]">Cargando anomalías...</p>
+                            <p class="text-[var(--text-secondary)]" data-i18n="loading_anomalies">Cargando anomalías...</p>
                         </div>
                     </div>
 
                     <div class="card p-6 mb-6">
-                        <h2 class="text-lg font-semibold mb-4">Estrategia de Pago de Deudas</h2>
+                        <h2 class="text-lg font-semibold mb-4" data-i18n="debt_strategy">Estrategia de Pago de Deudas</h2>
                         <div class="flex gap-2 mb-4">
-                            <button onclick="loadDebtStrategy('avalanche')" class="tab-btn active" id="tab-avalanche">Avalancha</button>
-                            <button onclick="loadDebtStrategy('snowball')" class="tab-btn" id="tab-snowball">Bola de Nieve</button>
+<button onclick="loadDebtStrategy('avalanche')" class="tab-btn active" id="tab-avalanche" data-i18n="avalanche">Avalancha</button>
+                                <button onclick="loadDebtStrategy('snowball')" class="tab-btn" id="tab-snowball" data-i18n="snowball">Bola de Nieve</button>
                         </div>
                         <div id="ai-debt-strategy" class="space-y-3">
-                            <p class="text-[var(--text-secondary)]">Selecciona una estrategia</p>
+                            <p class="text-[var(--text-secondary)]" data-i18n="select_strategy">Selecciona una estrategia</p>
                         </div>
                     </div>
 
                     <div class="card p-6">
-                        <h2 class="text-lg font-semibold mb-4">Simulador "What-If"</h2>
+                        <h2 class="text-lg font-semibold mb-4" data-i18n="whatif_simulator">Simulador What-If</h2>
                         <div class="grid grid-cols-2 gap-3 mb-4">
                             <select id="sim-type" class="input col-span-2">
-                                <option value="income_change">Cambio en Ingresos</option>
-                                <option value="expense_reduction">Reducción de Gastos</option>
-                                <option value="extra_debt_payment">Pago Extra de Deuda</option>
-                                <option value="refinance">Refinanciamiento</option>
+                                <option value="income_change" data-i18n="income_change">Cambio en Ingresos</option>
+                                <option value="expense_reduction" data-i18n="expense_reduction">Reducción de Gastos</option>
+                                <option value="extra_debt_payment" data-i18n="extra_debt_payment">Pago Extra de Deuda</option>
+                                <option value="refinance" data-i18n="refinance">Refinanciamiento</option>
                             </select>
-                            <input type="number" id="sim-value" class="input" placeholder="Monto ($)">
-                            <input type="number" id="sim-rate" class="input hidden" placeholder="Nueva tasa (%)">
+                            <input type="number" id="sim-value" class="input" data-i18n-placeholder="amount_placeholder" placeholder="Monto ($)">
+                            <input type="number" id="sim-rate" class="input hidden" data-i18n-placeholder="new_rate_placeholder" placeholder="Nueva tasa (%)">
                             <button onclick="runSimulation()" class="btn btn-primary col-span-2">Simular</button>
                         </div>
                         <div id="sim-result" class="hidden card p-4 bg-[var(--bg-tertiary)]">
@@ -582,7 +582,7 @@
         <div id="modal" class="modal fixed inset-0 flex items-center justify-center p-4 z-50 hidden">
             <div class="card p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 id="modal-title" class="text-xl font-semibold">Modal</h2>
+                    <h2 id="modal-title" class="text-xl font-semibold" data-i18n="modal">Modal</h2>
                     <button onclick="closeModal()" class="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
@@ -600,11 +600,11 @@
     <!-- Confirm Dialog -->
     <div id="confirm-overlay">
         <div id="confirm-dialog">
-            <h3 id="confirm-title">Confirmar</h3>
-            <p id="confirm-message">¿Estas seguro?</p>
+            <h3 id="confirm-title" data-i18n="confirm">Confirmar</h3>
+            <p id="confirm-message" data-i18n="are_you_sure">¿Estás seguro?</p>
             <div class="confirm-actions">
-                <button id="confirm-cancel" onclick="confirmResolve(false)">Cancelar</button>
-                <button id="confirm-ok" onclick="confirmResolve(true)">Confirmar</button>
+                <button id="confirm-cancel" onclick="confirmResolve(false)" data-i18n="cancel">Cancelar</button>
+                <button id="confirm-ok" onclick="confirmResolve(true)" data-i18n="confirm">Confirmar</button>
             </div>
         </div>
     </div>
@@ -612,12 +612,12 @@
     <!-- Prompt Dialog -->
     <div id="prompt-overlay">
         <div id="prompt-dialog">
-            <h3 id="prompt-title">Ingresar</h3>
+            <h3 id="prompt-title" data-i18n="prompt_title">Ingresar</h3>
             <label id="prompt-label" for="prompt-input"></label>
             <input type="text" id="prompt-input" autocomplete="off">
             <div class="prompt-actions">
-                <button id="prompt-cancel" onclick="promptResolve(null)">Cancelar</button>
-                <button id="prompt-ok" onclick="promptSubmit()">Aceptar</button>
+                <button id="prompt-cancel" onclick="promptResolve(null)" data-i18n="cancel">Cancelar</button>
+                <button id="prompt-ok" onclick="promptSubmit()" data-i18n="ok">Aceptar</button>
             </div>
         </div>
     </div>
@@ -625,6 +625,655 @@
     <script>
         let confirmCallback = null;
         let promptCallback = null;
+
+        const translations = {
+            es: {
+                app_name: 'FamilyFinance',
+                app_slogan: 'Gestión financiera sin estrés',
+                enter: 'Entrar',
+                incorrect_password: 'Contraseña incorrecta',
+                begin: 'Comenzar',
+                summary: 'Resumen',
+                demo_data: 'Datos Demo',
+                add: 'Agregar',
+                balance: 'Balance',
+                income: 'Ingresos',
+                expenses: 'Gastos',
+                debt: 'Deuda',
+                kakebo_this_month: 'Kakebo Este Mes',
+                needs: 'Necesidades',
+                wants: 'Deseos',
+                culture: 'Cultura',
+                unexpected: 'Inesperado',
+                upcoming_payments: 'Próximos Pagos',
+                no_upcoming: 'No hay pagos próximos',
+                add_income: 'Agregar Ingreso',
+                add_expense: 'Agregar Gasto',
+                no_income: 'No hay ingresos registrados',
+                no_expenses: 'No hay gastos registrados',
+                new_debt: 'Nueva Deuda',
+                new_card: 'Nueva Tarjeta',
+                new_service: 'Nuevo Servicio',
+                no_debts: 'No hay deudas registradas',
+                no_cards: 'No hay tarjetas registradas',
+                no_services: 'No hay servicios registrados',
+                reports: 'Reportes',
+                export_csv: 'Exportar CSV',
+                fortnightly: 'Quincenal',
+                monthly: 'Mensual',
+                quarterly: 'Trimestral',
+                yearly: 'Anual',
+                kakebo: 'Kakebo',
+                debts: 'Deudas',
+                select_period: 'Selecciona un período',
+                budgets: 'Presupuestos',
+                loading_budgets: 'Cargando presupuestos...',
+                ai_assistant: 'Asistente IA',
+                financial_summary: 'Resumen Financiero',
+                loading_insights: 'Cargando insights...',
+                recommendations: 'Recomendaciones',
+                loading_recommendations: 'Cargando recomendaciones...',
+                anomaly_detection: 'Detección de Anomalías',
+                loading_anomalies: 'Cargando anomalías...',
+                debt_strategy: 'Estrategia de Pago de Deudas',
+                avalanche: 'Avalancha',
+                snowball: 'Bola de Nieve',
+                select_strategy: 'Selecciona una estrategia',
+                whatif_simulator: 'Simulador What-If',
+                income_change: 'Cambio en Ingresos',
+                expense_reduction: 'Reducción de Gastos',
+                extra_debt_payment: 'Pago Extra de Deuda',
+                refinance: 'Refinanciamiento',
+                simulate: 'Simular',
+                modal: 'Modal',
+                confirm: 'Confirmar',
+                cancel: 'Cancelar',
+                ok: 'Aceptar',
+                enter: 'Ingresar',
+                no_cards: 'No hay tarjetas registradas',
+                limit: 'Límite',
+                used: 'usado',
+                rate: 'Tasa',
+                current_balance: 'Saldo actual',
+                add_charge: 'Agregar Cargo',
+                view_projection: 'Ver Proyección',
+                edit: 'Editar',
+                delete: 'Eliminar',
+                save: 'Guardar',
+                close: 'Cerrar',
+                amount: 'Monto',
+                description: 'Descripción',
+                category: 'Categoría',
+                date: 'Fecha',
+                kakebo_category: 'Categoría Kakebo',
+                salary: 'Salario',
+                freelance: 'Freelance',
+                investment: 'Inversión',
+                gift: 'Regalo',
+                other: 'Otro',
+                name: 'Nombre',
+                initial_amount: 'Monto Inicial',
+                current_amount: 'Monto Actual',
+                interest_rate: 'Tasa de Interés (%)',
+                monthly_payment: 'Pago Mensual',
+                start_date: 'Fecha de Inicio',
+                next_payment_date: 'Próxima Fecha de Pago',
+                provider: 'Proveedor',
+                due_day: 'Día de Vencimiento',
+                reminder_days: 'Días de Recordatorio',
+                active: 'Activo',
+                inactive: 'Inactivo',
+                paid: 'Pagado',
+                pay: 'Pagar',
+                loading: 'Cargando...',
+                error: 'Error',
+                success: 'Éxito',
+                amount_required: 'El monto es requerido',
+                name_required: 'El nombre es requerido',
+                date_required: 'La fecha es requerida',
+                month: 'Mes',
+                payments: 'Pagos',
+                total_interest: 'Total intereses',
+                principal: 'Principal',
+                balance: 'Saldo',
+                months_remaining: 'Meses restantes',
+                amortization_table: 'Tabla de Amortización',
+                card_projection: 'Proyección de Tarjeta',
+                months_to_pay: 'Meses para pagar',
+                total_cost: 'Costo total',
+                minimum_payment_warning: 'Pago mínimo no cubre intereses',
+                no_debts_active: 'No hay deudas activas',
+                interest_saved: 'Interés ahorrado',
+                months_saved: 'Meses ahorrados',
+                impact: 'Impacto',
+                positive: 'Positivo',
+                negative: 'Negativo',
+                neutral: 'Neutral',
+                password: 'Contraseña',
+                create_password: 'Crea una contraseña',
+                confirm_password: 'Confirma la contraseña',
+                amount_placeholder: 'Monto ($)',
+                new_rate_placeholder: 'Nueva tasa (%)',
+                edit_expense: 'Editar Gasto',
+                edit_card: 'Editar Tarjeta',
+                edit_debt: 'Editar Deuda',
+                password_mismatch: 'Las contraseñas no coinciden',
+                password_min_length: 'La contraseña debe tener al menos 4 caracteres',
+                gastos_kakebo: 'Gastos (Kakebo)',
+                carga_error: 'Error al cargar',
+                stress_free_finance: 'Gestión financiera sin estrés',
+                days: 'días',
+                no_provider: 'Sin proveedor',
+                mark_paid: 'Marcar Pagado',
+                amount_prompt: 'Monto del pago:',
+                charge_prompt: 'Monto del cargo:',
+                quick_add_prompt: 'Agregar ingreso (i) o gasto (g)?',
+                export_prompt: 'Qué deseas exportar?',
+                refinance_option: 'Refinanciamiento',
+                compare_all: 'Comparar Todo',
+                no_debts_cards_compare: 'No hay deudas ni tarjetas para comparar',
+                loading: 'Cargando...',
+                cargando: 'Cargando...',
+                simulate: 'Simular',
+                are_you_sure: '¿Estás seguro?',
+                prompt_title: 'Ingresar',
+                card_limit: 'Límite',
+                used: 'usado',
+                rate: 'Tasa',
+                current_balance: 'Saldo actual',
+                add_charge: 'Agregar Cargo',
+                view_projection: 'Ver Proyección',
+                edit: 'Editar',
+                amount: 'Monto',
+                description: 'Descripción',
+                category: 'Categoría',
+                date: 'Fecha',
+                name: 'Nombre',
+                initial_amount: 'Monto Inicial',
+                current_amount: 'Monto Actual',
+                interest_rate: 'Tasa de Interés (%)',
+                monthly_payment: 'Pago Mensual',
+                start_date: 'Fecha de Inicio',
+                next_payment: 'Próximo Pago',
+                limit: 'Límite',
+                actual_balance: 'Saldo Actual',
+                cutoff_day: 'Día de Corte (1-31)',
+                provider: 'Proveedor',
+                monthly_amount: 'Monto Mensual',
+                payment_day: 'Día de Pago (1-31)',
+                reminder_days: 'Días de Recordatorio',
+                paid: 'Pagado',
+                active: 'Activo',
+                inactive: 'Inactivo',
+                deactivate: 'Desactivar',
+                activate: 'Activar',
+                last_payment: 'Último pago',
+                days_ago: 'días',
+                no_payments: 'Sin pagos registrados',
+                no_description: 'Sin descripción',
+                all_income: 'Todos los ingresos',
+                all_expenses: 'Todos los gastos',
+                this_month: 'Este mes',
+                comparison_prev: 'Comparación con periodo anterior',
+                averages: 'Promedios',
+                avg_income: 'Prom. Ingresos',
+                avg_expenses: 'Prom. Gastos',
+                kakebo_this: 'Kakebo - Este Mes',
+                recommended_budget: 'Presupuesto Recomendado (Regla 50/30/20)',
+                remaining: 'Restante',
+                exceeded: 'Excedido',
+                debt_history: 'Historial de Deudas',
+                original: 'Original',
+                actual: 'Actual',
+                progress: 'Progreso',
+                total_original: 'Total Original',
+                total_pending: 'Total Pendiente',
+                total_paid: 'Total Pagado',
+                loading_comparison: 'Cargando...',
+                loading: 'Cargando...',
+                error_loading: 'Error al cargar',
+                higher_rate: 'Mayor Tasa',
+                lower_rate: 'Menor Tasa',
+                higher_rate_interest: 'Mayor tasa de interés',
+                ranking_rate: 'Ranking por Tasa de Interés (Mayor a Menor)',
+                balance: 'Saldo',
+                interest_est: 'Interés Est.',
+                estimated: 'Estimado',
+            },
+            en: {
+                app_name: 'FamilyFinance',
+                app_slogan: 'Stress-free financial management',
+                enter: 'Enter',
+                incorrect_password: 'Incorrect password',
+                begin: 'Start',
+                summary: 'Summary',
+                demo_data: 'Demo Data',
+                add: 'Add',
+                balance: 'Balance',
+                income: 'Income',
+                expenses: 'Expenses',
+                debt: 'Debt',
+                kakebo_this_month: 'Kakebo This Month',
+                needs: 'Needs',
+                wants: 'Wants',
+                culture: 'Culture',
+                unexpected: 'Unexpected',
+                upcoming_payments: 'Upcoming Payments',
+                no_upcoming: 'No upcoming payments',
+                add_income: 'Add Income',
+                add_expense: 'Add Expense',
+                no_income: 'No income recorded',
+                no_expenses: 'No expenses recorded',
+                new_debt: 'New Debt',
+                new_card: 'New Card',
+                new_service: 'New Service',
+                no_debts: 'No debts recorded',
+                no_cards: 'No cards recorded',
+                no_services: 'No services recorded',
+                reports: 'Reports',
+                export_csv: 'Export CSV',
+                fortnightly: 'Fortnightly',
+                monthly: 'Monthly',
+                quarterly: 'Quarterly',
+                yearly: 'Yearly',
+                kakebo: 'Kakebo',
+                debts: 'Debts',
+                select_period: 'Select a period',
+                budgets: 'Budgets',
+                loading_budgets: 'Loading budgets...',
+                ai_assistant: 'AI Assistant',
+                financial_summary: 'Financial Summary',
+                loading_insights: 'Loading insights...',
+                recommendations: 'Recommendations',
+                loading_recommendations: 'Loading recommendations...',
+                anomaly_detection: 'Anomaly Detection',
+                loading_anomalies: 'Loading anomalies...',
+                debt_strategy: 'Debt Payoff Strategy',
+                avalanche: 'Avalanche',
+                snowball: 'Snowball',
+                select_strategy: 'Select a strategy',
+                whatif_simulator: 'What-If Simulator',
+                income_change: 'Income Change',
+                expense_reduction: 'Expense Reduction',
+                extra_debt_payment: 'Extra Debt Payment',
+                refinance: 'Refinancing',
+                simulate: 'Simulate',
+                modal: 'Modal',
+                confirm: 'Confirm',
+                cancel: 'Cancel',
+                ok: 'OK',
+                enter: 'Enter',
+                no_cards: 'No cards recorded',
+                limit: 'Limit',
+                used: 'used',
+                rate: 'Rate',
+                current_balance: 'Current balance',
+                add_charge: 'Add Charge',
+                view_projection: 'View Projection',
+                edit: 'Edit',
+                delete: 'Delete',
+                save: 'Save',
+                close: 'Close',
+                amount: 'Amount',
+                description: 'Description',
+                category: 'Category',
+                date: 'Date',
+                kakebo_category: 'Kakebo Category',
+                salary: 'Salary',
+                freelance: 'Freelance',
+                investment: 'Investment',
+                gift: 'Gift',
+                other: 'Other',
+                name: 'Name',
+                initial_amount: 'Initial Amount',
+                current_amount: 'Current Amount',
+                interest_rate: 'Interest Rate (%)',
+                monthly_payment: 'Monthly Payment',
+                start_date: 'Start Date',
+                next_payment_date: 'Next Payment Date',
+                provider: 'Provider',
+                due_day: 'Due Day',
+                reminder_days: 'Reminder Days',
+                active: 'Active',
+                inactive: 'Inactive',
+                paid: 'Paid',
+                pay: 'Pay',
+                loading: 'Loading...',
+                error: 'Error',
+                success: 'Success',
+                amount_required: 'Amount is required',
+                name_required: 'Name is required',
+                date_required: 'Date is required',
+                month: 'Month',
+                payments: 'Payments',
+                total_interest: 'Total interest',
+                principal: 'Principal',
+                balance: 'Balance',
+                months_remaining: 'Months remaining',
+                amortization_table: 'Amortization Table',
+                card_projection: 'Card Projection',
+                months_to_pay: 'Months to pay',
+                total_cost: 'Total cost',
+                minimum_payment_warning: 'Minimum payment does not cover interest',
+                no_debts_active: 'No active debts',
+                interest_saved: 'Interest saved',
+                months_saved: 'Months saved',
+                impact: 'Impact',
+                positive: 'Positive',
+                negative: 'Negative',
+                neutral: 'Neutral',
+                password: 'Password',
+                create_password: 'Create a password',
+                confirm_password: 'Confirm password',
+                amount_placeholder: 'Amount ($)',
+                new_rate_placeholder: 'New rate (%)',
+                edit_expense: 'Edit Expense',
+                edit_card: 'Edit Card',
+                edit_debt: 'Edit Debt',
+                password_mismatch: 'Passwords do not match',
+                password_min_length: 'Password must be at least 4 characters',
+                gastos_kakebo: 'Expenses (Kakebo)',
+                carga_error: 'Error loading',
+                stress_free_finance: 'Stress-free financial management',
+                days: 'days',
+                no_provider: 'No provider',
+                mark_paid: 'Mark Paid',
+                amount_prompt: 'Payment amount:',
+                charge_prompt: 'Charge amount:',
+                quick_add_prompt: 'Add income (i) or expense (g)?',
+                export_prompt: 'What do you want to export?',
+                refinance_option: 'Refinancing',
+                compare_all: 'Compare All',
+                no_debts_cards_compare: 'No debts or cards to compare',
+                loading: 'Loading...',
+                cargando: 'Loading...',
+                simulate: 'Simulate',
+                are_you_sure: 'Are you sure?',
+                prompt_title: 'Enter',
+                card_limit: 'Limit',
+                used: 'used',
+                rate: 'Rate',
+                current_balance: 'Current balance',
+                add_charge: 'Add Charge',
+                view_projection: 'View Projection',
+                edit: 'Edit',
+                amount: 'Amount',
+                description: 'Description',
+                category: 'Category',
+                date: 'Date',
+                name: 'Name',
+                initial_amount: 'Initial Amount',
+                current_amount: 'Current Amount',
+                interest_rate: 'Interest Rate (%)',
+                monthly_payment: 'Monthly Payment',
+                start_date: 'Start Date',
+                next_payment: 'Next Payment',
+                limit: 'Limit',
+                actual_balance: 'Actual Balance',
+                cutoff_day: 'Cutoff Day (1-31)',
+                provider: 'Provider',
+                monthly_amount: 'Monthly Amount',
+                payment_day: 'Payment Day (1-31)',
+                reminder_days: 'Reminder Days',
+                paid: 'Paid',
+                active: 'Active',
+                inactive: 'Inactive',
+                deactivate: 'Deactivate',
+                activate: 'Activate',
+                last_payment: 'Last payment',
+                days_ago: 'days',
+                no_payments: 'No payments registered',
+                no_description: 'No description',
+                all_income: 'All income',
+                all_expenses: 'All expenses',
+                this_month: 'This month',
+                comparison_prev: 'Comparison with previous period',
+                averages: 'Averages',
+                avg_income: 'Avg Income',
+                avg_expenses: 'Avg Expenses',
+                kakebo_this: 'Kakebo - This Month',
+                recommended_budget: 'Recommended Budget (Rule 50/30/20)',
+                remaining: 'Remaining',
+                exceeded: 'Exceeded',
+                debt_history: 'Debt History',
+                original: 'Original',
+                actual: 'Actual',
+                progress: 'Progress',
+                total_original: 'Total Original',
+                total_pending: 'Total Pending',
+                total_paid: 'Total Paid',
+                loading_comparison: 'Loading...',
+                loading: 'Loading...',
+                error_loading: 'Error loading',
+                higher_rate: 'Higher Rate',
+                lower_rate: 'Lower Rate',
+                higher_rate_interest: 'Higher interest rate',
+                ranking_rate: 'Ranking by Interest Rate (High to Low)',
+                balance: 'Balance',
+                interest_est: 'Interest Est.',
+                estimated: 'Estimated',
+                
+                // NEW i18n keys added
+                card_limit_usage: { es: 'Límite: {limit} | {usage}% usado | Tasa: {rate}%', en: 'Limit: {limit} | {usage}% used | Rate: {rate}%' },
+                current_balance_label: { es: 'Saldo actual', en: 'Current balance' },
+                view_projection_short: { es: 'Ver Proyección', en: 'View Projection' },
+                amount_label: { es: 'Monto', en: 'Amount' },
+                description_label: { es: 'Descripción', en: 'Description' },
+                category_label: { es: 'Categoría', en: 'Category' },
+                date_label: { es: 'Fecha', en: 'Date' },
+                name_label: { es: 'Nombre', en: 'Name' },
+                initial_amount_label: { es: 'Monto Inicial', en: 'Initial Amount' },
+                current_amount_label: { es: 'Monto Actual', en: 'Current Amount' },
+                interest_rate_pct: { es: 'Tasa de Interés (%)', en: 'Interest Rate (%)' },
+                monthly_payment_label: { es: 'Pago Mensual', en: 'Monthly Payment' },
+                start_date_label: { es: 'Fecha de Inicio', en: 'Start Date' },
+                next_payment_label: { es: 'Próximo Pago', en: 'Next Payment' },
+                limit_label: { es: 'Límite', en: 'Limit' },
+                actual_balance_label: { es: 'Saldo Actual', en: 'Actual Balance' },
+                cutoff_day_label: { es: 'Día de Corte (1-31)', en: 'Cutoff Day (1-31)' },
+                provider_label: { es: 'Proveedor', en: 'Provider' },
+                monthly_amount_label: { es: 'Monto Mensual', en: 'Monthly Amount' },
+                payment_day_label: { es: 'Día de Pago (1-31)', en: 'Payment Day (1-31)' },
+                reminder_days_label: { es: 'Días de Recordatorio', en: 'Reminder Days' },
+                save_label: { es: 'Guardar', en: 'Save' },
+                salary_label: { es: 'Salario', en: 'Salary' },
+                freelance_label: { es: 'Freelance', en: 'Freelance' },
+                investment_label: { es: 'Inversión', en: 'Investment' },
+                gift_label: { es: 'Regalo', en: 'Gift' },
+                other_income_label: { es: 'Otro', en: 'Other' },
+                kakebo_category_label: { es: 'Categoría Kakebo', en: 'Kakebo Category' },
+                needs_label: { es: 'Necesidades', en: 'Needs' },
+                wants_label: { es: 'Deseos', en: 'Wants' },
+                culture_label: { es: 'Cultura', en: 'Culture' },
+                unexpected_label: { es: 'Inesperado', en: 'Unexpected' },
+                this_month: { es: 'Este mes', en: 'This month' },
+                view_all_count: { es: 'Ver todo ({count})', en: 'View all ({count})' },
+                no_income_month: { es: 'No hay ingresos este mes', en: 'No income this month' },
+                no_description: { es: 'Sin descripción', en: 'No description' },
+                all_income_label: { es: 'Todos los ingresos', en: 'All income' },
+                view_current_month: { es: 'Ver mes actual', en: 'View current month' },
+                no_expenses_month: { es: 'No hay gastos este mes', en: 'No expenses this month' },
+                all_expenses_label: { es: 'Todos los gastos', en: 'All expenses' },
+                pay_immediately: { es: 'Pagar de Inmediato', en: 'Pay Immediately' },
+                pay_overdue: { es: 'Pagar Vencido', en: 'Pay Overdue' },
+                pay_early: { es: 'Pagar Adelantado', en: 'Pay Early' },
+                today_urgent: { es: 'Hoy - URGENTE', en: 'Today - URGENT' },
+                overdue_label: { es: 'Vencido', en: 'Overdue' },
+                in_days: { es: 'En {days} día{daysPlural}', en: 'In {days} day{daysPlural}' },
+                payment_month: { es: 'Pago: {amount}/mes', en: 'Payment: {amount}/month' },
+                inactive_label: { es: 'Inactivo', en: 'Inactive' },
+                last_payment_label: { es: 'Último pago', en: 'Last payment' },
+                days_ago_label: { es: 'días', en: 'days' },
+                no_payments_label: { es: 'Sin pagos registrados', en: 'No payments registered' },
+                deactivate_label: { es: 'Desactivar', en: 'Deactivate' },
+                activate_label: { es: 'Activar', en: 'Activate' },
+                service_deactivated: { es: 'Servicio desactivado', en: 'Service deactivated' },
+                service_activated: { es: 'Servicio activado', en: 'Service activated' },
+                confirm_pay_service: { es: 'Registrar pago de este servicio?', en: 'Register payment for this service?' },
+                payment_registered: { es: 'Pago registrado', en: 'Payment registered' },
+                past_feedback: { es: 'Retroalimentación del Pasado', en: 'Past Feedback' },
+                income_vs_month: { es: 'Ingresos vs mes anterior', en: 'Income vs last month' },
+                expenses_vs_month: { es: 'Gastos vs mes anterior', en: 'Expenses vs last month' },
+                future_suggestions: { es: 'Sugerencias a Futuro', en: 'Future Suggestions' },
+                no_sufficient_data: { es: 'No hay datos suficientes para generar insights', en: 'Not enough data to generate insights' },
+                no_recommendations: { es: 'No hay recomendaciones', en: 'No recommendations' },
+                no_anomalies: { es: 'No se detectaron anomalías ni oportunidades', en: 'No anomalies or opportunities detected' },
+                potential_savings: { es: 'Ahorro potencial', en: 'Potential savings' },
+                detected_label: { es: 'Detectado', en: 'Detected' },
+                calculating: { es: 'Calculando...', en: 'Calculating...' },
+                no_debts_excellent: { es: 'No hay deudas activas. ¡Excelente!', en: 'No active debts. Excellent!' },
+                months_estimate: { es: '{months} meses estimado', en: '{months} months estimated' },
+                priority_order: { es: 'Orden de Prioridad', en: 'Priority Order' },
+                steps_label: { es: 'Pasos', en: 'Steps' },
+                no_data_period: { es: 'No hay datos para este período', en: 'No data for this period' },
+                comparison_prev: { es: 'Comparación con período anterior', en: 'Comparison with previous period' },
+                averages_label: { es: 'Promedios', en: 'Averages' },
+                avg_income_label: { es: 'Prom. Ingresos', en: 'Avg Income' },
+                avg_expenses_label: { es: 'Prom. Gastos', en: 'Avg Expenses' },
+                kakebo_this_month: { es: 'Kakebo - Este Mes', en: 'Kakebo - This Month' },
+                recommended_budget: { es: 'Presupuesto Recomendado (Regla 50/30/20)', en: 'Recommended Budget (Rule 50/30/20)' },
+                spent_label: { es: 'Gastado', en: 'Spent' },
+                remaining_label: { es: 'Restante', en: 'Remaining' },
+                exceeded_label: { es: 'Excedido', en: 'Exceeded' },
+                debt_history: { es: 'Historial de Deudas', en: 'Debt History' },
+                rate_label: { es: 'Tasa', en: 'Rate' },
+                original_label: { es: 'Original', en: 'Original' },
+                actual_label: { es: 'Actual', en: 'Actual' },
+                progress_label: { es: 'Progreso', en: 'Progress' },
+                summary_label: { es: 'Resumen', en: 'Summary' },
+                total_original_label: { es: 'Total Original', en: 'Total Original' },
+                total_pending_label: { es: 'Total Pendiente', en: 'Total Pending' },
+                total_paid_label: { es: 'Total Pagado', en: 'Total Paid' },
+                total_debt_label: { es: 'Total Deuda', en: 'Total Debt' },
+                total_interest_label: { es: 'Total Intereses', en: 'Total Interest' },
+                higher_rate_label: { es: 'Mayor Tasa', en: 'Higher Rate' },
+                lower_rate_label: { es: 'Menor Tasa', en: 'Lower Rate' },
+                priority_badge: { es: 'PRIORIDAD', en: 'PRIORITY' },
+                higher_rate_interest: { es: 'Mayor tasa de interés', en: 'Higher interest rate' },
+                loan_label: { es: 'Préstamo', en: 'Loan' },
+                credit_card_label: { es: 'Tarjeta de Crédito', en: 'Credit Card' },
+                balance_label: { es: 'Saldo', en: 'Balance' },
+                est_interest: { es: 'Interés Est.', en: 'Est. Interest' },
+                total_cost_label: { es: 'Costo Total', en: 'Total Cost' },
+                est_months: { es: 'Meses Est.', en: 'Est. Months' },
+                high_risk: { es: 'ALTO RIESGO', en: 'HIGH RISK' },
+                medium_risk: { es: 'MEDIO', en: 'MEDIUM' },
+                low_risk: { es: 'BAJO', en: 'LOW' },
+                ranking_rate: { es: 'Ranking por Tasa de Interés (Mayor a Menor)', en: 'Ranking by Interest Rate (High to Low)' },
+                loans_label: { es: 'Préstamos', en: 'Loans' },
+                credit_cards_label: { es: 'Tarjetas de Crédito', en: 'Credit Cards' },
+                error_comparison: { es: 'Error al cargar comparación', en: 'Error loading comparison' },
+                recommendation_pay_first: { es: 'Recomendación: Pagar este primero para ahorrar en intereses', en: 'Recommendation: Pay this first to save on interest' },
+                months_to_pay_label: { es: 'Meses para pagar', en: 'Months to pay' },
+                cost_total_label: { es: 'Costo total', en: 'Total cost' },
+                payments_count: { es: 'Pagos ({total} meses)', en: 'Payments ({total} months)' },
+                month_label: { es: 'Mes', en: 'Month' },
+                interest_label: { es: 'Interés', en: 'Interest' },
+                error_projection: { es: 'Error al cargar proyección', en: 'Error loading projection' },
+                months_remaining_label: { es: 'Meses restantes', en: 'Months remaining' },
+                payment_label: { es: 'Pago', en: 'Payment' },
+                balance_label_short: { es: 'Saldo', en: 'Balance' },
+                confirm_delete_income: { es: '¿Estás seguro de eliminar este ingreso?', en: 'Are you sure you want to delete this income?' },
+                confirm_delete_expense: { es: '¿Estás seguro de eliminar este gasto?', en: 'Are you sure you want to delete this expense?' },
+                confirm_delete_card: { es: '¿Estás seguro de eliminar esta tarjeta?', en: 'Are you sure you want to delete this card?' },
+                confirm_delete_debt: { es: '¿Estás seguro de eliminar esta deuda?', en: 'Are you sure you want to delete this debt?' },
+                income_deleted: { es: 'Ingreso eliminado', en: 'Income deleted' },
+                expense_deleted: { es: 'Gasto eliminado', en: 'Expense deleted' },
+                card_deleted: { es: 'Tarjeta eliminada', en: 'Card deleted' },
+                debt_deleted: { es: 'Deuda eliminada', en: 'Debt deleted' },
+                pay_debt_title: { es: 'Pagar Deuda', en: 'Pay Debt' },
+                payment_amount_label: { es: 'Monto del pago:', en: 'Payment amount:' },
+                payment_error: { es: 'Error al registrar pago', en: 'Error registering payment' },
+                payment_success: { es: 'Pago registrado', en: 'Payment registered' },
+                error_save: { es: 'Error al guardar', en: 'Error saving' },
+                saved_successfully: { es: 'Guardado correctamente', en: 'Saved successfully' },
+                connection_error: { es: 'Error de conexión', en: 'Connection error' },
+                error_loading_report: { es: 'Error al cargar el reporte', en: 'Error loading report' },
+                charge_amount_label: { es: 'Monto del cargo:', en: 'Charge amount:' },
+                charge_description_label: { es: 'Descripción del cargo:', en: 'Charge description:' },
+                charge_added: { es: 'Cargo agregado', en: 'Charge added' },
+                error_add_charge: { es: 'Error al agregar cargo', en: 'Error adding charge' },
+                monthly_income_label: { es: 'Ingreso mensual:', en: 'Monthly income:' },
+                quick_add_title: { es: 'Agregar Rápido', en: 'Quick Add' },
+                quick_add_prompt_input: { es: 'Escribe "i" para ingreso o "g" para gasto:', en: 'Type "i" for income or "g" for expense:' },
+                loading_data: { es: 'Cargando datos...', en: 'Loading data...' },
+                data_loaded: { es: '✓ Datos cargados', en: '✓ Data loaded' },
+                error_loading_demo: { es: 'Error al cargar datos', en: 'Error loading data' },
+                export_prompt: { es: 'Recurso a exportar:', en: 'Resource to export:' },
+                no_expenses_category: { es: 'No hay gastos en {category} este mes', en: 'No expenses in {category} this month' },
+                view_all_expenses: { es: 'Ver todos los gastos', en: 'View all expenses' },
+                registros_mes: { es: 'registros de este mes', en: 'records this month' },
+                total_this_month: { es: 'Total este mes:', en: 'Total this month:' },
+                amount_of: { es: '{current} de {initial} | {rate}%', en: '{current} of {initial} | {rate}%' },
+                sim_current_monthly: { es: 'Ingreso Actual', en: 'Current Monthly' },
+                sim_new_monthly: { es: 'Nuevo Ingreso', en: 'New Monthly' },
+                sim_extra_available: { es: 'Extra Disponible', en: 'Extra Available' },
+                sim_recommended_savings: { es: 'Ahorro Recom.', en: 'Rec. Savings' },
+                sim_yearly_impact: { es: 'Impacto Anual', en: 'Yearly Impact' },
+                sim_current_expenses: { es: 'Gastos Actuales', en: 'Current Expenses' },
+                sim_new_expenses: { es: 'Nuevos Gastos', en: 'New Expenses' },
+                sim_monthly_savings: { es: 'Ahorro Mensual', en: 'Monthly Savings' },
+                sim_yearly_savings: { es: 'Ahorro Anual', en: 'Yearly Savings' },
+                sim_current_rate: { es: 'Tasa Actual', en: 'Current Rate' },
+                sim_new_rate: { es: 'Nueva Tasa', en: 'New Rate' },
+                sim_rate_reduction: { es: 'Reducción Tasa', en: 'Rate Reduction' },
+                sim_monthly_interest_current: { es: 'Interés Mensual Actual', en: 'Current Monthly Interest' },
+                sim_monthly_interest_new: { es: 'Nuevo Interés Mensual', en: 'New Monthly Interest' },
+                sim_total_savings: { es: 'Ahorro Total', en: 'Total Savings' },
+                sim_debt_name: { es: 'Deuda', en: 'Debt' },
+                sim_current_payment: { es: 'Pago Actual', en: 'Current Payment' },
+                sim_extra_payment: { es: 'Pago Extra', en: 'Extra Payment' },
+                sim_new_payment: { es: 'Nuevo Pago', en: 'New Payment' },
+                sim_months_saved: { es: 'Meses Ahorrados', en: 'Months Saved' },
+                sim_years_less: { es: 'Años Menos', en: 'Years Less' },
+                sim_interest_saved: { es: 'Interés Ahorrado', en: 'Interest Saved' },
+                add_income_title: { es: 'Agregar Ingreso', en: 'Add Income' },
+                add_expense_title: { es: 'Agregar Gasto', en: 'Add Expense' },
+            }
+        };
+
+        let currentLang = localStorage.getItem('ff-lang') || 'es';
+
+        function t(key) {
+            // Support both simple strings and {es, en} objects
+            const value = translations[currentLang]?.[key] || translations.es?.[key];
+            if (value && typeof value === 'object' && value.es !== undefined) {
+                return value[currentLang] || value.es || key;
+            }
+            return value || key;
+        }
+
+        // Helper to replace placeholders in translation strings
+        function tr(key, params) {
+            let text = t(key);
+            if (params) {
+                Object.keys(params).forEach(k => {
+                    text = text.replace(new RegExp('\\{' + k + '\\}', 'g'), params[k]);
+                });
+            }
+            return text;
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('ff-lang', lang);
+            applyTranslations();
+        }
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.textContent = t(key);
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                el.placeholder = t(key);
+            });
+        }
+
+        function toggleLanguage() {
+            setLanguage(currentLang === 'es' ? 'en' : 'es');
+        }
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
@@ -707,7 +1356,7 @@
                 .then(r => r.json())
                 .then(cards => {
                     if (!cards.length) {
-                        list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8">No hay tarjetas registradas</p>';
+                        list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_cards">' + t('no_cards') + '</p>';
                         return;
                     }
                     list.innerHTML = cards.map(c => {
@@ -716,21 +1365,21 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="font-semibold">${c.name}</p>
-                                    <p class="text-sm text-[var(--text-secondary)]">Limite: ${formatMoney(c.limit)} | ${usage}% usado | Tasa: ${c.interest_rate}%</p>
+                                    <p class="text-sm text-[var(--text-secondary)]">${tr('card_limit_usage', { limit: formatMoney(c.limit), usage: usage, rate: c.interest_rate })}</p>
                                     <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2 mt-2">
                                         <div class="bg-[var(--accent-coral)] h-2 rounded-full" style="width: ${Math.min(usage, 100)}%"></div>
                                     </div>
                                 </div>
                                 <div class="text-right">
                                     <p class="text-lg font-semibold text-[var(--accent-coral)]">${formatMoney(c.current_balance)}</p>
-                                    <p class="text-xs text-[var(--text-secondary)]">Saldo actual</p>
+                                    <p class="text-xs text-[var(--text-secondary)]">${t('current_balance_label')}</p>
                                 </div>
                             </div>
                             <div id="card-projection-${c.id}" class="hidden mt-3"></div>
                             <div class="flex gap-2 mt-3">
-                                <button onclick="addCardCharge(${c.id})" class="btn btn-primary text-xs flex-1">Agregar Cargo</button>
-                                <button onclick="showCardProjection(${c.id})" class="btn text-xs flex-1">Ver Proyeccion</button>
-                                <button onclick="editCard(${c.id})" class="btn text-xs flex-1">Editar</button>
+                                <button onclick="addCardCharge(${c.id})" class="btn btn-primary text-xs flex-1">${t('add_charge')}</button>
+                                <button onclick="showCardProjection(${c.id})" class="btn text-xs flex-1">${t('view_projection_short')}</button>
+                                <button onclick="editCard(${c.id})" class="btn text-xs flex-1">${t('edit')}</button>
                             </div>
                         </div>`;
                     }).join('');
@@ -752,141 +1401,141 @@
             
             const forms = {
                 income: {
-                    title: 'Agregar Ingreso',
+                    title: t('add_income'),
                     fields: `
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Monto</label>
+                            <label class="block text-sm font-medium mb-1">${t('amount_label')}</label>
                             <input type="number" name="amount" step="0.01" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Descripcion</label>
+                            <label class="block text-sm font-medium mb-1">${t('description_label')}</label>
                             <input type="text" name="description" class="input">
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Categoria</label>
+                            <label class="block text-sm font-medium mb-1">${t('category_label')}</label>
                             <select name="category" class="input" required>
-                                <option value="salary">Salario</option>
-                                <option value="freelance">Freelance</option>
-                                <option value="investment">Inversion</option>
-                                <option value="gift">Regalo</option>
-                                <option value="other">Otro</option>
+                                <option value="salary">${t('salary_label')}</option>
+                                <option value="freelance">${t('freelance_label')}</option>
+                                <option value="investment">${t('investment_label')}</option>
+                                <option value="gift">${t('gift_label')}</option>
+                                <option value="other">${t('other_income_label')}</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Fecha</label>
+                            <label class="block text-sm font-medium mb-1">${t('date_label')}</label>
                             <input type="date" name="date" class="input" value="${new Date().toISOString().split('T')[0]}" required>
                         </div>
                     `,
                     endpoint: '/api/income'
                 },
                 expense: {
-                    title: 'Agregar Gasto',
+                    title: t('add_expense'),
                     fields: `
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Monto</label>
+                            <label class="block text-sm font-medium mb-1">${t('amount_label')}</label>
                             <input type="number" name="amount" step="0.01" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Descripcion</label>
+                            <label class="block text-sm font-medium mb-1">${t('description_label')}</label>
                             <input type="text" name="description" class="input">
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Categoria Kakebo</label>
+                            <label class="block text-sm font-medium mb-1">${t('kakebo_category_label')}</label>
                             <select name="kakebo_type" class="input" required>
-                                <option value="needs">Necesidades</option>
-                                <option value="wants">Deseos</option>
-                                <option value="culture">Cultura</option>
-                                <option value="unexpected">Inesperado</option>
+                                <option value="needs">${t('needs_label')}</option>
+                                <option value="wants">${t('wants_label')}</option>
+                                <option value="culture">${t('culture_label')}</option>
+                                <option value="unexpected">${t('unexpected_label')}</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Fecha</label>
+                            <label class="block text-sm font-medium mb-1">${t('date_label')}</label>
                             <input type="date" name="date" class="input" value="${new Date().toISOString().split('T')[0]}" required>
                         </div>
                     `,
                     endpoint: '/api/expense'
                 },
                 debt: {
-                    title: 'Nueva Deuda',
+                    title: t('new_debt'),
                     fields: `
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Nombre</label>
+                            <label class="block text-sm font-medium mb-1">${t('name_label')}</label>
                             <input type="text" name="name" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Monto Inicial</label>
+                            <label class="block text-sm font-medium mb-1">${t('initial_amount_label')}</label>
                             <input type="number" name="initial_amount" step="0.01" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Monto Actual</label>
+                            <label class="block text-sm font-medium mb-1">${t('current_amount_label')}</label>
                             <input type="number" name="current_amount" step="0.01" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Tasa de Interes (%)</label>
+                            <label class="block text-sm font-medium mb-1">${t('interest_rate_pct')}</label>
                             <input type="number" name="interest_rate" step="0.01" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Pago Mensual</label>
+                            <label class="block text-sm font-medium mb-1">${t('monthly_payment_label')}</label>
                             <input type="number" name="monthly_payment" step="0.01" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Fecha de Inicio</label>
+                            <label class="block text-sm font-medium mb-1">${t('start_date_label')}</label>
                             <input type="date" name="start_date" class="input" value="${new Date().toISOString().split('T')[0]}" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Proximo Pago</label>
+                            <label class="block text-sm font-medium mb-1">${t('next_payment_label')}</label>
                             <input type="date" name="next_payment_date" class="input" required>
                         </div>
                     `,
                     endpoint: '/api/debt'
                 },
                 card: {
-                    title: 'Nueva Tarjeta',
+                    title: t('new_card'),
                     fields: `
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Nombre</label>
+                            <label class="block text-sm font-medium mb-1">${t('name_label')}</label>
                             <input type="text" name="name" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Limite</label>
+                            <label class="block text-sm font-medium mb-1">${t('limit_label')}</label>
                             <input type="number" name="limit" step="0.01" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Saldo Actual</label>
+                            <label class="block text-sm font-medium mb-1">${t('actual_balance_label')}</label>
                             <input type="number" name="current_balance" step="0.01" class="input" value="0">
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Tasa de Interes (%)</label>
+                            <label class="block text-sm font-medium mb-1">${t('interest_rate_pct')}</label>
                             <input type="number" name="interest_rate" step="0.01" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Dia de Corte (1-31)</label>
+                            <label class="block text-sm font-medium mb-1">${t('cutoff_day_label')}</label>
                             <input type="number" name="due_date" min="1" max="31" class="input" required>
                         </div>
                     `,
                     endpoint: '/api/credit-card'
                 },
                 service: {
-                    title: 'Nuevo Servicio',
+                    title: t('new_service'),
                     fields: `
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Nombre</label>
+                            <label class="block text-sm font-medium mb-1">${t('name_label')}</label>
                             <input type="text" name="name" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Proveedor</label>
+                            <label class="block text-sm font-medium mb-1">${t('provider_label')}</label>
                             <input type="text" name="provider" class="input">
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Monto Mensual</label>
+                            <label class="block text-sm font-medium mb-1">${t('monthly_amount_label')}</label>
                             <input type="number" name="amount" step="0.01" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Dia de Pago (1-31)</label>
+                            <label class="block text-sm font-medium mb-1">${t('payment_day_label')}</label>
                             <input type="number" name="due_day" min="1" max="31" class="input" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium mb-1">Dias de Recordatorio</label>
+                            <label class="block text-sm font-medium mb-1">${t('reminder_days_label')}</label>
                             <input type="number" name="reminder_days" class="input" value="3">
                         </div>
                     `,
@@ -898,7 +1547,7 @@
             if (!config) return;
 
             title.textContent = config.title;
-            form.innerHTML = config.fields + '<button type="submit" class="btn btn-primary w-full mt-4">Guardar</button>';
+            form.innerHTML = config.fields + '<button type="submit" class="btn btn-primary w-full mt-4">' + t('save_label') + '</button>';
             form.dataset.endpoint = config.endpoint;
             form.dataset.type = type;
             modal.classList.remove('hidden');
@@ -929,15 +1578,15 @@
 
                 if (!resp.ok) {
                     const err = await resp.json();
-                    showToast(err.detail || 'Error al guardar', 'error');
+                    showToast(err.detail || t('error_save'), 'error');
                     return;
                 }
 
                 closeModal();
-                showToast('Guardado correctamente', 'success');
+                showToast(t('saved_successfully'), 'success');
                 refreshCurrentSection();
             } catch (e) {
-                showToast('Error de conexion', 'error');
+                showToast(t('connection_error'), 'error');
             }
         }
 
@@ -960,7 +1609,8 @@
             const upcoming = await fetch('/api/dashboard/upcoming').then(r => r.json());
             const container = document.getElementById('upcoming-payments');
             if (!upcoming.length) {
-                container.innerHTML = '<p class="text-[var(--text-secondary)] text-sm" data-i18n="no_upcoming">No hay pagos proximos</p>';
+                container.innerHTML = '<p class="text-[var(--text-secondary)] text-sm" data-i18n="no_upcoming"></p>';
+                container.textContent = t('no_upcoming');
             } else {
                 container.innerHTML = upcoming.map(p => {
                     const daysUntil = Math.ceil((new Date(p.due_date) - new Date()) / (1000 * 60 * 60 * 24));
@@ -1024,10 +1674,10 @@
             
             let header = `<div class="card p-4 mb-4 flex justify-between items-center">
                 <div>
-                    <p class="text-sm text-[var(--text-secondary)]">Este mes</p>
+                    <p class="text-sm text-[var(--text-secondary)]">${t('this_month')}</p>
                     <p class="text-xl font-semibold text-[var(--accent-green)]">${formatMoney(total)}</p>
                 </div>
-                ${hasAll ? `<button onclick="loadIncomeAll()" class="text-sm text-[var(--accent-blue)]">Ver todo (${incomes.length})</button>` : ''}
+                ${hasAll ? `<button onclick="loadIncomeAll()" class="text-sm text-[var(--accent-blue)]">${tr('view_all_count', { count: incomes.length })}</button>` : ''}
             </div>`;
             
             if (!monthlyIncomes.length) {
@@ -1039,7 +1689,7 @@
                 <div class="card p-4 flex items-center justify-between mb-2">
                     <div>
                         <p class="font-semibold text-[var(--accent-green)]">${formatMoney(i.amount)}</p>
-                        <p class="text-sm text-[var(--text-secondary)]">${i.description || 'Sin descripcion'} | ${formatDate(i.date)}</p>
+                        <p class="text-sm text-[var(--text-secondary)]">${i.description || t('no_description')} | ${formatDate(i.date)}</p>
                         <span class="badge badge-green mt-1">${i.category}</span>
                     </div>
                     <div class="flex gap-2">
@@ -1060,15 +1710,15 @@
             
             list.innerHTML = `<div class="card p-4 mb-4 flex justify-between items-center">
                 <div>
-                    <p class="text-sm text-[var(--text-secondary)]">Todos los ingresos</p>
+                    <p class="text-sm text-[var(--text-secondary)]">${t('all_income_label')}</p>
                     <p class="text-xl font-semibold text-[var(--accent-green)]">${formatMoney(total)}</p>
                 </div>
-                <button onclick="loadIncome()" class="text-sm text-[var(--accent-blue)]">Ver mes actual</button>
+                <button onclick="loadIncome()" class="text-sm text-[var(--accent-blue)]">${t('view_current_month')}</button>
             </div>` + incomes.map(i => `
                 <div class="card p-4 flex items-center justify-between mb-2">
                     <div>
                         <p class="font-semibold text-[var(--accent-green)]">${formatMoney(i.amount)}</p>
-                        <p class="text-sm text-[var(--text-secondary)]">${i.description || 'Sin descripcion'} | ${formatDate(i.date)}</p>
+                        <p class="text-sm text-[var(--text-secondary)]">${i.description || t('no_description')} | ${formatDate(i.date)}</p>
                         <span class="badge badge-green mt-1">${i.category}</span>
                     </div>
                     <div class="flex gap-2">
@@ -1084,7 +1734,7 @@
         async function loadExpenses() {
             currentCategoryFilter = null;
             const sectionTitle = document.querySelector('#section-expenses h1');
-            if (sectionTitle) sectionTitle.textContent = 'Gastos (Kakebo)';
+            if (sectionTitle) sectionTitle.textContent = t('gastos_kakebo');
             
             const list = document.getElementById('expense-list');
             const expenses = await fetch('/api/expense').then(r => r.json());
@@ -1104,10 +1754,10 @@
             
             let header = `<div class="card p-4 mb-4 flex justify-between items-center">
                 <div>
-                    <p class="text-sm text-[var(--text-secondary)]">Este mes</p>
+                    <p class="text-sm text-[var(--text-secondary)]">${t('this_month')}</p>
                     <p class="text-xl font-semibold text-[var(--accent-coral)]">${formatMoney(total)}</p>
                 </div>
-                ${hasAll ? `<button onclick="loadExpensesAll()" class="text-sm text-[var(--accent-blue)]">Ver todo (${expenses.length})</button>` : ''}
+                ${hasAll ? `<button onclick="loadExpensesAll()" class="text-sm text-[var(--accent-blue)]">${tr('view_all_count', { count: expenses.length })}</button>` : ''}
             </div>`;
             
             if (!monthlyExpenses.length) {
@@ -1120,7 +1770,7 @@
                 return `<div class="card p-4 flex items-center justify-between mb-2">
                     <div>
                         <p class="font-medium">${formatMoney(e.amount)}</p>
-                        <p class="text-sm text-[var(--text-secondary)]">${e.description || 'Sin descripcion'} - ${formatDate(e.date)}</p>
+                        <p class="text-sm text-[var(--text-secondary)]">${e.description || t('no_description')} - ${formatDate(e.date)}</p>
                         <span class="badge badge-${color} mt-1">${e.kakebo_type}</span>
                     </div>
                     <button onclick="editExpense(${e.id})" class="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg">
@@ -1134,7 +1784,7 @@
         async function loadExpensesAll() {
             currentCategoryFilter = null;
             const sectionTitle = document.querySelector('#section-expenses h1');
-            if (sectionTitle) sectionTitle.textContent = 'Gastos (Kakebo)';
+            if (sectionTitle) sectionTitle.textContent = t('gastos_kakebo');
             
             const list = document.getElementById('expense-list');
             const expenses = await fetch('/api/expense').then(r => r.json());
@@ -1143,16 +1793,16 @@
             
             list.innerHTML = `<div class="card p-4 mb-4 flex justify-between items-center">
                 <div>
-                    <p class="text-sm text-[var(--text-secondary)]">Todos los gastos</p>
+                    <p class="text-sm text-[var(--text-secondary)]">${t('all_expenses_label')}</p>
                     <p class="text-xl font-semibold text-[var(--accent-coral)]">${formatMoney(total)}</p>
                 </div>
-                <button onclick="loadExpenses()" class="text-sm text-[var(--accent-blue)]">Ver mes actual</button>
+                <button onclick="loadExpenses()" class="text-sm text-[var(--accent-blue)]">${t('view_current_month')}</button>
             </div>` + expenses.map(e => {
                 const color = getCategoryColor(e.category);
                 return `<div class="card p-4 flex items-center justify-between mb-2">
                     <div>
                         <p class="font-medium">${formatMoney(e.amount)}</p>
-                        <p class="text-sm text-[var(--text-secondary)]">${e.description || 'Sin descripcion'} - ${formatDate(e.date)}</p>
+                        <p class="text-sm text-[var(--text-secondary)]">${e.description || t('no_description')} - ${formatDate(e.date)}</p>
                         <span class="badge badge-${color} mt-1">${e.kakebo_type}</span>
                     </div>
                     <button onclick="editExpense(${e.id})" class="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg">
@@ -1176,20 +1826,20 @@
                     <div class="flex items-center justify-between mb-3">
                         <div>
                             <p class="font-semibold">${d.name}</p>
-                            <p class="text-sm text-[var(--text-secondary)]">${formatMoney(d.current_amount)} de ${formatMoney(d.initial_amount)} | ${d.interest_rate}%</p>
+                            <p class="text-sm text-[var(--text-secondary)]">${tr('amount_of', { current: formatMoney(d.current_amount), initial: formatMoney(d.initial_amount), rate: d.interest_rate })}</p>
                         </div>
                         <div class="text-right">
-                            <span class="badge ${paid}">${d.is_paid ? 'Pagado' : 'Activo'}</span>
-                            <p class="text-sm text-[var(--text-secondary)] mt-1">Pago: ${formatMoney(d.monthly_payment)}/mes</p>
+                            <span class="badge ${paid}">${d.is_paid ? t('paid') : t('active')}</span>
+                            <p class="text-sm text-[var(--text-secondary)] mt-1">${tr('payment_month', { amount: formatMoney(d.monthly_payment) })}</p>
                         </div>
                     </div>
                     <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2 mb-3">
                         <div class="h-2 rounded-full bg-[var(--accent-green)]" style="width: ${((1 - d.current_amount / d.initial_amount) * 100).toFixed(0)}%"></div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="payDebt(${d.id})" class="btn-pay flex-1">Pagar</button>
-                        <button onclick="showDebtProjection(${d.id})" class="btn text-xs flex-1">Ver Proyeccion</button>
-                        <button onclick="editDebt(${d.id})" class="btn text-xs flex-1">Editar</button>
+                        <button onclick="payDebt(${d.id})" class="btn-pay flex-1">${t('pay')}</button>
+                        <button onclick="showDebtProjection(${d.id})" class="btn text-xs flex-1">${t('view_projection_short')}</button>
+                        <button onclick="editDebt(${d.id})" class="btn text-xs flex-1">${t('edit')}</button>
                     </div>
                     <div id="debt-projection-${d.id}" class="hidden mt-3"></div>
                 </div>`;
@@ -1207,15 +1857,16 @@
             list.innerHTML = services.map(s => {
                 const daysSince = s.last_paid_date ? Math.floor((new Date() - new Date(s.last_paid_date)) / (1000 * 60 * 60 * 24)) : null;
                 const statusColor = !s.is_active ? 'var(--text-tertiary)' : (daysSince && daysSince > 30 ? 'var(--accent-coral)' : 'var(--accent-green)');
+                const lastPaymentText = !s.is_active ? t('inactive_label') : (s.last_paid_date ? t('last_payment_label') + ': ' + daysSince + ' ' + t('days_ago_label') : t('no_payments_label'));
                 return `<div class="card p-4 flex items-center justify-between">
                     <div>
                         <p class="font-semibold">${s.name}</p>
                         <p class="text-sm text-[var(--text-secondary)]">${s.provider || ''} | ${formatMoney(s.amount)}/mes</p>
-                        <p class="text-xs" style="color: ${statusColor}">${!s.is_active ? 'Inactivo' : (s.last_paid_date ? `Ultimo pago: hace ${daysSince} dias` : 'Sin pagos registrados')}</p>
+                        <p class="text-xs" style="color: ${statusColor}">${lastPaymentText}</p>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="payService(${s.id})" class="btn-pay">Pagar</button>
-                        <button onclick="toggleService(${s.id})" class="btn text-xs ${s.is_active ? '' : 'btn-coral'}">${s.is_active ? 'Desactivar' : 'Activar'}</button>
+                        <button onclick="payService(${s.id})" class="btn-pay">${t('pay')}</button>
+                        <button onclick="toggleService(${s.id})" class="btn text-xs ${s.is_active ? '' : 'btn-coral'}">${s.is_active ? t('deactivate_label') : t('activate_label')}</button>
                     </div>
                 </div>`;
             }).join('');
@@ -1623,7 +2274,7 @@
                 const sum = data.summary;
                 
                 if (!sum.total_debts && !sum.total_cards) {
-                    container.innerHTML = '<div class="card p-6"><p class="text-[var(--text-secondary)]">No hay deudas ni tarjetas para comparar</p></div>';
+                    container.innerHTML = '<div class="card p-6"><p class="text-[var(--text-secondary)]">' + t('no_debts_cards_compare') + '</p></div>';
                     return;
                 }
                 
@@ -1948,9 +2599,9 @@
         }
 
         async function addCardCharge(cardId) {
-            const amount = await showPrompt('Agregar Cargo', 'Monto del cargo:');
+            const amount = await showPrompt(t('add_charge'), t('charge_amount_label'));
             if (!amount) return;
-            const desc = await showPrompt('Descripcion', 'Descripcion del cargo:', '');
+            const desc = await showPrompt(t('description_label'), t('charge_description_label'), '');
             
             try {
                 const resp = await fetch(`/api/credit-card/${cardId}/charge`, {
@@ -1960,13 +2611,13 @@
                 });
                 
                 if (resp.ok) {
-                    showToast('Cargo agregado', 'success');
+                    showToast(t('charge_added'), 'success');
                     loadCards();
                 } else {
-                    showToast('Error al agregar cargo', 'error');
+                    showToast(t('error_add_charge'), 'error');
                 }
             } catch (e) {
-                showToast('Error de conexion', 'error');
+                showToast(t('connection_error'), 'error');
             }
         }
 
@@ -2101,42 +2752,42 @@
         }
 
         async function deleteIncome(id) {
-            const ok = await showConfirm('Eliminar Ingreso', 'Estas seguro de eliminar este ingreso?');
+            const ok = await showConfirm(t('delete'), t('confirm_delete_income'));
             if (!ok) return;
             await fetch(`/api/income/${id}`, { method: 'DELETE' });
-            showToast('Ingreso eliminado', 'success');
+            showToast(t('income_deleted'), 'success');
             loadIncome();
         }
 
         async function deleteExpense(id) {
-            const ok = await showConfirm('Eliminar Gasto', 'Estas seguro de eliminar este gasto?');
+            const ok = await showConfirm(t('delete'), t('confirm_delete_expense'));
             if (!ok) return;
             await fetch(`/api/expense/${id}`, { method: 'DELETE' });
             closeModal();
-            showToast('Gasto eliminado', 'success');
+            showToast(t('expense_deleted'), 'success');
             loadExpenses();
         }
 
         async function deleteCard(id) {
-            const ok = await showConfirm('Eliminar Tarjeta', 'Estas seguro de eliminar esta tarjeta?');
+            const ok = await showConfirm(t('delete'), t('confirm_delete_card'));
             if (!ok) return;
             await fetch(`/api/credit-card/${id}`, { method: 'DELETE' });
             closeModal();
-            showToast('Tarjeta eliminada', 'success');
+            showToast(t('card_deleted'), 'success');
             loadCards();
         }
 
         async function deleteDebt(id) {
-            const ok = await showConfirm('Eliminar Deuda', 'Estas seguro de eliminar esta deuda?');
+            const ok = await showConfirm(t('delete'), t('confirm_delete_debt'));
             if (!ok) return;
             await fetch(`/api/debt/${id}`, { method: 'DELETE' });
             closeModal();
-            showToast('Deuda eliminada', 'success');
+            showToast(t('debt_deleted'), 'success');
             loadDebts();
         }
 
         async function payDebt(id) {
-            const amount = await showPrompt('Pagar Deuda', 'Monto del pago:');
+            const amount = await showPrompt(t('pay_debt_title'), t('payment_amount_label'));
             if (!amount) return;
             try {
                 const resp = await fetch(`/api/debt/${id}/pay`, {
@@ -2145,31 +2796,31 @@
                     body: JSON.stringify({ amount: parseFloat(amount), payment_date: new Date().toISOString().split('T')[0] })
                 });
                 if (resp.ok) {
-                    showToast('Pago registrado', 'success');
+                    showToast(t('payment_success'), 'success');
                     loadDebts();
                     loadDashboard();
                 } else {
-                    showToast('Error al registrar pago', 'error');
+                    showToast(t('payment_error'), 'error');
                 }
             } catch (e) {
-                showToast('Error de conexion', 'error');
+                showToast(t('connection_error'), 'error');
             }
         }
 
         async function payService(id) {
-            const ok = await showConfirm('Pagar Servicio', 'Registrar pago de este servicio?');
+            const ok = await showConfirm(t('pay'), t('confirm_pay_service'));
             if (!ok) return;
             try {
                 const resp = await fetch(`/api/service/${id}/pay`, { method: 'POST' });
                 if (resp.ok) {
-                    showToast('Pago registrado', 'success');
+                    showToast(t('payment_success'), 'success');
                     loadServices();
                     loadDashboard();
                 } else {
-                    showToast('Error al registrar pago', 'error');
+                    showToast(t('payment_error'), 'error');
                 }
             } catch (e) {
-                showToast('Error de conexion', 'error');
+                showToast(t('connection_error'), 'error');
             }
         }
 
@@ -2456,7 +3107,7 @@
         }
 
         async function openQuickAdd() {
-            const type = await showPrompt('Agregar Rapido', 'Escribe "i" para ingreso o "g" para gasto:');
+            const type = await showPrompt(t('quick_add_title'), t('quick_add_prompt_input'));
             if (type === 'i') openModal('income');
             else if (type === 'g') openModal('expense');
         }
@@ -2494,7 +3145,7 @@
         }
 
         async function exportCSV() {
-            const resource = await showPrompt('Exportar CSV', 'Recurso a exportar (transactions, income, expense, debt, credit_card, service):', 'transactions');
+            const resource = await showPrompt(t('export_csv'), t('export_prompt'), 'transactions');
             if (!resource) return;
             window.location.href = `/api/export/csv?resource=${resource}`;
         }
@@ -2560,7 +3211,7 @@
                     <div class="card p-4 flex items-center justify-between mb-2">
                         <div>
                             <p class="font-medium">${formatMoney(e.amount)}</p>
-                            <p class="text-sm text-[var(--text-secondary)]">${e.description || 'Sin descripcion'} - ${formatDate(e.date)}</p>
+                            <p class="text-sm text-[var(--text-secondary)]">${e.description || t('no_description')} - ${formatDate(e.date)}</p>
                             <span class="badge badge-${getCategoryColor(e.category)} mt-1">${e.kakebo_type}</span>
                         </div>
                         <button onclick="editExpense(${e.id})" class="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg">
@@ -2581,165 +3232,9 @@
             loadExpenses();
         }
 
-        // i18n
-        const translations = {
-            es: {
-                summary: 'Resumen',
-                add: 'Agregar',
-                balance: 'Balance',
-                income: 'Ingresos',
-                expenses: 'Gastos',
-                debt: 'Deuda',
-                kakebo_this_month: 'Kakebo Este Mes',
-                needs: 'Necesidades',
-                wants: 'Deseos',
-                culture: 'Cultura',
-                unexpected: 'Inesperado',
-                upcoming_payments: 'Próximos Pagos',
-                no_upcoming: 'No hay pagos próximos',
-                add_income: 'Agregar Ingreso',
-                add_expense: 'Agregar Gasto',
-                new_debt: 'Nueva Deuda',
-                new_card: 'Nueva Tarjeta',
-                new_service: 'Nuevo Servicio',
-                no_income: 'No hay ingresos registrados',
-                no_expenses: 'No hay gastos registrados',
-                no_debts: 'No hay deudas registradas',
-                no_cards: 'No hay tarjetas registradas',
-                no_services: 'No hay servicios registrados',
-                reports: 'Reportes',
-                ai_assistant: 'Asistente IA',
-                financial_summary: 'Resumen Financiero',
-                recommendations: 'Recomendaciones',
-                no_recommendations: 'No hay recomendaciones',
-                no_insights: 'No hay insights',
-                loading_recommendations: 'Cargando recomendaciones...',
-                loading_insights: 'Cargando insights...',
-                select_period: 'Selecciona un período',
-                fortnightly: 'Quincenal',
-                monthly: 'Mensual',
-                quarterly: 'Cuatrimestral',
-                password: 'Contraseña',
-                create_password: 'Crea una contraseña',
-                confirm_password: 'Confirma la contraseña',
-                enter: 'Entrar',
-                begin: 'Comenzar',
-                passwords_no_match: 'Las contraseñas no coinciden',
-                password_min_length: 'La contraseña debe tener al menos 4 caracteres',
-                incorrect_password: 'Contraseña incorrecta',
-                stress_free_finance: 'Gestión financiera sin estrés',
-                days: 'días',
-                paid: 'Pagado',
-                active: 'Activo',
-                inactive: 'Inactivo',
-                no_provider: 'Sin proveedor',
-                current_balance: 'Saldo actual',
-                monthly_payment: 'Pago mensual',
-                pay: 'Pagar',
-                edit: 'Editar',
-                used: 'usado',
-                add_charge: 'Agregar Cargo',
-                mark_paid: 'Marcar Pagado',
-                amount_prompt: 'Monto del pago:',
-                charge_prompt: 'Monto del cargo:',
-                quick_add_prompt: '¿Agregar ingreso (i) o gasto (g)?',
-                export_csv: 'Exportar CSV',
-                export_prompt: '¿Qué deseas exportar?\n1. transactions\n2. income\n3. expense\n4. debt\n5. credit_card\n6. service',
-            },
-            en: {
-                summary: 'Summary',
-                add: 'Add',
-                balance: 'Balance',
-                income: 'Income',
-                expenses: 'Expenses',
-                debt: 'Debt',
-                kakebo_this_month: 'Kakebo This Month',
-                needs: 'Needs',
-                wants: 'Wants',
-                culture: 'Culture',
-                unexpected: 'Unexpected',
-                upcoming_payments: 'Upcoming Payments',
-                no_upcoming: 'No upcoming payments',
-                add_income: 'Add Income',
-                add_expense: 'Add Expense',
-                new_debt: 'New Debt',
-                new_card: 'New Card',
-                new_service: 'New Service',
-                no_income: 'No income registered',
-                no_expenses: 'No expenses registered',
-                no_debts: 'No debts registered',
-                no_cards: 'No cards registered',
-                no_services: 'No services registered',
-                reports: 'Reports',
-                ai_assistant: 'AI Assistant',
-                financial_summary: 'Financial Summary',
-                recommendations: 'Recommendations',
-                no_recommendations: 'No recommendations',
-                no_insights: 'No insights',
-                loading_recommendations: 'Loading recommendations...',
-                loading_insights: 'Loading insights...',
-                select_period: 'Select a period',
-                fortnightly: 'Fortnightly',
-                monthly: 'Monthly',
-                quarterly: 'Quarterly',
-                password: 'Password',
-                create_password: 'Create a password',
-                confirm_password: 'Confirm the password',
-                enter: 'Enter',
-                begin: 'Begin',
-                passwords_no_match: 'Passwords do not match',
-                password_min_length: 'Password must be at least 4 characters',
-                incorrect_password: 'Incorrect password',
-                stress_free_finance: 'Stress-free financial management',
-                days: 'days',
-                paid: 'Paid',
-                active: 'Active',
-                inactive: 'Inactive',
-                no_provider: 'No provider',
-                current_balance: 'Current balance',
-                monthly_payment: 'Monthly payment',
-                pay: 'Pay',
-                edit: 'Edit',
-                used: 'used',
-                add_charge: 'Add Charge',
-                mark_paid: 'Mark Paid',
-                amount_prompt: 'Payment amount:',
-                charge_prompt: 'Charge amount:',
-                quick_add_prompt: 'Add income (i) or expense (g)?',
-                export_csv: 'Export CSV',
-                export_prompt: 'What do you want to export?\n1. transactions\n2. income\n3. expense\n4. debt\n5. credit_card\n6. service',
-            }
-        };
-
-        let currentLang = localStorage.getItem('ff-lang') || 'es';
-
-        function t(key) {
-            return translations[currentLang]?.[key] || translations['es']?.[key] || key;
-        }
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('ff-lang', lang);
-            applyTranslations();
-        }
-
-        function applyTranslations() {
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                el.textContent = t(key);
-            });
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-i18n-placeholder');
-                el.placeholder = t(key);
-            });
-        }
-
-        function toggleLanguage() {
-            setLanguage(currentLang === 'es' ? 'en' : 'es');
-        }
-
         function startApp() {
             init();
+            applyTranslations();
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
