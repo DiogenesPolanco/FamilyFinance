@@ -30,7 +30,7 @@ jobs:
       
       - name: Deploy via FTP
         run: |
-          zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py -x "*.pyc"
+          zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py startup.sh -x "*.pyc"
           
           echo "Uploading via FTP..."
           curl --ftp-ssl -T package.zip -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" "ftp://${{ secrets.FTP_HOST }}/site/wwwroot/"
@@ -44,7 +44,7 @@ jobs:
       
       - name: Deploy via ZipDeploy
         run: |
-          zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py -x "*.pyc"
+          zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py startup.sh -x "*.pyc"
           
           az webapp deployment source config-zip \
             --src package.zip \
@@ -56,4 +56,4 @@ jobs:
           az webapp config set \
             --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
             --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-            --startup-cmd "python -m uvicorn main:app --host 0.0.0.0 --port 8000"
+            --startup-file startup.sh
