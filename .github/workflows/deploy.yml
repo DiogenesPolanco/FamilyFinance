@@ -58,8 +58,7 @@ jobs:
           az webapp deployment source config-zip \
             --src package.zip \
             --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-            --build-remote true
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}"
 
       # ⚙️ Startup command
       - name: Set startup command
