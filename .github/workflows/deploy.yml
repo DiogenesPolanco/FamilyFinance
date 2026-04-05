@@ -32,7 +32,7 @@ jobs:
         run: |
           zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py -x "*.pyc"
           
-          FTP_HOST="waws-prod-dm1-209.ftp.azurewebsites.net"
+          FTP_HOST="waws-prod-dm1-209.ftp.azurewebsites.windows.net"
           USERNAME="$MyFamilyFinance\$MyFamilyFinance"
           PASSWORD="ERNhgS1byc7jGSGZbBayvkAKmHhrQRtw8m30klfNdlgqGPifNzFyqXWqYTpA"
           
