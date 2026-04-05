@@ -1,9 +1,15 @@
 #!/bin/bash
 
+echo "Installing dependencies..."
+
+pip install -r requirements.txt
+
 echo "Starting FastAPI..."
+
+PORT=${PORT:-8000}
 
 gunicorn main:app \
   --worker-class uvicorn.workers.UvicornWorker \
-  --bind 0.0.0.0:8000 \
+  --bind 0.0.0.0:$PORT \
   --timeout 600 \
   --workers 2

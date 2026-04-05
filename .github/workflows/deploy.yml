@@ -10,31 +10,35 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      # 📥 Código
       - name: Checkout code
         uses: actions/checkout@v4
       
+      # 🐍 Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       
+      # 📦 Dependencias (solo para tests)
       - name: Install dependencies (for tests only)
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
+      # 🧪 Tests
       - name: Run validation tests
         run: |
           python validate_frontend.py
           node test_translations.js
 
-      # 🔥 LOGIN EN AZURE
+      # 🔐 Login Azure
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # 🔥 FIX CRÍTICO: instalar dependencias en Azure
+      # 🔥 FIX 1: habilitar build automático (Oryx)
       - name: Enable build during deployment
         run: |
           az webapp config appsettings set \
@@ -42,21 +46,22 @@ jobs:
             --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
             --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
 
-      # 🔥 Permiso al startup.sh
+      # 🔥 FIX 2: permisos a startup.sh
       - name: Make startup executable
         run: chmod +x startup.sh
 
-      # 🚀 Deploy limpio
-      - name: Deploy via ZipDeploy
+      # 🚀 Deploy con build remoto (CLAVE)
+      - name: Deploy via ZipDeploy (with build)
         run: |
           zip -r package.zip . -x "*.pyc" ".git/*"
           
           az webapp deployment source config-zip \
             --src package.zip \
             --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}"
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --build-remote true
 
-      # 🔥 Startup correcto
+      # ⚙️ Startup command
       - name: Set startup command
         run: |
           az webapp config set \
