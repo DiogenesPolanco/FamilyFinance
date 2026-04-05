@@ -2538,15 +2538,15 @@
             container.classList.toggle('hidden');
             if (container.classList.contains('hidden')) return;
             
-            container.innerHTML = '<p class="text-sm text-[var(--text-secondary)]">Cargando...</p>';
+            container.innerHTML = '<p class="text-sm text-[var(--text-secondary)]">' + t('loading') + '</p>';
             
             try {
                 const data = await fetch(`/api/debt/${debtId}/projection`).then(r => r.json());
                 
                 let html = '<div class="mt-2 p-3 bg-[var(--bg-tertiary)] rounded-xl text-sm">';
-                html += `<p class="font-semibold mb-2">Tabla de Amortizacion</p>`;
-                html += `<p>Meses restantes: ${data.months_remaining || 'N/A'}</p>`;
-                html += `<p>Total intereses: ${formatMoney(data.total_interest || 0)}</p>`;
+                html += `<p class="font-semibold mb-2">${t('amortization_table')}</p>`;
+                html += `<p>${t('months_remaining_label')}: ${data.months_remaining || 'N/A'}</p>`;
+                html += `<p>${t('total_interest_label')}: ${formatMoney(data.total_interest || 0)}</p>`;
                 
                 if (data.schedule && data.schedule.length) {
                     const total = data.schedule.length;
@@ -2555,7 +2555,7 @@
                     window[`debtSched_${debtId}`] = { data: data.schedule, page: 1, pages, perPage };
                     html += `<div class="mt-2 pt-2 border-t border-[var(--border)]">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs text-[var(--text-secondary)]">Pagos (${total} meses)</span>`;
+                            <span class="text-xs text-[var(--text-secondary)]">${tr('payments_count', { total: total })}</span>`;
                     if (pages > 1) {
                         html += `<div class="flex gap-1 items-center">
                             <button onclick="debtSchedNav(${debtId}, -1)" class="px-2 py-1 text-xs bg-[var(--bg-secondary)] rounded hover:bg-[var(--border)]">&#8592;</button>
@@ -2566,10 +2566,10 @@
                     html += `</div><div class="space-y-1" id="debt-sched-list-${debtId}">`;
                     data.schedule.slice(0, perPage).forEach(s => {
                         html += `<div class="flex justify-between text-xs">
-                            <span>Mes ${s.month}</span>
-                            <span>Pago: ${formatMoney(s.payment)}</span>
-                            <span>Interes: ${formatMoney(s.interest)}</span>
-                            <span>Saldo: ${formatMoney(s.balance)}</span>
+                            <span>${t('month_label')} ${s.month}</span>
+                            <span>${t('payment_label')}: ${formatMoney(s.payment)}</span>
+                            <span>${t('interest_label')}: ${formatMoney(s.interest)}</span>
+                            <span>${t('balance_label_short')}: ${formatMoney(s.balance)}</span>
                         </div>`;
                     });
                     html += `</div></div>`;
@@ -2578,7 +2578,7 @@
                 html += '</div>';
                 container.innerHTML = html;
             } catch (e) {
-                container.innerHTML = '<p class="text-[var(--accent-coral)]">Error al cargar proyeccion</p>';
+                container.innerHTML = '<p class="text-[var(--accent-coral)]">' + t('error_projection') + '</p>';
             }
         }
 
@@ -2631,34 +2631,34 @@
             const title = document.getElementById('modal-title');
             const form = document.getElementById('modal-form');
             
-            title.textContent = 'Editar Gasto';
+            title.textContent = t('edit_expense');
             editingId = expenseId;
             
             form.innerHTML = `
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Monto</label>
+                    <label class="block text-sm font-medium mb-1">${t('amount_label')}</label>
                     <input type="number" name="amount" step="0.01" class="input" value="${expense.amount}" required>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Descripcion</label>
+                    <label class="block text-sm font-medium mb-1">${t('description_label')}</label>
                     <input type="text" name="description" class="input" value="${expense.description || ''}">
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Categoria Kakebo</label>
+                    <label class="block text-sm font-medium mb-1">${t('kakebo_category_label')}</label>
                     <select name="kakebo_type" class="input" required>
-                        <option value="needs" ${expense.kakebo_type === 'needs' ? 'selected' : ''}>Necesidades</option>
-                        <option value="wants" ${expense.kakebo_type === 'wants' ? 'selected' : ''}>Deseos</option>
-                        <option value="culture" ${expense.kakebo_type === 'culture' ? 'selected' : ''}>Cultura</option>
-                        <option value="unexpected" ${expense.kakebo_type === 'unexpected' ? 'selected' : ''}>Inesperado</option>
+                        <option value="needs" ${expense.kakebo_type === 'needs' ? 'selected' : ''}>${t('needs')}</option>
+                        <option value="wants" ${expense.kakebo_type === 'wants' ? 'selected' : ''}>${t('wants')}</option>
+                        <option value="culture" ${expense.kakebo_type === 'culture' ? 'selected' : ''}>${t('culture')}</option>
+                        <option value="unexpected" ${expense.kakebo_type === 'unexpected' ? 'selected' : ''}>${t('unexpected')}</option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Fecha</label>
+                    <label class="block text-sm font-medium mb-1">${t('date_label')}</label>
                     <input type="date" name="date" class="input" value="${expense.date.split('T')[0]}" required>
                 </div>
                 <div class="flex gap-2 mt-4">
-                    <button type="button" onclick="deleteExpense(${expenseId})" class="btn flex-1" style="background: var(--accent-coral); color: white;">Eliminar</button>
-                    <button type="submit" class="btn btn-primary flex-1">Guardar</button>
+                    <button type="button" onclick="deleteExpense(${expenseId})" class="btn flex-1" style="background: var(--accent-coral); color: white;">${t('delete')}</button>
+                    <button type="submit" class="btn btn-primary flex-1">${t('save')}</button>
                 </div>
             `;
             form.dataset.endpoint = '/api/expense';
@@ -2675,33 +2675,33 @@
             const title = document.getElementById('modal-title');
             const form = document.getElementById('modal-form');
             
-            title.textContent = 'Editar Tarjeta';
+            title.textContent = t('edit_card');
             editingId = cardId;
             
             form.innerHTML = `
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Nombre</label>
+                    <label class="block text-sm font-medium mb-1">${t('name_label')}</label>
                     <input type="text" name="name" class="input" value="${card.name}" required>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Limite</label>
+                    <label class="block text-sm font-medium mb-1">${t('limit_label')}</label>
                     <input type="number" name="limit" step="0.01" class="input" value="${card.limit}" required>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Saldo Actual</label>
+                    <label class="block text-sm font-medium mb-1">${t('actual_balance_label')}</label>
                     <input type="number" name="current_balance" step="0.01" class="input" value="${card.current_balance}">
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Tasa de Interes (%)</label>
+                    <label class="block text-sm font-medium mb-1">${t('interest_rate_pct')}</label>
                     <input type="number" name="interest_rate" step="0.01" class="input" value="${card.interest_rate}" required>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Dia de Corte (1-31)</label>
+                    <label class="block text-sm font-medium mb-1">${t('cutoff_day_label')}</label>
                     <input type="number" name="due_date" min="1" max="31" class="input" value="${card.due_date}" required>
                 </div>
                 <div class="flex gap-2 mt-4">
-                    <button type="button" onclick="deleteCard(${cardId})" class="btn flex-1" style="background: var(--accent-coral); color: white;">Eliminar</button>
-                    <button type="submit" class="btn btn-primary flex-1">Guardar</button>
+                    <button type="button" onclick="deleteCard(${cardId})" class="btn flex-1" style="background: var(--accent-coral); color: white;">${t('delete')}</button>
+                    <button type="submit" class="btn btn-primary flex-1">${t('save')}</button>
                 </div>
             `;
             form.dataset.endpoint = '/api/credit-card';
@@ -2718,33 +2718,33 @@
             const title = document.getElementById('modal-title');
             const form = document.getElementById('modal-form');
             
-            title.textContent = 'Editar Deuda';
+            title.textContent = t('edit_debt');
             editingId = debtId;
             
             form.innerHTML = `
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Nombre</label>
+                    <label class="block text-sm font-medium mb-1">${t('name_label')}</label>
                     <input type="text" name="name" class="input" value="${debt.name}" required>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Monto Actual</label>
+                    <label class="block text-sm font-medium mb-1">${t('current_amount_label')}</label>
                     <input type="number" name="current_amount" step="0.01" class="input" value="${debt.current_amount}" required>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Tasa de Interes (%)</label>
+                    <label class="block text-sm font-medium mb-1">${t('interest_rate_pct')}</label>
                     <input type="number" name="interest_rate" step="0.01" class="input" value="${debt.interest_rate}" required>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Pago Mensual</label>
+                    <label class="block text-sm font-medium mb-1">${t('monthly_payment_label')}</label>
                     <input type="number" name="monthly_payment" step="0.01" class="input" value="${debt.monthly_payment}" required>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Proximo Pago</label>
+                    <label class="block text-sm font-medium mb-1">${t('next_payment_label')}</label>
                     <input type="date" name="next_payment_date" class="input" value="${debt.next_payment_date.split('T')[0]}" required>
                 </div>
                 <div class="flex gap-2 mt-4">
-                    <button type="button" onclick="deleteDebt(${debtId})" class="btn flex-1" style="background: var(--accent-coral); color: white;">Eliminar</button>
-                    <button type="submit" class="btn btn-primary flex-1">Guardar</button>
+                    <button type="button" onclick="deleteDebt(${debtId})" class="btn flex-1" style="background: var(--accent-coral); color: white;">${t('delete')}</button>
+                    <button type="submit" class="btn btn-primary flex-1">${t('save')}</button>
                 </div>
             `;
             form.dataset.endpoint = '/api/debt';
@@ -2835,7 +2835,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ is_active: !service.is_active })
             });
-            showToast(service.is_active ? 'Servicio desactivado' : 'Servicio activado', 'success');
+            showToast(service.is_active ? t('service_deactivated') : t('service_activated'), 'success');
             loadServices();
         }
 
@@ -2846,9 +2846,9 @@
         async function loadBudget() {
             const container = document.getElementById('budget-content');
             const data = await fetch('/api/budget').then(r => r.json());
-            const catNames = { needs: 'Necesidades', wants: 'Deseos', culture: 'Cultura', unexpected: 'Inesperado' };
+            const catNames = { needs: t('needs'), wants: t('wants'), culture: t('culture'), unexpected: t('unexpected') };
             const catColors = { needs: 'var(--accent-blue)', wants: 'var(--accent-coral)', culture: 'var(--accent-purple)', unexpected: 'var(--accent-yellow)' };
-            let html = `<div class="card p-4 mb-4"><p class="text-sm text-[var(--text-secondary)]">Ingreso mensual: <span class="font-semibold text-[var(--accent-green)]">${formatMoney(data.total_income)}</span></p></div>`;
+            let html = `<div class="card p-4 mb-4"><p class="text-sm text-[var(--text-secondary)]">${t('monthly_income_label')} <span class="font-semibold text-[var(--accent-green)]">${formatMoney(data.total_income)}</span></p></div>`;
             for (const [cat, info] of Object.entries(data.budgets)) {
                 const pct = info.limit > 0 ? (info.spent / info.limit * 100).toFixed(0) : 0;
                 const over = info.spent > info.limit;
@@ -2875,7 +2875,7 @@
 
         async function loadDebtStrategy(strategy) {
             const container = document.getElementById('ai-debt-strategy');
-            container.innerHTML = '<p class="text-[var(--text-secondary)]">Calculando...</p>';
+            container.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('calculating') + '</p>';
             
             document.querySelectorAll('[id^="tab-"]').forEach(btn => btn.classList.remove('active'));
             const tabBtn = document.getElementById(`tab-${strategy}`);
@@ -2884,25 +2884,25 @@
             const data = await fetch(`/api/ai/debt-strategy?strategy=${strategy}`).then(r => r.json());
             
             if (!data.has_debts) {
-                container.innerHTML = '<p class="text-[var(--text-secondary)]">No hay deudas activas. Excelente!</p>';
+                container.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('no_debts_excellent') + '</p>';
                 return;
             }
             
             const strategyColor = strategy === 'avalanche' ? 'var(--accent-blue)' : 'var(--accent-green)';
-            const label = strategy === 'avalanche' ? 'Avalancha' : 'Bola de Nieve';
+            const label = strategy === 'avalanche' ? t('avalanche') : t('snowball');
             
             let html = `<div class="card p-4 mb-4" style="border-left: 4px solid ${strategyColor}">
                 <div class="flex items-center justify-between mb-3">
                     <span class="badge" style="background: ${strategyColor}">${label}</span>
-                    <span class="text-sm text-[var(--text-secondary)]">${data.total_months_estimate || 0} meses estimado</span>
+                    <span class="text-sm text-[var(--text-secondary)]">${tr('months_estimate', { months: data.total_months_estimate || 0 })}</span>
                 </div>
                 <div class="grid grid-cols-2 gap-3 text-sm">
                     <div class="bg-[var(--bg-tertiary)] p-3 rounded-lg">
-                        <p class="text-xs text-[var(--text-tertiary)]">Total Deuda</p>
+                        <p class="text-xs text-[var(--text-tertiary)]">${t('total_debt_label')}</p>
                         <p class="font-bold text-lg">${formatMoney(data.total_debt || 0)}</p>
                     </div>
                     <div class="bg-[var(--bg-tertiary)] p-3 rounded-lg">
-                        <p class="text-xs text-[var(--text-tertiary)]">Interes Est.</p>
+                        <p class="text-xs text-[var(--text-tertiary)]">${t('est_interest')}</p>
                         <p class="font-bold text-lg text-[var(--accent-coral)]">${formatMoney(data.estimated_total_interest || 0)}</p>
                     </div>
                 </div>
@@ -2910,7 +2910,7 @@
             </div>`;
             
             if (data.priority_order && data.priority_order.length > 0) {
-                html += `<h4 class="font-semibold text-sm mb-2">Orden de Prioridad:</h4>`;
+                html += `<h4 class="font-semibold text-sm mb-2">${t('priority_order')}:</h4>`;
                 data.priority_order.forEach((debt, idx) => {
                     const isFirst = idx === 0;
                     html += `<div class="card p-3 mb-2 ${isFirst ? 'border-l-4 border-[var(--accent-coral)]' : ''}">
@@ -2929,7 +2929,7 @@
             }
             
             if (data.tips && data.tips.length > 0) {
-                html += `<div class="mt-4"><h4 class="font-semibold text-sm mb-2">Pasos:</h4><ol class="text-sm space-y-1">`;
+                html += `<div class="mt-4"><h4 class="font-semibold text-sm mb-2">${t('steps_label')}:</h4><ol class="text-sm space-y-1">`;
                 data.tips.forEach(tip => {
                     html += `<li class="flex items-start gap-2"><span class="text-[var(--accent-green)]">✓</span>${tip}</li>`;
                 });
@@ -2958,11 +2958,11 @@
             if (data.error) { result.innerHTML = `<p class="text-[var(--accent-coral)]">${data.error}</p>`; return; }
             
             const impactColor = data.impact === 'positive' ? 'var(--accent-green)' : data.impact === 'negative' ? 'var(--accent-coral)' : 'var(--accent-blue)';
-            const impactLabel = data.impact === 'positive' ? 'Positivo' : data.impact === 'negative' ? 'Negativo' : 'Neutral';
+            const impactLabel = data.impact === 'positive' ? t('positive') : data.impact === 'negative' ? t('negative') : t('neutral');
             
             let html = `<div class="card p-4 bg-[var(--bg-tertiary)] mb-3" style="border-left: 4px solid ${impactColor}">
                 <div class="flex items-center justify-between">
-                    <span class="text-sm text-[var(--text-secondary)]">Impacto</span>
+                    <span class="text-sm text-[var(--text-secondary)]">${t('impact')}</span>
                     <span class="badge" style="background: ${impactColor}">${impactLabel}</span>
                 </div>
             </div>`;
@@ -2973,29 +2973,28 @@
             
             const skipKeys = ['scenario', 'impact', 'summary', 'debt_name'];
             const displayLabels = {
-                'current_monthly': 'Ingreso Actual',
-                'new_monthly': 'Nuevo Ingreso',
-                'extra_available': 'Extra Disponible',
-                'recommended_savings': 'Ahorro Recom.',
-                'yearly_impact': 'Impacto Anual',
-                'current_expenses': 'Gastos Actuales',
-                'new_expenses': 'Nuevos Gastos',
-                'monthly_savings': 'Ahorro Mensual',
-                'yearly_savings': 'Ahorro Anual',
-                'current_rate': 'Tasa Actual',
-                'new_rate': 'Nueva Tasa',
-                'rate_reduction': 'Reducción Tasa',
-                'monthly_interest_current': 'Interes Mensual Actual',
-                'monthly_interest_new': 'Nuevo Interes Mensual',
-                'monthly_savings': 'Ahorro Mensual',
-                'total_savings': 'Ahorro Total',
-                'debt_name': 'Deuda',
-                'current_payment': 'Pago Actual',
-                'extra_payment': 'Pago Extra',
-                'new_payment': 'Nuevo Pago',
-                'months_saved': 'Meses Ahorrados',
-                'payoff_earlier': 'Anos Menos',
-                'interest_saved': 'Interes Ahorrado'
+                'current_monthly': t('sim_current_monthly'),
+                'new_monthly': t('sim_new_monthly'),
+                'extra_available': t('sim_extra_available'),
+                'recommended_savings': t('sim_recommended_savings'),
+                'yearly_impact': t('sim_yearly_impact'),
+                'current_expenses': t('sim_current_expenses'),
+                'new_expenses': t('sim_new_expenses'),
+                'monthly_savings': t('sim_monthly_savings'),
+                'yearly_savings': t('sim_yearly_savings'),
+                'current_rate': t('sim_current_rate'),
+                'new_rate': t('sim_new_rate'),
+                'rate_reduction': t('sim_rate_reduction'),
+                'monthly_interest_current': t('sim_monthly_interest_current'),
+                'monthly_interest_new': t('sim_monthly_interest_new'),
+                'total_savings': t('sim_total_savings'),
+                'debt_name': t('sim_debt_name'),
+                'current_payment': t('sim_current_payment'),
+                'extra_payment': t('sim_extra_payment'),
+                'new_payment': t('sim_new_payment'),
+                'months_saved': t('sim_months_saved'),
+                'payoff_earlier': t('sim_years_less'),
+                'interest_saved': t('sim_interest_saved')
             };
             
             html += '<div class="space-y-2">';
