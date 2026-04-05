@@ -34,45 +34,44 @@ jobs:
           zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py -x "*.pyc"
           
           # Get token via API
-          TOKEN=$(curl -s -X POST "https://login.microsoftonline.com/${{ secrets.AZURE_TENANT_ID }}/oauth2/v2.0/token" \
+          TOKEN_RESPONSE=$(curl -s -X POST "https://login.microsoftonline.com/${{ secrets.AZURE_TENANT_ID }}/oauth2/v2.0/token" \
             -H "Content-Type: application/x-www-form-urlencoded" \
             -d "client_id=${{ secrets.AZURE_CLIENT_ID }}" \
             -d "scope=https://management.azure.com/.default" \
             -d "client_secret=${{ secrets.AZURE_CLIENT_SECRET }}" \
-            -d "grant_type=client_credentials" | jq -r '.access_token')
+            -d "grant_type=client_credentials")
           
-          # Debug: print token (first 20 chars)
-          echo "Token obtained: ${TOKEN:0:20}..."
+          echo "Token response: $TOKEN_RESPONSE"
+          TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
           
-          # Get publishing profile - try different API versions
-          echo "Getting publishing profile..."
-          PROFILE=$(curl -s -X GET "https://management.azure.com/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP }}/providers/Microsoft.Web/sites/${{ secrets.AZURE_WEBAPP_NAME }}/publishingprofile?api-version=2022-03-01" \
-            -H "Authorization: Bearer $TOKEN")
-          
-          echo "Profile response: $PROFILE" | head -c 500
-          
-          # Try to extract FTP info
-          FTP_URL=$(echo "$PROFILE" | jq -r '.profiles[].publishingProfile.ftpPublishing.url // .publishingProfiles[].ftpPublishing.url // .publishingProfile.ftpPublishing.url' 2>/dev/null)
-          USERNAME=$(echo "$PROFILE" | jq -r '.profiles[].publishingProfile.ftpPublishing.username // .publishingProfiles[].ftpPublishing.username // .publishingProfile.ftpPublishing.username' 2>/dev/null)
-          PASSWORD=$(echo "$PROFILE" | jq -r '.profiles[].publishingProfile.ftpPublishing.password // .publishingProfiles[].ftpPublishing.password // .publishingProfile.ftpPublishing.password' 2>/dev/null)
-          
-          echo "FTP URL: $FTP_URL"
-          echo "Username: $USERNAME"
-          
-          if [ "$FTP_URL" = "null" ] || [ -z "$FTP_URL" ]; then
-            echo "Getting profile via alternative method..."
-            # Alternative: get publishing credentials
-            CREDS=$(curl -s -X POST "https://management.azure.com/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP }}/providers/Microsoft.Web/sites/${{ secrets.AZURE_WEBAPP_NAME }}/listPublishingCredentials?api-version=2022-03-01" \
-              -H "Authorization: Bearer $TOKEN" \
-              -H "Content-Type: application/json")
-            
-            FTP_URL="https://waws-prod-dm1-209.ftp.azurewebsites.windows.net/site/wwwroot"
-            USERNAME=$(echo "$CREDS" | jq -r '.publishingUserName')
-            PASSWORD=$(echo "$CREDS" | jq -r '.publishingPassword')
+          if [ "$TOKEN" = "null" ] || [ -z "$TOKEN" ]; then
+            echo "Failed to get token. Check credentials."
+            exit 1
           fi
           
-          # Upload via FTP
-          echo "Uploading files via FTP..."
-          curl -T package.zip -u "$USERNAME:$PASSWORD" "$FTP_URL/package.zip"
+          # Get publishing credentials using listPublishingCredentials API
+          echo "Getting publishing credentials..."
+          CREDS=$(curl -s -X POST "https://management.azure.com/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP }}/providers/Microsoft.Web/sites/${{ secrets.AZURE_WEBAPP_NAME }}/listPublishingCredentials?api-version=2022-03-01" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json")
           
-          echo "Deployment complete!"
+          echo "Creds response: $CREDS"
+          
+          USERNAME=$(echo "$CREDS" | jq -r '.publishingUserName')
+          PASSWORD=$(echo "$CREDS" | jq -r '.publishingPassword')
+          
+          echo "Username: $USERNAME"
+          
+          if [ "$USERNAME" = "null" ] || [ -z "$USERNAME" ]; then
+            echo "Failed to get publishing credentials"
+            exit 1
+          fi
+          
+          # Determine FTP host from webapp name
+          FTP_HOST="${{ secrets.AZURE_WEBAPP_NAME }}.ftp.azurewebsites.net"
+          
+          # Upload via FTP
+          echo "Uploading files via FTP to $FTP_HOST..."
+          curl -T package.zip -u "$USERNAME:$PASSWORD" "https://$FTP_HOST/site/wwwroot/package.zip"
+          
+          echo "Upload complete!"
