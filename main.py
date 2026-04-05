@@ -26,6 +26,18 @@ security = HTTPBearer(auto_error=False)
 def lifespan(app):
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
+
+    from models import User
+
+    db = SessionLocal()
+    try:
+        if not db.query(User).first():
+            user = User(password_hash=get_password_hash("1234"))
+            db.add(user)
+            db.commit()
+    finally:
+        db.close()
+
     yield
 
 
