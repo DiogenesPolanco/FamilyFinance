@@ -16,7 +16,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       
       - name: Install dependencies
         run: |
@@ -49,11 +49,12 @@ jobs:
             exit 1
           fi
           
-          # Get publishing credentials using listPublishingCredentials API
+          # Get publishing credentials with proper headers
           echo "Getting publishing credentials..."
           CREDS=$(curl -s -X POST "https://management.azure.com/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP }}/providers/Microsoft.Web/sites/${{ secrets.AZURE_WEBAPP_NAME }}/listPublishingCredentials?api-version=2022-03-01" \
             -H "Authorization: Bearer $TOKEN" \
-            -H "Content-Type: application/json")
+            -H "Content-Type: application/json" \
+            -H "Content-Length: 0")
           
           echo "Creds response: $CREDS"
           
@@ -67,11 +68,8 @@ jobs:
             exit 1
           fi
           
-          # Determine FTP host from webapp name
-          FTP_HOST="${{ secrets.AZURE_WEBAPP_NAME }}.ftp.azurewebsites.net"
-          
-          # Upload via FTP
-          echo "Uploading files via FTP to $FTP_HOST..."
-          curl -T package.zip -u "$USERNAME:$PASSWORD" "https://$FTP_HOST/site/wwwroot/package.zip"
+          # Upload via FTPS (explicit TLS)
+          echo "Uploading files via FTPS..."
+          curl -TLS -T package.zip -u "$USERNAME:$PASSWORD" "ftps://myfamilyfinance.ftps.azurewebsites.net/site/wwwroot/package.zip"
           
           echo "Upload complete!"
