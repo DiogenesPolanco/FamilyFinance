@@ -35,7 +35,7 @@ def main():
             ("Auth Status", "curl -s http://localhost:8000/api/auth/status"),
             (
                 "Setup User",
-                'curl -s -X POST http://localhost:8000/api/setup -d "password=test123"',
+                'curl -s -X POST http://localhost:8000/api/setup -H "Content-Type: application/x-www-form-urlencoded" -d "password=test123"',
             ),
             (
                 "Auth Status (user exists)",
@@ -43,7 +43,7 @@ def main():
             ),
             (
                 "Login",
-                'curl -s -X POST http://localhost:8000/api/auth/login -d "password=test123"',
+                'curl -s -X POST http://localhost:8000/api/auth/login -H "Content-Type: application/x-www-form-urlencoded" -d "password=test123"',
             ),
             (
                 "Create Income",
