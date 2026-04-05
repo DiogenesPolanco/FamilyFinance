@@ -1,0 +1,2171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FamilyFinance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-primary: #F8F6F3;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F0EDE8;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --text-tertiary: #B2BEC3;
+            --accent-green: #55A991;
+            --accent-coral: #E17055;
+            --accent-blue: #74B9FF;
+            --accent-purple: #A29BFE;
+            --accent-yellow: #FDCB6E;
+            --border: #E8E4DF;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(45, 52, 54, 0.08);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(45, 52, 54, 0.12);
+        }
+        .btn {
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        .btn-primary {
+            background: var(--accent-green);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #4a9580;
+        }
+        .btn-coral {
+            background: var(--accent-coral);
+            color: white;
+        }
+        .btn-coral:hover {
+            background: #d35f45;
+        }
+        .btn-purple {
+            background: var(--accent-purple);
+            color: white;
+        }
+        .input {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            width: 100%;
+            background: var(--bg-secondary);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(85, 169, 145, 0.1);
+        }
+        .tab-btn {
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            transition: all 0.15s ease;
+        }
+        .tab-btn.active {
+            background: var(--bg-secondary);
+            color: var(--accent-green);
+            box-shadow: 0 2px 8px rgba(45, 52, 54, 0.08);
+        }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-green {
+            background: rgba(85, 169, 145, 0.1);
+            color: var(--accent-green);
+        }
+        .badge-coral {
+            background: rgba(225, 112, 85, 0.1);
+            color: var(--accent-coral);
+        }
+        .badge-blue {
+            background: rgba(116, 185, 255, 0.1);
+            color: var(--accent-blue);
+        }
+        .badge-purple {
+            background: rgba(162, 155, 254, 0.1);
+            color: var(--accent-purple);
+        }
+        .badge-yellow {
+            background: rgba(253, 203, 110, 0.1);
+            color: #e6b440;
+        }
+        .fade-in {
+            animation: fadeIn 0.2s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+        }
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--bg-tertiary);
+            overflow: hidden;
+        }
+            .progress-fill {
+                height: 100%;
+                border-radius: 4px;
+                transition: width 0.3s ease;
+            }
+            .nav-btn { position: relative; transition: all 0.2s ease; }
+            .nav-btn:hover { background: var(--bg-tertiary); }
+            .nav-btn.active {
+                background: var(--accent-green);
+                color: white;
+            }
+            .nav-btn.active::before {
+                content: '';
+                position: absolute;
+                left: -12px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 4px;
+                height: 24px;
+                background: var(--accent-green);
+                border-radius: 0 4px 4px 0;
+            }
+            @media (max-width: 768px) {
+                .nav-btn.active::before {
+                    left: 50%;
+                    top: -1px;
+                    transform: translateX(-50%);
+                    width: 24px;
+                    height: 3px;
+                    border-radius: 0 0 4px 4px;
+                }
+            }
+            /* Pay button */
+            .btn-pay { background: var(--accent-green); color: white; font-weight: 700; padding: 6px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; transition: all 0.2s; box-shadow: 0 2px 8px rgba(85,169,145,0.3); }
+            .btn-pay:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(85,169,145,0.4); }
+            .btn-pay-early { background: var(--accent-blue); color: white; font-weight: 600; padding: 6px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+            .btn-pay-early:hover { transform: translateY(-1px); }
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: var(--bg-secondary);
+                border-top: 1px solid var(--border);
+                display: flex;
+                justify-content: space-around;
+                padding: 8px 0;
+                z-index: 100;
+            }
+            .main-content {
+                padding-bottom: 80px;
+            }
+        }
+        /* Toast - Global styles */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { padding: 14px 24px; border-radius: 12px; color: white; font-size: 14px; font-weight: 500; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-width: 380px; line-height: 1.4; }
+        .toast-success { background: var(--accent-green); border-left: 4px solid #3d8b73; }
+        .toast-error { background: var(--accent-coral); border-left: 4px solid #c4513e; }
+        .toast-info { background: var(--accent-blue); border-left: 4px solid #5a9fd9; }
+        .toast-warning { background: var(--accent-yellow); color: var(--text-primary); border-left: 4px solid #d4a83a; }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
+        /* Confirm dialog - Global styles */
+        #confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 9998; display: none; align-items: center; justify-content: center; }
+        #confirm-overlay.show { display: flex !important; }
+        #confirm-dialog { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 32px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 25px 80px rgba(0,0,0,0.3); transform: scale(1); animation: dialogIn 0.2s ease-out; }
+        @keyframes dialogIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        #confirm-dialog h3 { margin-bottom: 16px; font-size: 22px; font-weight: 600; color: var(--text-primary); }
+        #confirm-dialog p { color: var(--text-secondary); margin-bottom: 28px; font-size: 15px; line-height: 1.5; white-space: pre-line; }
+        #confirm-dialog .confirm-actions { display: flex; gap: 12px; justify-content: center; }
+        #confirm-dialog .confirm-actions button { padding: 12px 28px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; font-size: 15px; transition: all 0.15s; }
+        #confirm-cancel { background: var(--bg-tertiary); color: var(--text-primary); }
+        #confirm-cancel:hover { background: #e0ddd8; }
+        #confirm-ok { background: var(--accent-green); color: white; }
+        #confirm-ok:hover { background: #4a9580; transform: translateY(-1px); }
+        /* Prompt dialog - Global styles */
+        #prompt-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 9998; display: none; align-items: center; justify-content: center; }
+        #prompt-overlay.show { display: flex !important; }
+        #prompt-dialog { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 32px; max-width: 420px; width: 90%; box-shadow: 0 25px 80px rgba(0,0,0,0.3); animation: dialogIn 0.2s ease-out; }
+        #prompt-dialog h3 { margin-bottom: 16px; font-size: 22px; font-weight: 600; color: var(--text-primary); }
+        #prompt-dialog label { display: block; color: var(--text-secondary); margin-bottom: 12px; font-size: 15px; }
+        #prompt-dialog input { width: 100%; padding: 14px 16px; border-radius: 10px; border: 2px solid var(--border); background: var(--bg-tertiary); color: var(--text-primary); font-size: 16px; margin-bottom: 24px; outline: none; transition: border-color 0.15s; }
+        #prompt-dialog input:focus { border-color: var(--accent-green); box-shadow: 0 0 0 3px rgba(85,169,145,0.1); }
+        #prompt-dialog .prompt-actions { display: flex; gap: 12px; justify-content: flex-end; }
+        #prompt-dialog .prompt-actions button { padding: 12px 28px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; font-size: 15px; transition: all 0.15s; }
+        #prompt-cancel { background: var(--bg-tertiary); color: var(--text-primary); }
+        #prompt-cancel:hover { background: #e0ddd8; }
+        #prompt-ok { background: var(--accent-green); color: white; }
+        #prompt-ok:hover { background: #4a9580; transform: translateY(-1px); }
+        @media (min-width: 769px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 80px;
+                background: var(--bg-secondary);
+                border-right: 1px solid var(--border);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                gap: 8px;
+                z-index: 100;
+            }
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="app" class="min-h-screen">
+        <!-- Login Screen -->
+        <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 hidden">
+            <div class="card p-8 w-full max-w-md">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-[var(--accent-green)] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="wallet" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h1 class="text-2xl font-semibold">FamilyFinance</h1>
+                    <p class="text-[var(--text-secondary)] mt-2" data-i18n="stress_free_finance">Gestión financiera sin estrés</p>
+                </div>
+                <div id="login-form" class="hidden">
+                    <input type="password" id="login-password" class="input mb-4" data-i18n-placeholder="password" placeholder="Contraseña">
+                    <button onclick="login()" class="btn btn-primary w-full" data-i18n="enter">Entrar</button>
+                    <p id="login-error" class="text-[var(--accent-coral)] text-sm mt-3 text-center hidden" data-i18n="incorrect_password">Contraseña incorrecta</p>
+                </div>
+                <div id="setup-form">
+                    <input type="password" id="setup-password" class="input mb-4" data-i18n-placeholder="create_password" placeholder="Crea una contraseña">
+                    <input type="password" id="setup-password-confirm" class="input mb-4" data-i18n-placeholder="confirm_password" placeholder="Confirma la contraseña">
+                    <button onclick="setup()" class="btn btn-primary w-full" data-i18n="begin">Comenzar</button>
+                    <p id="setup-error" class="text-[var(--accent-coral)] text-sm mt-3 text-center hidden"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App -->
+        <div id="main-app" class="hidden">
+            <!-- Sidebar (Desktop) -->
+            <nav class="sidebar hidden md:flex">
+                <button onclick="showSection('dashboard')" class="nav-btn p-3 rounded-xl" data-section="dashboard" data-tip="Inicio">
+                    <i data-lucide="home" class="w-6 h-6"></i>
+                </button>
+                <button onclick="showSection('income')" class="nav-btn p-3 rounded-xl" data-section="income">
+                    <i data-lucide="trending-up" class="w-6 h-6"></i>
+                </button>
+                <button onclick="showSection('expenses')" class="nav-btn p-3 rounded-xl" data-section="expenses">
+                    <i data-lucide="trending-down" class="w-6 h-6"></i>
+                </button>
+                <button onclick="showSection('debts')" class="nav-btn p-3 rounded-xl" data-section="debts">
+                    <i data-lucide="landmark" class="w-6 h-6"></i>
+                </button>
+                <button onclick="showSection('cards')" class="nav-btn p-3 rounded-xl" data-section="cards">
+                    <i data-lucide="credit-card" class="w-6 h-6"></i>
+                </button>
+                <button onclick="showSection('services')" class="nav-btn p-3 rounded-xl" data-section="services">
+                    <i data-lucide="zap" class="w-6 h-6"></i>
+                </button>
+                <button onclick="showSection('reports')" class="nav-btn p-3 rounded-xl" data-section="reports">
+                    <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+                </button>
+                <button onclick="showSection('budget')" class="nav-btn p-3 rounded-xl" data-section="budget">
+                    <i data-lucide="piggy-bank" class="w-6 h-6"></i>
+                </button>
+                <button onclick="showSection('ai')" class="nav-btn p-3 rounded-xl" data-section="ai">
+                    <i data-lucide="sparkles" class="w-6 h-6"></i>
+                </button>
+                <button onclick="toggleLanguage()" class="p-3 rounded-xl hover:bg-[var(--bg-tertiary)] mt-auto" title="Toggle language">
+                    <i data-lucide="languages" class="w-6 h-6"></i>
+                </button>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="main-content p-4 md:p-8 max-w-4xl mx-auto">
+                <!-- Dashboard -->
+                <section id="section-dashboard" class="fade-in">
+                    <div class="flex items-center justify-between mb-6">
+                        <h1 class="text-2xl font-semibold" data-i18n="summary">Resumen</h1>
+                        <div class="flex gap-2">
+                            <button onclick="loadDummyData()" class="btn" style="background: var(--accent-purple); color: white;">
+                                <i data-lucide="database" class="w-4 h-4 inline mr-1"></i>Datos Demo
+                            </button>
+                            <button onclick="openQuickAdd()" class="btn btn-primary">
+                                <i data-lucide="plus" class="w-4 h-4 inline mr-1"></i><span data-i18n="add">Agregar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="card p-4">
+                            <p class="text-sm text-[var(--text-secondary)]" data-i18n="balance">Balance</p>
+                            <p id="dash-balance" class="text-2xl font-semibold mt-1">$0</p>
+                        </div>
+                        <div class="card p-4">
+                            <p class="text-sm text-[var(--text-secondary)]" data-i18n="income">Ingresos</p>
+                            <p id="dash-income" class="text-2xl font-semibold mt-1 text-[var(--accent-green)]">$0</p>
+                        </div>
+                        <div class="card p-4">
+                            <p class="text-sm text-[var(--text-secondary)]" data-i18n="expenses">Gastos</p>
+                            <p id="dash-expenses" class="text-2xl font-semibold mt-1 text-[var(--accent-coral)]">$0</p>
+                        </div>
+                        <div class="card p-4">
+                            <p class="text-sm text-[var(--text-secondary)]" data-i18n="debt">Deuda</p>
+                            <p id="dash-debt" class="text-2xl font-semibold mt-1 text-[var(--accent-coral)]">$0</p>
+                        </div>
+                    </div>
+
+                    <!-- Kakebo Quick View -->
+                    <div class="card p-6 mb-6">
+                        <h2 class="text-lg font-semibold mb-4" data-i18n="kakebo_this_month">Kakebo Este Mes</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="text-center cursor-pointer hover:bg-[var(--bg-tertiary)] rounded-xl p-2 transition-colors" onclick="showExpensesByCategory('needs')">
+                                <div class="w-12 h-12 bg-[var(--accent-blue)] rounded-full flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="home" class="w-6 h-6 text-white"></i>
+                                </div>
+                                <p class="text-sm text-[var(--text-secondary)]" data-i18n="needs">Necesidades</p>
+                                <p id="kakebo-needs" class="font-semibold">$0</p>
+                            </div>
+                            <div class="text-center cursor-pointer hover:bg-[var(--bg-tertiary)] rounded-xl p-2 transition-colors" onclick="showExpensesByCategory('wants')">
+                                <div class="w-12 h-12 bg-[var(--accent-coral)] rounded-full flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="shopping-bag" class="w-6 h-6 text-white"></i>
+                                </div>
+                                <p class="text-sm text-[var(--text-secondary)]" data-i18n="wants">Deseos</p>
+                                <p id="kakebo-wants" class="font-semibold">$0</p>
+                            </div>
+                            <div class="text-center cursor-pointer hover:bg-[var(--bg-tertiary)] rounded-xl p-2 transition-colors" onclick="showExpensesByCategory('culture')">
+                                <div class="w-12 h-12 bg-[var(--accent-purple)] rounded-full flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="book-open" class="w-6 h-6 text-white"></i>
+                                </div>
+                                <p class="text-sm text-[var(--text-secondary)]" data-i18n="culture">Cultura</p>
+                                <p id="kakebo-culture" class="font-semibold">$0</p>
+                            </div>
+                            <div class="text-center cursor-pointer hover:bg-[var(--bg-tertiary)] rounded-xl p-2 transition-colors" onclick="showExpensesByCategory('unexpected')">
+                                <div class="w-12 h-12 bg-[var(--accent-yellow)] rounded-full flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="alert-triangle" class="w-6 h-6 text-white"></i>
+                                </div>
+                                <p class="text-sm text-[var(--text-secondary)]" data-i18n="unexpected">Inesperado</p>
+                                <p id="kakebo-unexpected" class="font-semibold">$0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Payments -->
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold mb-4" data-i18n="upcoming_payments">Próximos Pagos</h2>
+                        <div id="upcoming-payments" class="space-y-3">
+                            <p class="text-[var(--text-secondary)] text-sm" data-i18n="no_upcoming">No hay pagos próximos</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Income -->
+                <section id="section-income" class="fade-in hidden">
+                    <h1 class="text-2xl font-semibold mb-6" data-i18n="income">Ingresos</h1>
+                    <div class="card p-4 mb-4">
+                        <button onclick="openModal('income')" class="btn btn-primary w-full">
+                            <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i><span data-i18n="add_income">Agregar Ingreso</span>
+                        </button>
+                    </div>
+                    <div id="income-list" class="space-y-3">
+                        <p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_income">No hay ingresos registrados</p>
+                    </div>
+                </section>
+
+                <!-- Expenses -->
+                <section id="section-expenses" class="fade-in hidden">
+                    <h1 class="text-2xl font-semibold mb-6" data-i18n="expenses">Gastos (Kakebo)</h1>
+                    <div class="card p-4 mb-4">
+                        <button onclick="openModal('expense')" class="btn btn-coral w-full">
+                            <i data-lucide="minus" class="w-4 h-4 inline mr-2"></i><span data-i18n="add_expense">Agregar Gasto</span>
+                        </button>
+                    </div>
+                    <div id="expense-list" class="space-y-3">
+                        <p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_expenses">No hay gastos registrados</p>
+                    </div>
+                </section>
+
+                <!-- Debts -->
+                <section id="section-debts" class="fade-in hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <h1 class="text-2xl font-semibold" data-i18n="debt">Deudas</h1>
+                        <button onclick="loadDebtComparison()" class="btn" style="background: var(--accent-yellow); color: #000;">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4 inline mr-1"></i>Analizar Intereses
+                        </button>
+                    </div>
+                    <div id="debt-comparison" class="hidden card p-6 mb-6"></div>
+                    <div class="card p-4 mb-4">
+                        <button onclick="openModal('debt')" class="btn btn-primary w-full">
+                            <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i><span data-i18n="new_debt">Nueva Deuda</span>
+                        </button>
+                    </div>
+                    <div id="debt-list" class="space-y-3">
+                        <p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_debts">No hay deudas registradas</p>
+                    </div>
+                </section>
+
+                <!-- Credit Cards -->
+                <section id="section-cards" class="fade-in hidden">
+                    <h1 class="text-2xl font-semibold mb-6" data-i18n="new_card">Tarjetas de Credito</h1>
+                    <div class="card p-4 mb-4">
+                        <button onclick="openModal('card')" class="btn btn-primary w-full">
+                            <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i><span data-i18n="new_card">Nueva Tarjeta</span>
+                        </button>
+                    </div>
+                    <div id="card-list" class="space-y-3">
+                        <p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_cards">No hay tarjetas registradas</p>
+                    </div>
+                </section>
+
+
+                <!-- Services -->
+                <section id="section-services" class="fade-in hidden">
+                    <h1 class="text-2xl font-semibold mb-6" data-i18n="new_service">Servicios del Hogar</h1>
+                    <div class="card p-4 mb-4">
+                        <button onclick="openModal('service')" class="btn btn-primary w-full">
+                            <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i><span data-i18n="new_service">Nuevo Servicio</span>
+                        </button>
+                    </div>
+                    <div id="service-list" class="space-y-3">
+                        <p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_services">No hay servicios registrados</p>
+                    </div>
+                </section>
+
+                <!-- Reports -->
+                <section id="section-reports" class="fade-in hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <h1 class="text-2xl font-semibold">Reportes</h1>
+                        <button onclick="exportCSV()" class="btn btn-primary">
+                            <i data-lucide="download" class="w-4 h-4 inline mr-1"></i>Exportar CSV
+                        </button>
+                    </div>
+                    <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+                        <button onclick="loadReport('fortnightly')" class="tab-btn active whitespace-nowrap">Quincenal</button>
+                        <button onclick="loadReport('monthly')" class="tab-btn whitespace-nowrap">Mensual</button>
+                        <button onclick="loadReport('quarterly')" class="tab-btn whitespace-nowrap">Cuatrimestral</button>
+                    </div>
+                    <div id="report-content" class="card p-6">
+                        <p class="text-[var(--text-secondary)]">Selecciona un período</p>
+                    </div>
+                </section>
+
+                <!-- Budget -->
+                <section id="section-budget" class="fade-in hidden">
+                    <h1 class="text-2xl font-semibold mb-6">Presupuestos</h1>
+                    <div id="budget-content" class="space-y-4">
+                        <div class="card p-6">
+                            <p class="text-[var(--text-secondary)]">Cargando presupuestos...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI -->
+                <section id="section-ai" class="fade-in hidden">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-8 h-8 bg-[var(--accent-purple)] rounded-lg flex items-center justify-center">
+                            <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <h1 class="text-2xl font-semibold">Asistente IA</h1>
+                    </div>
+
+                    <div class="card p-6 mb-6">
+                        <h2 class="text-lg font-semibold mb-4">Recomendaciones</h2>
+                        <div id="ai-recommendations" class="space-y-3">
+                            <p class="text-[var(--text-secondary)]">Cargando recomendaciones...</p>
+                        </div>
+                    </div>
+
+                    <div class="card p-6 mb-6">
+                        <h2 class="text-lg font-semibold mb-4">Detección de Anomalías</h2>
+                        <div id="ai-anomalies" class="space-y-3">
+                            <p class="text-[var(--text-secondary)]">Cargando anomalías...</p>
+                        </div>
+                    </div>
+
+                    <div class="card p-6 mb-6">
+                        <h2 class="text-lg font-semibold mb-4">Estrategia de Pago de Deudas</h2>
+                        <div class="flex gap-2 mb-4">
+                            <button onclick="loadDebtStrategy('avalanche')" class="tab-btn active">Avalancha</button>
+                            <button onclick="loadDebtStrategy('snowball')" class="tab-btn">Bola de Nieve</button>
+                        </div>
+                        <div id="ai-debt-strategy" class="space-y-3">
+                            <p class="text-[var(--text-secondary)]">Selecciona una estrategia</p>
+                        </div>
+                    </div>
+
+                    <div class="card p-6 mb-6">
+                        <h2 class="text-lg font-semibold mb-4">Simulador "What-If"</h2>
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <select id="sim-type" class="input col-span-2">
+                                <option value="income_change">Cambio en Ingresos</option>
+                                <option value="expense_reduction">Reducción de Gastos</option>
+                                <option value="extra_debt_payment">Pago Extra de Deuda</option>
+                                <option value="refinance">Refinanciamiento</option>
+                            </select>
+                            <input type="number" id="sim-value" class="input" placeholder="Monto ($)">
+                            <input type="number" id="sim-rate" class="input hidden" placeholder="Nueva tasa (%)">
+                            <button onclick="runSimulation()" class="btn btn-primary col-span-2">Simular</button>
+                        </div>
+                        <div id="sim-result" class="hidden card p-4 bg-[var(--bg-tertiary)]">
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold mb-4">Resumen Financiero</h2>
+                        <div id="ai-insights" class="space-y-3">
+                            <p class="text-[var(--text-secondary)]">Cargando insights...</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Bottom Nav (Mobile) -->
+            <nav class="bottom-nav md:hidden">
+                <button onclick="showSection('dashboard')" class="nav-btn p-2" data-section="dashboard">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                </button>
+                <button onclick="showSection('income')" class="nav-btn p-2" data-section="income">
+                    <i data-lucide="trending-up" class="w-5 h-5"></i>
+                </button>
+                <button onclick="showSection('expenses')" class="nav-btn p-2" data-section="expenses">
+                    <i data-lucide="trending-down" class="w-5 h-5"></i>
+                </button>
+                <button onclick="showSection('debts')" class="nav-btn p-2" data-section="debts">
+                    <i data-lucide="landmark" class="w-5 h-5"></i>
+                </button>
+                <button onclick="showSection('cards')" class="nav-btn p-2" data-section="cards">
+                    <i data-lucide="credit-card" class="w-5 h-5"></i>
+                </button>
+                <button onclick="showSection('services')" class="nav-btn p-2" data-section="services">
+                    <i data-lucide="zap" class="w-5 h-5"></i>
+                </button>
+                <button onclick="showSection('reports')" class="nav-btn p-2" data-section="reports">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                </button>
+                <button onclick="showSection('budget')" class="nav-btn p-2" data-section="budget">
+                    <i data-lucide="piggy-bank" class="w-5 h-5"></i>
+                </button>
+                <button onclick="showSection('ai')" class="nav-btn p-2" data-section="ai">
+                    <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Modal -->
+        <div id="modal" class="modal fixed inset-0 flex items-center justify-center p-4 z-50 hidden">
+            <div class="card p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 id="modal-title" class="text-xl font-semibold">Modal</h2>
+                    <button onclick="closeModal()" class="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <form id="modal-form" onsubmit="handleSubmit(event)">
+                    <!-- Dynamic content -->
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Confirm Dialog -->
+    <div id="confirm-overlay">
+        <div id="confirm-dialog">
+            <h3 id="confirm-title">Confirmar</h3>
+            <p id="confirm-message">¿Estas seguro?</p>
+            <div class="confirm-actions">
+                <button id="confirm-cancel" onclick="confirmResolve(false)">Cancelar</button>
+                <button id="confirm-ok" onclick="confirmResolve(true)">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prompt Dialog -->
+    <div id="prompt-overlay">
+        <div id="prompt-dialog">
+            <h3 id="prompt-title">Ingresar</h3>
+            <label id="prompt-label" for="prompt-input"></label>
+            <input type="text" id="prompt-input" autocomplete="off">
+            <div class="prompt-actions">
+                <button id="prompt-cancel" onclick="promptResolve(null)">Cancelar</button>
+                <button id="prompt-ok" onclick="promptSubmit()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let confirmCallback = null;
+        let promptCallback = null;
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showConfirm(title, message) {
+            return new Promise(resolve => {
+                confirmCallback = resolve;
+                const overlay = document.getElementById('confirm-overlay');
+                const dialog = document.getElementById('confirm-dialog');
+                document.getElementById('confirm-title').textContent = title;
+                document.getElementById('confirm-message').textContent = message;
+                overlay.classList.add('show');
+                
+                const closeOnOverlay = (e) => {
+                    if (e.target === overlay) {
+                        confirmResolve(false);
+                        overlay.removeEventListener('click', closeOnOverlay);
+                    }
+                };
+                overlay.addEventListener('click', closeOnOverlay);
+            });
+        }
+
+        function confirmResolve(value) {
+            document.getElementById('confirm-overlay').classList.remove('show');
+            if (confirmCallback) confirmCallback(value);
+            confirmCallback = null;
+        }
+
+        function showPrompt(title, label, defaultValue = '') {
+            return new Promise(resolve => {
+                promptCallback = resolve;
+                const overlay = document.getElementById('prompt-overlay');
+                const input = document.getElementById('prompt-input');
+                document.getElementById('prompt-title').textContent = title;
+                document.getElementById('prompt-label').textContent = label;
+                input.value = defaultValue;
+                overlay.classList.add('show');
+                setTimeout(() => { input.focus(); input.select(); }, 100);
+                
+                const closeOnOverlay = (e) => {
+                    if (e.target === overlay) {
+                        promptResolve(null);
+                        overlay.removeEventListener('click', closeOnOverlay);
+                    }
+                };
+                overlay.addEventListener('click', closeOnOverlay);
+            });
+        }
+
+        function promptResolve(value) {
+            document.getElementById('prompt-overlay').classList.remove('show');
+            if (promptCallback) promptCallback(value);
+            promptCallback = null;
+        }
+
+        function promptSubmit() {
+            const value = document.getElementById('prompt-input').value;
+            promptResolve(value);
+        }
+
+        document.getElementById('prompt-input').addEventListener('keydown', e => {
+            if (e.key === 'Enter') promptSubmit();
+            if (e.key === 'Escape') promptResolve(null);
+        });
+
+        let currentSection = 'dashboard';
+        let editingId = null;
+        let currentReportType = 'fortnightly';
+
+        function loadCards() {
+            const list = document.getElementById('card-list');
+            fetch('/api/credit-card')
+                .then(r => r.json())
+                .then(cards => {
+                    if (!cards.length) {
+                        list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8">No hay tarjetas registradas</p>';
+                        return;
+                    }
+                    list.innerHTML = cards.map(c => {
+                        const usage = c.limit > 0 ? (c.current_balance / c.limit * 100).toFixed(0) : 0;
+                        return `<div class="card p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-semibold">${c.name}</p>
+                                    <p class="text-sm text-[var(--text-secondary)]">Limite: ${formatMoney(c.limit)} | ${usage}% usado | Tasa: ${c.interest_rate}%</p>
+                                    <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2 mt-2">
+                                        <div class="bg-[var(--accent-coral)] h-2 rounded-full" style="width: ${Math.min(usage, 100)}%"></div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-lg font-semibold text-[var(--accent-coral)]">${formatMoney(c.current_balance)}</p>
+                                    <p class="text-xs text-[var(--text-secondary)]">Saldo actual</p>
+                                </div>
+                            </div>
+                            <div id="card-projection-${c.id}" class="hidden mt-3"></div>
+                            <div class="flex gap-2 mt-3">
+                                <button onclick="addCardCharge(${c.id})" class="btn btn-primary text-xs flex-1">Agregar Cargo</button>
+                                <button onclick="showCardProjection(${c.id})" class="btn text-xs flex-1">Ver Proyeccion</button>
+                                <button onclick="editCard(${c.id})" class="btn text-xs flex-1">Editar</button>
+                            </div>
+                        </div>`;
+                    }).join('');
+                    if (typeof lucide !== "undefined") lucide.createIcons();
+                });
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+            document.getElementById('modal-form').innerHTML = '';
+            editingId = null;
+        }
+
+        function openModal(type) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const form = document.getElementById('modal-form');
+            editingId = null;
+            
+            const forms = {
+                income: {
+                    title: 'Agregar Ingreso',
+                    fields: `
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Monto</label>
+                            <input type="number" name="amount" step="0.01" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Descripcion</label>
+                            <input type="text" name="description" class="input">
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Categoria</label>
+                            <select name="category" class="input" required>
+                                <option value="salary">Salario</option>
+                                <option value="freelance">Freelance</option>
+                                <option value="investment">Inversion</option>
+                                <option value="gift">Regalo</option>
+                                <option value="other">Otro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Fecha</label>
+                            <input type="date" name="date" class="input" value="${new Date().toISOString().split('T')[0]}" required>
+                        </div>
+                    `,
+                    endpoint: '/api/income'
+                },
+                expense: {
+                    title: 'Agregar Gasto',
+                    fields: `
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Monto</label>
+                            <input type="number" name="amount" step="0.01" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Descripcion</label>
+                            <input type="text" name="description" class="input">
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Categoria Kakebo</label>
+                            <select name="kakebo_type" class="input" required>
+                                <option value="needs">Necesidades</option>
+                                <option value="wants">Deseos</option>
+                                <option value="culture">Cultura</option>
+                                <option value="unexpected">Inesperado</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Fecha</label>
+                            <input type="date" name="date" class="input" value="${new Date().toISOString().split('T')[0]}" required>
+                        </div>
+                    `,
+                    endpoint: '/api/expense'
+                },
+                debt: {
+                    title: 'Nueva Deuda',
+                    fields: `
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Nombre</label>
+                            <input type="text" name="name" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Monto Inicial</label>
+                            <input type="number" name="initial_amount" step="0.01" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Monto Actual</label>
+                            <input type="number" name="current_amount" step="0.01" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Tasa de Interes (%)</label>
+                            <input type="number" name="interest_rate" step="0.01" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Pago Mensual</label>
+                            <input type="number" name="monthly_payment" step="0.01" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Fecha de Inicio</label>
+                            <input type="date" name="start_date" class="input" value="${new Date().toISOString().split('T')[0]}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Proximo Pago</label>
+                            <input type="date" name="next_payment_date" class="input" required>
+                        </div>
+                    `,
+                    endpoint: '/api/debt'
+                },
+                card: {
+                    title: 'Nueva Tarjeta',
+                    fields: `
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Nombre</label>
+                            <input type="text" name="name" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Limite</label>
+                            <input type="number" name="limit" step="0.01" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Saldo Actual</label>
+                            <input type="number" name="current_balance" step="0.01" class="input" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Tasa de Interes (%)</label>
+                            <input type="number" name="interest_rate" step="0.01" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Dia de Corte (1-31)</label>
+                            <input type="number" name="due_date" min="1" max="31" class="input" required>
+                        </div>
+                    `,
+                    endpoint: '/api/credit-card'
+                },
+                service: {
+                    title: 'Nuevo Servicio',
+                    fields: `
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Nombre</label>
+                            <input type="text" name="name" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Proveedor</label>
+                            <input type="text" name="provider" class="input">
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Monto Mensual</label>
+                            <input type="number" name="amount" step="0.01" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Dia de Pago (1-31)</label>
+                            <input type="number" name="due_day" min="1" max="31" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">Dias de Recordatorio</label>
+                            <input type="number" name="reminder_days" class="input" value="3">
+                        </div>
+                    `,
+                    endpoint: '/api/service'
+                }
+            };
+
+            const config = forms[type];
+            if (!config) return;
+
+            title.textContent = config.title;
+            form.innerHTML = config.fields + '<button type="submit" class="btn btn-primary w-full mt-4">Guardar</button>';
+            form.dataset.endpoint = config.endpoint;
+            form.dataset.type = type;
+            modal.classList.remove('hidden');
+            modal.dataset.type = type;
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const endpoint = form.dataset.endpoint;
+            const type = form.dataset.type;
+            const formData = new FormData(form);
+            
+            const data = {};
+            for (const [key, value] of formData.entries()) {
+                if (value) data[key] = value;
+            }
+
+            try {
+                const url = editingId ? `${endpoint}/${editingId}` : endpoint;
+                const method = editingId ? 'PUT' : 'POST';
+                
+                const resp = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!resp.ok) {
+                    const err = await resp.json();
+                    showToast(err.detail || 'Error al guardar', 'error');
+                    return;
+                }
+
+                closeModal();
+                showToast('Guardado correctamente', 'success');
+                refreshCurrentSection();
+            } catch (e) {
+                showToast('Error de conexion', 'error');
+            }
+        }
+
+        async function loadDashboard() {
+            const summary = await fetch('/api/dashboard/summary').then(r => r.json());
+            document.getElementById('dash-balance').textContent = formatMoney(summary.balance || 0);
+            document.getElementById('dash-income').textContent = formatMoney(summary.monthly_income || 0);
+            document.getElementById('dash-expenses').textContent = formatMoney(summary.monthly_expenses || 0);
+            document.getElementById('dash-debt').textContent = formatMoney(summary.total_debt || 0);
+
+            // Kakebo - use by_category
+            const kakebo = await fetch('/api/expense/kakebo').then(r => r.json());
+            const cats = kakebo.by_category || {};
+            document.getElementById('kakebo-needs').textContent = formatMoney(cats.needs || 0);
+            document.getElementById('kakebo-wants').textContent = formatMoney(cats.wants || 0);
+            document.getElementById('kakebo-culture').textContent = formatMoney(cats.culture || 0);
+            document.getElementById('kakebo-unexpected').textContent = formatMoney(cats.unexpected || 0);
+
+            // Upcoming payments
+            const upcoming = await fetch('/api/dashboard/upcoming').then(r => r.json());
+            const container = document.getElementById('upcoming-payments');
+            if (!upcoming.length) {
+                container.innerHTML = '<p class="text-[var(--text-secondary)] text-sm" data-i18n="no_upcoming">No hay pagos proximos</p>';
+            } else {
+                container.innerHTML = upcoming.map(p => {
+                    const daysUntil = Math.ceil((new Date(p.due_date) - new Date()) / (1000 * 60 * 60 * 24));
+                    const isToday = daysUntil === 0;
+                    const isPast = daysUntil < 0;
+                    const isSoon = daysUntil > 0 && daysUntil <= 3;
+                    
+                    let label, btnColor, btnBg, btnHover;
+                    if (isToday) {
+                        label = 'Pagar de Inmediato';
+                        btnColor = 'white';
+                        btnBg = 'var(--accent-green)';
+                        btnHover = '#4a9580';
+                    } else if (isPast) {
+                        label = 'Pagar Vencido';
+                        btnColor = 'white';
+                        btnBg = 'var(--accent-coral)';
+                        btnHover = '#d35f45';
+                    } else {
+                        label = 'Pagar Adelantado';
+                        btnColor = 'white';
+                        btnBg = 'var(--accent-blue)';
+                        btnHover = '#5a9fd9';
+                    }
+                    
+                    const statusColor = isToday ? 'var(--accent-green)' : (isPast ? 'var(--accent-coral)' : 'var(--accent-blue)');
+                    const statusText = isToday ? 'Hoy - URGENTE' : (isPast ? 'Vencido' : `En ${daysUntil} dia${daysUntil > 1 ? 's' : ''}`);
+                    
+                    let payBtn = '';
+                    const payAction = p.type === 'debt' ? `payDebt(${p.id})` : `payService(${p.id})`;
+                    payBtn = `<button onclick="${payAction}" style="background: ${btnBg}; color: ${btnColor}; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" onmouseover="this.style.background='${btnHover}'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='${btnBg}'; this.style.transform='translateY(0)'">${label}</button>`;
+                    
+                    return `<div class="flex items-center justify-between p-4 bg-[var(--bg-tertiary)] rounded-xl mb-2" style="${isToday ? 'border-left: 4px solid var(--accent-green)' : (isPast ? 'border-left: 4px solid var(--accent-coral)' : 'border-left: 4px solid var(--accent-blue)')}">
+                        <div>
+                            <p class="font-semibold">${p.name}</p>
+                            <p class="text-sm font-medium" style="color: ${statusColor}">${statusText}</p>
+                            <p class="text-lg font-bold text-[var(--text-primary)]">${formatMoney(p.amount)}</p>
+                        </div>
+                        ${payBtn}
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        async function loadIncome() {
+            const list = document.getElementById('income-list');
+            const incomes = await fetch('/api/income').then(r => r.json());
+            
+            // Filter by current month
+            const now = new Date();
+            const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+            const monthlyIncomes = incomes.filter(i => i.date >= firstOfMonth);
+            
+            if (!incomes.length) {
+                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_income">No hay ingresos registrados</p>';
+                return;
+            }
+            
+            const total = monthlyIncomes.reduce((sum, i) => sum + i.amount, 0);
+            const hasAll = incomes.length > monthlyIncomes.length;
+            
+            let header = `<div class="card p-4 mb-4 flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-[var(--text-secondary)]">Este mes</p>
+                    <p class="text-xl font-semibold text-[var(--accent-green)]">${formatMoney(total)}</p>
+                </div>
+                ${hasAll ? `<button onclick="loadIncomeAll()" class="text-sm text-[var(--accent-blue)]">Ver todo (${incomes.length})</button>` : ''}
+            </div>`;
+            
+            if (!monthlyIncomes.length) {
+                list.innerHTML = header + '<p class="text-[var(--text-secondary)] text-center py-8">No hay ingresos este mes</p>';
+                return;
+            }
+            
+            list.innerHTML = header + monthlyIncomes.map(i => `
+                <div class="card p-4 flex items-center justify-between mb-2">
+                    <div>
+                        <p class="font-semibold text-[var(--accent-green)]">${formatMoney(i.amount)}</p>
+                        <p class="text-sm text-[var(--text-secondary)]">${i.description || 'Sin descripcion'} | ${formatDate(i.date)}</p>
+                        <span class="badge badge-green mt-1">${i.category}</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="deleteIncome(${i.id})" class="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg text-[var(--accent-coral)]">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+
+        async function loadIncomeAll() {
+            const list = document.getElementById('income-list');
+            const incomes = await fetch('/api/income').then(r => r.json());
+            
+            const total = incomes.reduce((sum, i) => sum + i.amount, 0);
+            
+            list.innerHTML = `<div class="card p-4 mb-4 flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-[var(--text-secondary)]">Todos los ingresos</p>
+                    <p class="text-xl font-semibold text-[var(--accent-green)]">${formatMoney(total)}</p>
+                </div>
+                <button onclick="loadIncome()" class="text-sm text-[var(--accent-blue)]">Ver mes actual</button>
+            </div>` + incomes.map(i => `
+                <div class="card p-4 flex items-center justify-between mb-2">
+                    <div>
+                        <p class="font-semibold text-[var(--accent-green)]">${formatMoney(i.amount)}</p>
+                        <p class="text-sm text-[var(--text-secondary)]">${i.description || 'Sin descripcion'} | ${formatDate(i.date)}</p>
+                        <span class="badge badge-green mt-1">${i.category}</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="deleteIncome(${i.id})" class="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg text-[var(--accent-coral)]">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+
+        async function loadExpenses() {
+            currentCategoryFilter = null;
+            const sectionTitle = document.querySelector('#section-expenses h1');
+            if (sectionTitle) sectionTitle.textContent = 'Gastos (Kakebo)';
+            
+            const list = document.getElementById('expense-list');
+            const expenses = await fetch('/api/expense').then(r => r.json());
+            
+            // Filter by current month
+            const now = new Date();
+            const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+            const monthlyExpenses = expenses.filter(e => e.date >= firstOfMonth);
+            
+            if (!expenses.length) {
+                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_expenses">No hay gastos registrados</p>';
+                return;
+            }
+            
+            const total = monthlyExpenses.reduce((sum, e) => sum + e.amount, 0);
+            const hasAll = expenses.length > monthlyExpenses.length;
+            
+            let header = `<div class="card p-4 mb-4 flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-[var(--text-secondary)]">Este mes</p>
+                    <p class="text-xl font-semibold text-[var(--accent-coral)]">${formatMoney(total)}</p>
+                </div>
+                ${hasAll ? `<button onclick="loadExpensesAll()" class="text-sm text-[var(--accent-blue)]">Ver todo (${expenses.length})</button>` : ''}
+            </div>`;
+            
+            if (!monthlyExpenses.length) {
+                list.innerHTML = header + '<p class="text-[var(--text-secondary)] text-center py-8">No hay gastos este mes</p>';
+                return;
+            }
+            
+            list.innerHTML = header + monthlyExpenses.map(e => {
+                const color = getCategoryColor(e.category);
+                return `<div class="card p-4 flex items-center justify-between mb-2">
+                    <div>
+                        <p class="font-medium">${formatMoney(e.amount)}</p>
+                        <p class="text-sm text-[var(--text-secondary)]">${e.description || 'Sin descripcion'} - ${formatDate(e.date)}</p>
+                        <span class="badge badge-${color} mt-1">${e.kakebo_type}</span>
+                    </div>
+                    <button onclick="editExpense(${e.id})" class="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                    </button>
+                </div>`;
+            }).join('');
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+
+        async function loadExpensesAll() {
+            currentCategoryFilter = null;
+            const sectionTitle = document.querySelector('#section-expenses h1');
+            if (sectionTitle) sectionTitle.textContent = 'Gastos (Kakebo)';
+            
+            const list = document.getElementById('expense-list');
+            const expenses = await fetch('/api/expense').then(r => r.json());
+            
+            const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+            
+            list.innerHTML = `<div class="card p-4 mb-4 flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-[var(--text-secondary)]">Todos los gastos</p>
+                    <p class="text-xl font-semibold text-[var(--accent-coral)]">${formatMoney(total)}</p>
+                </div>
+                <button onclick="loadExpenses()" class="text-sm text-[var(--accent-blue)]">Ver mes actual</button>
+            </div>` + expenses.map(e => {
+                const color = getCategoryColor(e.category);
+                return `<div class="card p-4 flex items-center justify-between mb-2">
+                    <div>
+                        <p class="font-medium">${formatMoney(e.amount)}</p>
+                        <p class="text-sm text-[var(--text-secondary)]">${e.description || 'Sin descripcion'} - ${formatDate(e.date)}</p>
+                        <span class="badge badge-${color} mt-1">${e.kakebo_type}</span>
+                    </div>
+                    <button onclick="editExpense(${e.id})" class="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                    </button>
+                </div>`;
+            }).join('');
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+
+        async function loadDebtStrategy(strategy) {
+            const sectionTitle = document.querySelector('#section-expenses h1');
+            if (sectionTitle) sectionTitle.textContent = 'Gastos (Kakebo)';
+            
+            const list = document.getElementById('expense-list');
+            const expenses = await fetch('/api/expense').then(r => r.json());
+            if (!expenses.length) {
+                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_expenses">No hay gastos registrados</p>';
+                return;
+            }
+            list.innerHTML = expenses.map(e => {
+                const color = getCategoryColor(e.category);
+                return `<div class="card p-4 flex items-center justify-between">
+                    <div>
+                        <p class="font-medium">${formatMoney(e.amount)}</p>
+                        <p class="text-sm text-[var(--text-secondary)]">${e.description || 'Sin descripcion'} - ${formatDate(e.date)}</p>
+                        <span class="badge badge-${color} mt-1">${e.kakebo_type}</span>
+                    </div>
+                    <button onclick="editExpense(${e.id})" class="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                    </button>
+                </div>`;
+            }).join('');
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+
+        async function loadDebts() {
+            const list = document.getElementById('debt-list');
+            const debts = await fetch('/api/debt').then(r => r.json());
+            if (!debts.length) {
+                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_debts">No hay deudas registradas</p>';
+                return;
+            }
+            list.innerHTML = debts.map(d => {
+                const paid = d.is_paid ? 'badge-green' : 'badge-coral';
+                return `<div class="card p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <p class="font-semibold">${d.name}</p>
+                            <p class="text-sm text-[var(--text-secondary)]">${formatMoney(d.current_amount)} de ${formatMoney(d.initial_amount)} | ${d.interest_rate}%</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="badge ${paid}">${d.is_paid ? 'Pagado' : 'Activo'}</span>
+                            <p class="text-sm text-[var(--text-secondary)] mt-1">Pago: ${formatMoney(d.monthly_payment)}/mes</p>
+                        </div>
+                    </div>
+                    <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2 mb-3">
+                        <div class="h-2 rounded-full bg-[var(--accent-green)]" style="width: ${((1 - d.current_amount / d.initial_amount) * 100).toFixed(0)}%"></div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="payDebt(${d.id})" class="btn-pay flex-1">Pagar</button>
+                        <button onclick="showDebtProjection(${d.id})" class="btn text-xs flex-1">Ver Proyeccion</button>
+                        <button onclick="editDebt(${d.id})" class="btn text-xs flex-1">Editar</button>
+                    </div>
+                    <div id="debt-projection-${d.id}" class="hidden mt-3"></div>
+                </div>`;
+            }).join('');
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+
+        async function loadServices() {
+            const list = document.getElementById('service-list');
+            const services = await fetch('/api/service').then(r => r.json());
+            if (!services.length) {
+                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_services">No hay servicios registrados</p>';
+                return;
+            }
+            list.innerHTML = services.map(s => {
+                const daysSince = s.last_paid_date ? Math.floor((new Date() - new Date(s.last_paid_date)) / (1000 * 60 * 60 * 24)) : null;
+                const statusColor = !s.is_active ? 'var(--text-tertiary)' : (daysSince && daysSince > 30 ? 'var(--accent-coral)' : 'var(--accent-green)');
+                return `<div class="card p-4 flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold">${s.name}</p>
+                        <p class="text-sm text-[var(--text-secondary)]">${s.provider || ''} | ${formatMoney(s.amount)}/mes</p>
+                        <p class="text-xs" style="color: ${statusColor}">${!s.is_active ? 'Inactivo' : (s.last_paid_date ? `Ultimo pago: hace ${daysSince} dias` : 'Sin pagos registrados')}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="payService(${s.id})" class="btn-pay">Pagar</button>
+                        <button onclick="toggleService(${s.id})" class="btn text-xs ${s.is_active ? '' : 'btn-coral'}">${s.is_active ? 'Desactivar' : 'Activar'}</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function loadAI() {
+            // Recommendations
+            const recs = await fetch('/api/ai/recommendations').then(r => r.json());
+            const recContainer = document.getElementById('ai-recommendations');
+            if (!recs.length) {
+                recContainer.innerHTML = '<p class="text-[var(--text-secondary)]" data-i18n="no_recommendations">No hay recomendaciones</p>';
+            } else {
+                recContainer.innerHTML = recs.map(r => `<div class="p-3 bg-[var(--bg-tertiary)] rounded-xl"><p class="text-sm">${r.message || r}</p></div>`).join('');
+            }
+
+            // Anomalies
+            const anomalies = await fetch('/api/ai/anomalies').then(r => r.json());
+            const anomContainer = document.getElementById('ai-anomalies');
+            if (!anomalies.length) {
+                anomContainer.innerHTML = '<p class="text-[var(--text-secondary)]">No se detectaron anomalias</p>';
+            } else {
+                const typeLabels = { spike: 'Spike', duplicate: 'Duplicado', inactive_service: 'Servicio Inactivo' };
+                anomContainer.innerHTML = anomalies.map(a => {
+                    const color = a.severity === 'high' ? 'var(--accent-coral)' : (a.severity === 'medium' ? 'var(--accent-yellow)' : 'var(--accent-blue)');
+                    const typeLabel = typeLabels[a.anomaly_type] || a.anomaly_type || 'Anomalia';
+                    const message = a.description || a.title || 'Detectado';
+                    return `<div class="p-3 rounded-xl mb-2" style="border-left: 3px solid ${color}">
+                        <p class="text-sm font-medium mb-1"><span class="uppercase">${typeLabel}</span></p>
+                        <p class="text-sm text-[var(--text-secondary)]">${message}</p>
+                    </div>`;
+                }).join('');
+            }
+
+            // Insights
+            const insights = await fetch('/api/ai/insights').then(r => r.json());
+            const insightContainer = document.getElementById('ai-insights');
+            if (!insights.summary && !insights.forecast) {
+                insightContainer.innerHTML = '<p class="text-[var(--text-secondary)]" data-i18n="no_insights">No hay insights</p>';
+            } else {
+                let html = '';
+                if (insights.summary) html += `<p class="text-sm mb-2">${insights.summary}</p>`;
+                if (insights.forecast) html += `<p class="text-sm text-[var(--accent-blue)]">Proyeccion: ${insights.forecast}</p>`;
+                insightContainer.innerHTML = html;
+            }
+        }
+
+        async function loadReport(type) {
+            currentReportType = type;
+            const container = document.getElementById('report-content');
+            container.innerHTML = '<p class="text-[var(--text-secondary)]">Cargando...</p>';
+            
+            const typeNames = { fortnightly: 'quincenal', monthly: 'mensual', quarterly: 'cuatrimestral' };
+            
+            try {
+                const data = await fetch(`/api/reports/${type}`).then(r => r.json());
+                if (!data.periods || !data.periods.length) {
+                    container.innerHTML = '<p class="text-[var(--text-secondary)]">No hay datos para este periodo</p>';
+                    return;
+                }
+                
+                let html = `<div class="space-y-4">`;
+                data.periods.forEach(p => {
+                    const hasData = p.total_income > 0 || p.total_expenses > 0;
+                    if (!hasData) return;
+                    
+                    const balance = p.total_income - p.total_expenses;
+                    const balanceColor = balance >= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
+                    
+                    html += `<div class="p-4 bg-[var(--bg-tertiary)] rounded-xl">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-semibold">${p.label || p.period}</h3>
+                            <span class="font-semibold" style="color: ${balanceColor}">${formatMoney(balance)}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-[var(--text-secondary)]">Ingresos:</span>
+                                <span class="text-[var(--accent-green)]">${formatMoney(p.total_income)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[var(--text-secondary)]">Gastos:</span>
+                                <span class="text-[var(--accent-coral)]">${formatMoney(p.total_expenses)}</span>
+                            </div>
+                        </div>
+                        ${p.breakdown ? `<div class="mt-3 pt-3 border-t border-[var(--border)]">
+                            <p class="text-xs text-[var(--text-secondary)] mb-1">Kakebo:</p>
+                            ${Object.entries(p.breakdown).map(([k, v]) => `<span class="badge badge-${getCategoryColor(k)} mr-1">${k}: ${formatMoney(v)}</span>`).join('')}
+                        </div>` : ''}
+                    </div>`;
+                });
+                html += `</div>`;
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = '<p class="text-[var(--accent-coral)]">Error al cargar el reporte</p>';
+            }
+        }
+
+        async function loadDebtComparison() {
+            const container = document.getElementById('debt-comparison');
+            container.classList.toggle('hidden');
+            if (container.classList.contains('hidden')) return;
+            
+            container.innerHTML = '<p class="text-[var(--text-secondary)]">Cargando...</p>';
+            
+            try {
+                const data = await fetch('/api/debt/comparison').then(r => r.json());
+                if (!data.length) {
+                    container.innerHTML = '<p class="text-[var(--text-secondary)]">No hay deudas para comparar</p>';
+                    return;
+                }
+                
+                container.innerHTML = `<table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-left text-[var(--text-secondary)]">
+                            <th class="pb-2">Deuda</th>
+                            <th class="pb-2 text-right">Saldo</th>
+                            <th class="pb-2 text-right">Tasa</th>
+                            <th class="pb-2 text-right">Interes Total</th>
+                            <th class="pb-2 text-right">Costo Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map(d => `
+                            <tr class="border-t border-[var(--border)]">
+                                <td class="py-2">${d.name}</td>
+                                <td class="py-2 text-right">${formatMoney(d.current_amount)}</td>
+                                <td class="py-2 text-right">${d.interest_rate}%</td>
+                                <td class="py-2 text-right text-[var(--accent-coral)]">${formatMoney(d.total_interest)}</td>
+                                <td class="py-2 text-right font-semibold">${formatMoney(d.total_cost)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>`;
+            } catch (e) {
+                container.innerHTML = '<p class="text-[var(--accent-coral)]">Error al cargar comparacion</p>';
+            }
+        }
+
+        async function showCardProjection(cardId) {
+            const container = document.getElementById(`card-projection-${cardId}`);
+            container.classList.toggle('hidden');
+            if (container.classList.contains('hidden')) return;
+            
+            container.innerHTML = '<p class="text-sm text-[var(--text-secondary)]">Cargando...</p>';
+            
+            try {
+                const data = await fetch(`/api/credit-card/${cardId}/projection`).then(r => r.json());
+                
+                let html = '<div class="mt-2 p-3 bg-[var(--bg-tertiary)] rounded-xl text-sm">';
+                html += `<p class="font-semibold mb-2">Proyeccion de Tarjeta</p>`;
+                
+                if (data.months_until_paidoff !== undefined) {
+                    html += `<p>Meses para pagar: ${data.months_until_paidoff}</p>`;
+                    html += `<p>Total intereses: ${formatMoney(data.total_interest)}</p>`;
+                    html += `<p>Costo total: ${formatMoney(data.total_cost)}</p>`;
+                }
+                
+                if (data.warning) {
+                    html += `<p class="text-[var(--accent-coral)] mt-2">${data.warning}</p>`;
+                }
+                
+                if (data.schedule && data.schedule.length) {
+                    html += `<div class="mt-2 pt-2 border-t border-[var(--border)]">
+                        <p class="text-xs text-[var(--text-secondary)] mb-1">Proximo ano:</p>
+                        <div class="space-y-1">`;
+                    data.schedule.slice(0, 6).forEach(s => {
+                        html += `<div class="flex justify-between text-xs">
+                            <span>${s.month}</span>
+                            <span>Saldo: ${formatMoney(s.balance)}</span>
+                            <span>Interes: ${formatMoney(s.interest)}</span>
+                        </div>`;
+                    });
+                    html += `</div></div>`;
+                }
+                
+                html += '</div>';
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = '<p class="text-[var(--accent-coral)]">Error al cargar proyeccion</p>';
+            }
+        }
+
+        async function showDebtProjection(debtId) {
+            const container = document.getElementById(`debt-projection-${debtId}`);
+            container.classList.toggle('hidden');
+            if (container.classList.contains('hidden')) return;
+            
+            container.innerHTML = '<p class="text-sm text-[var(--text-secondary)]">Cargando...</p>';
+            
+            try {
+                const data = await fetch(`/api/debt/${debtId}/projection`).then(r => r.json());
+                
+                let html = '<div class="mt-2 p-3 bg-[var(--bg-tertiary)] rounded-xl text-sm">';
+                html += `<p class="font-semibold mb-2">Tabla de Amortizacion</p>`;
+                html += `<p>Meses restantes: ${data.months_remaining || 'N/A'}</p>`;
+                html += `<p>Total intereses: ${formatMoney(data.total_interest || 0)}</p>`;
+                
+                if (data.schedule && data.schedule.length) {
+                    html += `<div class="mt-2 pt-2 border-t border-[var(--border)]">
+                        <div class="space-y-1">`;
+                    data.schedule.slice(0, 6).forEach(s => {
+                        html += `<div class="flex justify-between text-xs">
+                            <span>${s.month}</span>
+                            <span>Pago: ${formatMoney(s.payment)}</span>
+                            <span>Interes: ${formatMoney(s.interest)}</span>
+                            <span>Saldo: ${formatMoney(s.balance)}</span>
+                        </div>`;
+                    });
+                    html += `</div></div>`;
+                }
+                
+                html += '</div>';
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = '<p class="text-[var(--accent-coral)]">Error al cargar proyeccion</p>';
+            }
+        }
+
+        async function addCardCharge(cardId) {
+            const amount = await showPrompt('Agregar Cargo', 'Monto del cargo:');
+            if (!amount) return;
+            const desc = await showPrompt('Descripcion', 'Descripcion del cargo:', '');
+            
+            try {
+                const resp = await fetch(`/api/credit-card/${cardId}/charge`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: parseFloat(amount), description: desc || 'Cargo', charge_date: new Date().toISOString().split('T')[0] })
+                });
+                
+                if (resp.ok) {
+                    showToast('Cargo agregado', 'success');
+                    loadCards();
+                } else {
+                    showToast('Error al agregar cargo', 'error');
+                }
+            } catch (e) {
+                showToast('Error de conexion', 'error');
+            }
+        }
+
+        async function editExpense(expenseId) {
+            const expenses = await fetch('/api/expense').then(r => r.json());
+            const expense = expenses.find(e => e.id === expenseId);
+            if (!expense) return;
+            
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const form = document.getElementById('modal-form');
+            
+            title.textContent = 'Editar Gasto';
+            editingId = expenseId;
+            
+            form.innerHTML = `
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Monto</label>
+                    <input type="number" name="amount" step="0.01" class="input" value="${expense.amount}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Descripcion</label>
+                    <input type="text" name="description" class="input" value="${expense.description || ''}">
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Categoria Kakebo</label>
+                    <select name="kakebo_type" class="input" required>
+                        <option value="needs" ${expense.kakebo_type === 'needs' ? 'selected' : ''}>Necesidades</option>
+                        <option value="wants" ${expense.kakebo_type === 'wants' ? 'selected' : ''}>Deseos</option>
+                        <option value="culture" ${expense.kakebo_type === 'culture' ? 'selected' : ''}>Cultura</option>
+                        <option value="unexpected" ${expense.kakebo_type === 'unexpected' ? 'selected' : ''}>Inesperado</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Fecha</label>
+                    <input type="date" name="date" class="input" value="${expense.date.split('T')[0]}" required>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button type="button" onclick="deleteExpense(${expenseId})" class="btn flex-1" style="background: var(--accent-coral); color: white;">Eliminar</button>
+                    <button type="submit" class="btn btn-primary flex-1">Guardar</button>
+                </div>
+            `;
+            form.dataset.endpoint = '/api/expense';
+            form.dataset.type = 'expense';
+            modal.classList.remove('hidden');
+        }
+
+        async function editCard(cardId) {
+            const cards = await fetch('/api/credit-card').then(r => r.json());
+            const card = cards.find(c => c.id === cardId);
+            if (!card) return;
+            
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const form = document.getElementById('modal-form');
+            
+            title.textContent = 'Editar Tarjeta';
+            editingId = cardId;
+            
+            form.innerHTML = `
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Nombre</label>
+                    <input type="text" name="name" class="input" value="${card.name}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Limite</label>
+                    <input type="number" name="limit" step="0.01" class="input" value="${card.limit}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Saldo Actual</label>
+                    <input type="number" name="current_balance" step="0.01" class="input" value="${card.current_balance}">
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Tasa de Interes (%)</label>
+                    <input type="number" name="interest_rate" step="0.01" class="input" value="${card.interest_rate}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Dia de Corte (1-31)</label>
+                    <input type="number" name="due_date" min="1" max="31" class="input" value="${card.due_date}" required>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button type="button" onclick="deleteCard(${cardId})" class="btn flex-1" style="background: var(--accent-coral); color: white;">Eliminar</button>
+                    <button type="submit" class="btn btn-primary flex-1">Guardar</button>
+                </div>
+            `;
+            form.dataset.endpoint = '/api/credit-card';
+            form.dataset.type = 'card';
+            modal.classList.remove('hidden');
+        }
+
+        async function editDebt(debtId) {
+            const debts = await fetch('/api/debt').then(r => r.json());
+            const debt = debts.find(d => d.id === debtId);
+            if (!debt) return;
+            
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const form = document.getElementById('modal-form');
+            
+            title.textContent = 'Editar Deuda';
+            editingId = debtId;
+            
+            form.innerHTML = `
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Nombre</label>
+                    <input type="text" name="name" class="input" value="${debt.name}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Monto Actual</label>
+                    <input type="number" name="current_amount" step="0.01" class="input" value="${debt.current_amount}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Tasa de Interes (%)</label>
+                    <input type="number" name="interest_rate" step="0.01" class="input" value="${debt.interest_rate}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Pago Mensual</label>
+                    <input type="number" name="monthly_payment" step="0.01" class="input" value="${debt.monthly_payment}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">Proximo Pago</label>
+                    <input type="date" name="next_payment_date" class="input" value="${debt.next_payment_date.split('T')[0]}" required>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button type="button" onclick="deleteDebt(${debtId})" class="btn flex-1" style="background: var(--accent-coral); color: white;">Eliminar</button>
+                    <button type="submit" class="btn btn-primary flex-1">Guardar</button>
+                </div>
+            `;
+            form.dataset.endpoint = '/api/debt';
+            form.dataset.type = 'debt';
+            modal.classList.remove('hidden');
+        }
+
+        async function deleteIncome(id) {
+            const ok = await showConfirm('Eliminar Ingreso', 'Estas seguro de eliminar este ingreso?');
+            if (!ok) return;
+            await fetch(`/api/income/${id}`, { method: 'DELETE' });
+            showToast('Ingreso eliminado', 'success');
+            loadIncome();
+        }
+
+        async function deleteExpense(id) {
+            const ok = await showConfirm('Eliminar Gasto', 'Estas seguro de eliminar este gasto?');
+            if (!ok) return;
+            await fetch(`/api/expense/${id}`, { method: 'DELETE' });
+            closeModal();
+            showToast('Gasto eliminado', 'success');
+            loadExpenses();
+        }
+
+        async function deleteCard(id) {
+            const ok = await showConfirm('Eliminar Tarjeta', 'Estas seguro de eliminar esta tarjeta?');
+            if (!ok) return;
+            await fetch(`/api/credit-card/${id}`, { method: 'DELETE' });
+            closeModal();
+            showToast('Tarjeta eliminada', 'success');
+            loadCards();
+        }
+
+        async function deleteDebt(id) {
+            const ok = await showConfirm('Eliminar Deuda', 'Estas seguro de eliminar esta deuda?');
+            if (!ok) return;
+            await fetch(`/api/debt/${id}`, { method: 'DELETE' });
+            closeModal();
+            showToast('Deuda eliminada', 'success');
+            loadDebts();
+        }
+
+        async function payDebt(id) {
+            const amount = await showPrompt('Pagar Deuda', 'Monto del pago:');
+            if (!amount) return;
+            try {
+                const resp = await fetch(`/api/debt/${id}/pay`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: parseFloat(amount), payment_date: new Date().toISOString().split('T')[0] })
+                });
+                if (resp.ok) {
+                    showToast('Pago registrado', 'success');
+                    loadDebts();
+                    loadDashboard();
+                } else {
+                    showToast('Error al registrar pago', 'error');
+                }
+            } catch (e) {
+                showToast('Error de conexion', 'error');
+            }
+        }
+
+        async function payService(id) {
+            const ok = await showConfirm('Pagar Servicio', 'Registrar pago de este servicio?');
+            if (!ok) return;
+            try {
+                const resp = await fetch(`/api/service/${id}/pay`, { method: 'POST' });
+                if (resp.ok) {
+                    showToast('Pago registrado', 'success');
+                    loadServices();
+                    loadDashboard();
+                } else {
+                    showToast('Error al registrar pago', 'error');
+                }
+            } catch (e) {
+                showToast('Error de conexion', 'error');
+            }
+        }
+
+        async function toggleService(id) {
+            const services = await fetch('/api/service').then(r => r.json());
+            const service = services.find(s => s.id === id);
+            if (!service) return;
+            
+            await fetch(`/api/service/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ is_active: !service.is_active })
+            });
+            showToast(service.is_active ? 'Servicio desactivado' : 'Servicio activado', 'success');
+            loadServices();
+        }
+
+        function refreshCurrentSection() {
+            showSection(currentSection);
+        }
+
+        async function loadBudget() {
+            const container = document.getElementById('budget-content');
+            const data = await fetch('/api/budget').then(r => r.json());
+            const catNames = { needs: 'Necesidades', wants: 'Deseos', culture: 'Cultura', unexpected: 'Inesperado' };
+            const catColors = { needs: 'var(--accent-blue)', wants: 'var(--accent-coral)', culture: 'var(--accent-purple)', unexpected: 'var(--accent-yellow)' };
+            let html = `<div class="card p-4 mb-4"><p class="text-sm text-[var(--text-secondary)]">Ingreso mensual: <span class="font-semibold text-[var(--accent-green)]">${formatMoney(data.total_income)}</span></p></div>`;
+            for (const [cat, info] of Object.entries(data.budgets)) {
+                const pct = info.limit > 0 ? (info.spent / info.limit * 100).toFixed(0) : 0;
+                const over = info.spent > info.limit;
+                html += `<div class="card p-4">
+                    <div class="flex justify-between mb-2">
+                        <span class="font-semibold">${catNames[cat]}</span>
+                        <span class="${over ? 'text-[var(--accent-coral)]' : ''}">${formatMoney(info.spent)} / ${formatMoney(info.limit)} (${pct}%)</span>
+                    </div>
+                    <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-3">
+                        <div class="h-3 rounded-full" style="width: ${Math.min(pct, 100)}%; background: ${over ? 'var(--accent-coral)' : catColors[cat]}"></div>
+                    </div>
+                </div>`;
+            }
+            if (data.alerts.length) {
+                html += '<div class="space-y-2 mt-4">';
+                data.alerts.forEach(a => {
+                    const color = a.severity === 'critical' ? 'var(--accent-coral)' : 'var(--accent-yellow)';
+                    html += `<div class="card p-3" style="border-left: 3px solid ${color}"><p class="text-sm">${a.message}</p></div>`;
+                });
+                html += '</div>';
+            }
+            container.innerHTML = html;
+        }
+
+        async function loadDebtStrategy(strategy) {
+            const container = document.getElementById('ai-debt-strategy');
+            container.innerHTML = '<p class="text-[var(--text-secondary)]">Calculando...</p>';
+            const data = await fetch(`/api/ai/debt-strategy?strategy=${strategy}`).then(r => r.json());
+            if (!data.steps.length) {
+                container.innerHTML = '<p class="text-[var(--text-secondary)]">No hay deudas activas</p>';
+                return;
+            }
+            const label = strategy === 'avalanche' ? 'Avalancha (mayor tasa primero)' : 'Bola de Nieve (menor saldo primero)';
+            let html = `<div class="card p-4 bg-[var(--bg-tertiary)] mb-3">
+                <p class="text-sm text-[var(--text-secondary)]">Estrategia: ${label}</p>
+                <p class="text-lg font-semibold">Libre de deudas en ${data.total_months} meses</p>
+                <p class="text-sm">Interes total: ${formatMoney(data.total_interest)}</p>
+            </div>`;
+            data.steps.forEach(s => {
+                html += `<div class="card p-3"><p class="font-semibold">${s.debt_name}</p><p class="text-sm">Pago: ${formatMoney(s.payment_amount)} | Mes ${s.months_to_payoff} | Interes acumulado: ${formatMoney(s.total_interest)}</p></div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        async function runSimulation() {
+            const type = document.getElementById('sim-type').value;
+            const value = parseFloat(document.getElementById('sim-value').value) || 0;
+            const result = document.getElementById('sim-result');
+            result.classList.remove('hidden');
+            let body = { type, value };
+            if (type === 'refinance') {
+                const newRate = parseFloat(document.getElementById('sim-rate').value) || 0;
+                body = { type, value, old_rate: 12, new_rate: newRate, term_months: 24 };
+            }
+            const data = await fetch('/api/ai/simulate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            }).then(r => r.json());
+            if (data.error) { result.innerHTML = `<p class="text-[var(--accent-coral)]">${data.error}</p>`; return; }
+            let html = '<div class="space-y-2">';
+            for (const [k, v] of Object.entries(data)) {
+                if (k === 'scenario' || k === 'impact') continue;
+                html += `<div class="flex justify-between"><span class="text-sm text-[var(--text-secondary)]">${k}</span><span class="font-semibold">${typeof v === 'number' ? formatMoney(v) : v}</span></div>`;
+            }
+            html += `<div class="flex justify-between mt-2"><span class="text-sm">Impacto</span><span class="${data.impact === 'positive' ? 'text-[var(--accent-green)]' : 'text-[var(--accent-coral)]'} font-semibold">${data.impact}</span></div>`;
+            html += '</div>';
+            result.innerHTML = html;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const simType = document.getElementById('sim-type');
+            if (simType) {
+                simType.addEventListener('change', function() {
+                    const rateInput = document.getElementById('sim-rate');
+                    if (rateInput) {
+                        if (this.value === 'refinance') rateInput.classList.remove('hidden');
+                        else rateInput.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        async function init() {
+            const status = await fetch('/api/auth/status').then(r => r.json());
+            if (status.is_setup) {
+                document.getElementById('login-form').classList.remove('hidden');
+                document.getElementById('setup-form').classList.add('hidden');
+            }
+            document.getElementById('login-screen').classList.remove('hidden');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        async function setup() {
+            const p1 = document.getElementById('setup-password').value;
+            const p2 = document.getElementById('setup-password-confirm').value;
+            const error = document.getElementById('setup-error');
+            if (p1 !== p2) {
+                error.textContent = 'Las contraseñas no coinciden';
+                error.classList.remove('hidden');
+                return;
+            }
+            if (p1.length < 4) {
+                error.textContent = 'La contraseña debe tener al menos 4 caracteres';
+                error.classList.remove('hidden');
+                return;
+            }
+            await fetch('/api/setup', { method: 'POST', body: new URLSearchParams({ password: p1 }) });
+            login(p1);
+        }
+
+        async function login(password) {
+            if (!password) {
+                password = document.getElementById('login-password').value;
+            }
+            const error = document.getElementById('login-error');
+            const resp = await fetch('/api/auth/login', {
+                method: 'POST',
+                body: new URLSearchParams({ password })
+            });
+            if (resp.ok) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                showSection('dashboard');
+            } else {
+                error.classList.remove('hidden');
+            }
+        }
+
+        function showSection(section) {
+            currentSection = section;
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('section-' + section).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.section === section);
+            });
+            
+            if (section === 'dashboard') loadDashboard();
+            else if (section === 'income') loadIncome();
+            else if (section === 'expenses') loadExpenses();
+            else if (section === 'debts') loadDebts();
+            else if (section === 'cards') loadCards();
+            else if (section === 'services') loadServices();
+            else if (section === 'reports') loadReport('fortnightly');
+            else if (section === 'budget') loadBudget();
+            else if (section === 'ai') loadAI();
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function formatMoney(amount) {
+            return '$' + (amount || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function getCategoryColor(cat) {
+            const colors = { needs: 'blue', wants: 'coral', culture: 'purple', unexpected: 'yellow' };
+            return colors[cat] || 'blue';
+        }
+
+        async function openQuickAdd() {
+            const type = await showPrompt('Agregar Rapido', 'Escribe "i" para ingreso o "g" para gasto:');
+            if (type === 'i') openModal('income');
+            else if (type === 'g') openModal('expense');
+        }
+
+        async function loadDummyData() {
+            const ok = await showConfirm(
+                'Datos Demo',
+                '¿Cargar datos de demostración?\n\nEsto agregará datos ficticios a todos los módulos para pruebas.'
+            );
+            if (!ok) return;
+            
+            try {
+                showToast('Cargando datos...', 'info');
+                const resp = await fetch('/api/seed/dummy', { method: 'POST' });
+                const data = await resp.json();
+                
+                if (resp.ok) {
+                    const counts = data.counts || {};
+                    const msg = Object.entries(counts)
+                        .map(([k, v]) => `${k}: ${v}`)
+                        .join(', ');
+                    showToast('✓ Datos cargados: ' + msg, 'success');
+                    loadDashboard();
+                    loadIncome();
+                    loadExpenses();
+                    loadDebts();
+                    loadCards();
+                    loadServices();
+                } else {
+                    showToast('Error al cargar: ' + (data.detail || 'Error desconocido'), 'error');
+                }
+            } catch (e) {
+                showToast('Error de conexión', 'error');
+            }
+        }
+
+        async function exportCSV() {
+            const resource = await showPrompt('Exportar CSV', 'Recurso a exportar (transactions, income, expense, debt, credit_card, service):', 'transactions');
+            if (!resource) return;
+            window.location.href = `/api/export/csv?resource=${resource}`;
+        }
+
+        let currentCategoryFilter = null;
+
+        async function showExpensesByCategory(category) {
+            currentCategoryFilter = category;
+            const names = { needs: 'Necesidades', wants: 'Deseos', culture: 'Cultura', unexpected: 'Inesperado' };
+            const colors = { needs: 'blue', wants: 'coral', culture: 'purple', unexpected: 'yellow' };
+            
+            showSection('expenses');
+            
+            // Update section title
+            const sectionTitle = document.querySelector('#section-expenses h1');
+            if (sectionTitle) {
+                sectionTitle.innerHTML = `<span class="flex items-center gap-2">
+                    <i data-lucide="arrow-left" class="w-5 h-5 cursor-pointer" onclick="clearCategoryFilter()"></i>
+                    ${names[category] || category} - Este Mes
+                </span>`;
+            }
+            
+            const expenses = await fetch('/api/expense').then(r => r.json());
+            
+            // Filter by current month AND category
+            const now = new Date();
+            const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+            const filtered = expenses.filter(e => e.category === category && e.date >= firstOfMonth);
+            
+            const list = document.getElementById('expense-list');
+            
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="card p-4 mb-4">
+                        <p class="text-sm text-[var(--text-secondary)]">
+                            No hay gastos en <span class="font-semibold badge badge-${colors[category]}">${names[category]}</span> este mes
+                        </p>
+                    </div>
+                    <button onclick="clearCategoryFilter()" class="btn w-full" style="background: var(--bg-tertiary)">
+                        Ver todos los gastos
+                    </button>
+                `;
+            } else {
+                const total = filtered.reduce((sum, e) => sum + e.amount, 0);
+                const accentColor = colors[category] === 'blue' ? 'blue' : colors[category] === 'coral' ? 'coral' : colors[category] === 'purple' ? 'purple' : 'yellow';
+                list.innerHTML = `
+                    <div class="card p-4 mb-4" style="border-left: 4px solid var(--accent-${accentColor})">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="badge badge-${colors[category]}">${names[category]}</span>
+                                <p class="text-sm text-[var(--text-secondary)] mt-1">${filtered.length} registros de este mes</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-[var(--text-secondary)]">Total este mes:</p>
+                                <p class="text-xl font-semibold text-[var(--accent-coral)]">${formatMoney(total)}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="clearCategoryFilter()" class="btn w-full mb-4" style="background: var(--bg-tertiary)">
+                        Ver todos los gastos
+                    </button>
+                ` + filtered.map(e => `
+                    <div class="card p-4 flex items-center justify-between mb-2">
+                        <div>
+                            <p class="font-medium">${formatMoney(e.amount)}</p>
+                            <p class="text-sm text-[var(--text-secondary)]">${e.description || 'Sin descripcion'} - ${formatDate(e.date)}</p>
+                            <span class="badge badge-${getCategoryColor(e.category)} mt-1">${e.kakebo_type}</span>
+                        </div>
+                        <button onclick="editExpense(${e.id})" class="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg">
+                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+
+        async function clearCategoryFilter() {
+            currentCategoryFilter = null;
+            const sectionTitle = document.querySelector('#section-expenses h1');
+            if (sectionTitle) {
+                sectionTitle.textContent = 'Gastos (Kakebo)';
+            }
+            loadExpenses();
+        }
+
+        // i18n
+        const translations = {
+            es: {
+                summary: 'Resumen',
+                add: 'Agregar',
+                balance: 'Balance',
+                income: 'Ingresos',
+                expenses: 'Gastos',
+                debt: 'Deuda',
+                kakebo_this_month: 'Kakebo Este Mes',
+                needs: 'Necesidades',
+                wants: 'Deseos',
+                culture: 'Cultura',
+                unexpected: 'Inesperado',
+                upcoming_payments: 'Próximos Pagos',
+                no_upcoming: 'No hay pagos próximos',
+                add_income: 'Agregar Ingreso',
+                add_expense: 'Agregar Gasto',
+                new_debt: 'Nueva Deuda',
+                new_card: 'Nueva Tarjeta',
+                new_service: 'Nuevo Servicio',
+                no_income: 'No hay ingresos registrados',
+                no_expenses: 'No hay gastos registrados',
+                no_debts: 'No hay deudas registradas',
+                no_cards: 'No hay tarjetas registradas',
+                no_services: 'No hay servicios registrados',
+                reports: 'Reportes',
+                ai_assistant: 'Asistente IA',
+                financial_summary: 'Resumen Financiero',
+                recommendations: 'Recomendaciones',
+                no_recommendations: 'No hay recomendaciones',
+                no_insights: 'No hay insights',
+                loading_recommendations: 'Cargando recomendaciones...',
+                loading_insights: 'Cargando insights...',
+                select_period: 'Selecciona un período',
+                fortnightly: 'Quincenal',
+                monthly: 'Mensual',
+                quarterly: 'Cuatrimestral',
+                password: 'Contraseña',
+                create_password: 'Crea una contraseña',
+                confirm_password: 'Confirma la contraseña',
+                enter: 'Entrar',
+                begin: 'Comenzar',
+                passwords_no_match: 'Las contraseñas no coinciden',
+                password_min_length: 'La contraseña debe tener al menos 4 caracteres',
+                incorrect_password: 'Contraseña incorrecta',
+                stress_free_finance: 'Gestión financiera sin estrés',
+                days: 'días',
+                paid: 'Pagado',
+                active: 'Activo',
+                inactive: 'Inactivo',
+                no_provider: 'Sin proveedor',
+                current_balance: 'Saldo actual',
+                monthly_payment: 'Pago mensual',
+                pay: 'Pagar',
+                edit: 'Editar',
+                used: 'usado',
+                add_charge: 'Agregar Cargo',
+                mark_paid: 'Marcar Pagado',
+                amount_prompt: 'Monto del pago:',
+                charge_prompt: 'Monto del cargo:',
+                quick_add_prompt: '¿Agregar ingreso (i) o gasto (g)?',
+                export_csv: 'Exportar CSV',
+                export_prompt: '¿Qué deseas exportar?\n1. transactions\n2. income\n3. expense\n4. debt\n5. credit_card\n6. service',
+            },
+            en: {
+                summary: 'Summary',
+                add: 'Add',
+                balance: 'Balance',
+                income: 'Income',
+                expenses: 'Expenses',
+                debt: 'Debt',
+                kakebo_this_month: 'Kakebo This Month',
+                needs: 'Needs',
+                wants: 'Wants',
+                culture: 'Culture',
+                unexpected: 'Unexpected',
+                upcoming_payments: 'Upcoming Payments',
+                no_upcoming: 'No upcoming payments',
+                add_income: 'Add Income',
+                add_expense: 'Add Expense',
+                new_debt: 'New Debt',
+                new_card: 'New Card',
+                new_service: 'New Service',
+                no_income: 'No income registered',
+                no_expenses: 'No expenses registered',
+                no_debts: 'No debts registered',
+                no_cards: 'No cards registered',
+                no_services: 'No services registered',
+                reports: 'Reports',
+                ai_assistant: 'AI Assistant',
+                financial_summary: 'Financial Summary',
+                recommendations: 'Recommendations',
+                no_recommendations: 'No recommendations',
+                no_insights: 'No insights',
+                loading_recommendations: 'Loading recommendations...',
+                loading_insights: 'Loading insights...',
+                select_period: 'Select a period',
+                fortnightly: 'Fortnightly',
+                monthly: 'Monthly',
+                quarterly: 'Quarterly',
+                password: 'Password',
+                create_password: 'Create a password',
+                confirm_password: 'Confirm the password',
+                enter: 'Enter',
+                begin: 'Begin',
+                passwords_no_match: 'Passwords do not match',
+                password_min_length: 'Password must be at least 4 characters',
+                incorrect_password: 'Incorrect password',
+                stress_free_finance: 'Stress-free financial management',
+                days: 'days',
+                paid: 'Paid',
+                active: 'Active',
+                inactive: 'Inactive',
+                no_provider: 'No provider',
+                current_balance: 'Current balance',
+                monthly_payment: 'Monthly payment',
+                pay: 'Pay',
+                edit: 'Edit',
+                used: 'used',
+                add_charge: 'Add Charge',
+                mark_paid: 'Mark Paid',
+                amount_prompt: 'Payment amount:',
+                charge_prompt: 'Charge amount:',
+                quick_add_prompt: 'Add income (i) or expense (g)?',
+                export_csv: 'Export CSV',
+                export_prompt: 'What do you want to export?\n1. transactions\n2. income\n3. expense\n4. debt\n5. credit_card\n6. service',
+            }
+        };
+
+        let currentLang = localStorage.getItem('ff-lang') || 'es';
+
+        function t(key) {
+            return translations[currentLang]?.[key] || translations['es']?.[key] || key;
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('ff-lang', lang);
+            applyTranslations();
+        }
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.textContent = t(key);
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                el.placeholder = t(key);
+            });
+        }
+
+        function toggleLanguage() {
+            setLanguage(currentLang === 'es' ? 'en' : 'es');
+        }
+
+        function startApp() {
+            init();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        if (document.readyState === 'complete') {
+            startApp();
+        } else {
+            window.addEventListener('load', startApp);
+        }
+        setTimeout(startApp, 3000);
+    </script>
+</body>
+</html>
