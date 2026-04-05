@@ -339,7 +339,7 @@ class AIFinanceEngine:
                     "icon": "alert-triangle",
                     "message": f"Gastas {((month_expense_total / avg_monthly_expense) - 1) * 100:.0f}% mas que tu promedio",
                 }
-            )
+            ) 
 
         if month_income_total > 0:
             needs_limit = month_income_total * 0.50
