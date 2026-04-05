@@ -28,37 +28,15 @@ jobs:
           python validate_frontend.py
           node test_translations.js
       
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      
-      - name: Deploy to Azure Web App
+      - name: Deploy via FTP
         run: |
-          # Create package
           zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py -x "*.pyc"
           
-          # Set subscription
-          az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          FTP_HOST="waws-prod-dm1-209.ftp.azurewebsites.net"
+          USERNAME="$MyFamilyFinance\$MyFamilyFinance"
+          PASSWORD="ERNhgS1byc7jGSGZbBayvkAKmHhrQRtw8m30klfNdlgqGPifNzFyqXWqYTpA"
           
-          # Get publishing credentials
-          az webapp deployment list-publishing-credentials \
-            --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" | tee creds.json
+          echo "Uploading via FTPS..."
+          curl -TLS -T package.zip -u "$USERNAME:$PASSWORD" "ftps://$FTP_HOST/site/wwwroot/package.zip"
           
-          USERNAME=$(jq -r '.publishingUserName' creds.json)
-          PASSWORD=$(jq -r '.publishingPassword' creds.json)
-          
-          echo "Got credentials for: $USERNAME"
-          
-          # Upload via FTP
-          echo "Uploading via FTP..."
-          curl -T package.zip -u "$USERNAME:$PASSWORD" "ftp://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/package.zip"
-          
-          echo "Setting startup command..."
-          az webapp config set \
-            --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-            --startup-command "uvicorn main:app --host 0.0.0.0 --port 8000"
-          
-          echo "Deployment complete!"
+          echo "Upload complete!"
