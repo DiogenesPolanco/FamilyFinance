@@ -1316,26 +1316,51 @@
             // Recommendations
             const recs = await fetch('/api/ai/recommendations').then(r => r.json());
             const recContainer = document.getElementById('ai-recommendations');
-            if (!recs.length) {
+            if (!recs || !recs.length) {
                 recContainer.innerHTML = '<p class="text-[var(--text-secondary)]">No hay recomendaciones</p>';
             } else {
-                recContainer.innerHTML = recs.map(r => `<div class="p-3 bg-[var(--bg-tertiary)] rounded-xl"><p class="text-sm">${r.message || r}</p></div>`).join('');
+                const typeColors = {
+                    'critical': 'var(--accent-coral)',
+                    'warning': 'var(--accent-yellow)',
+                    'opportunity': 'var(--accent-green)',
+                    'suggestion': 'var(--accent-blue)',
+                    'success': 'var(--accent-green)',
+                    'info': 'var(--text-secondary)'
+                };
+                recContainer.innerHTML = recs.map(r => {
+                    const color = typeColors[r.type] || 'var(--accent-blue)';
+                    return `<div class="p-3 rounded-xl mb-2" style="border-left: 3px solid ${color}; background: var(--bg-tertiary)">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="${r.icon || 'lightbulb'}" class="w-4 h-4 mt-0.5" style="color: ${color}"></i>
+                            <p class="text-sm">${r.message}</p>
+                        </div>
+                    </div>`;
+                }).join('');
             }
 
-            // Anomalies
+            // Anomalies & Opportunities
             const anomalies = await fetch('/api/ai/anomalies').then(r => r.json());
             const anomContainer = document.getElementById('ai-anomalies');
-            if (!anomalies.length) {
-                anomContainer.innerHTML = '<p class="text-[var(--text-secondary)]">No se detectaron anomalias</p>';
+            if (!anomalies || !anomalies.length) {
+                anomContainer.innerHTML = '<p class="text-[var(--text-secondary)]">No se detectaron anomalias ni oportunidades</p>';
             } else {
-                const typeLabels = { spike: 'Gasto Inusual', duplicate: 'Posible Duplicado', inactive_service: 'Servicio Inactivo' };
+                const typeColors = {
+                    'anomaly': 'var(--accent-coral)',
+                    'opportunity': 'var(--accent-green)'
+                };
                 anomContainer.innerHTML = anomalies.map(a => {
-                    const color = a.severity === 'high' ? 'var(--accent-coral)' : (a.severity === 'medium' ? 'var(--accent-yellow)' : 'var(--accent-blue)');
-                    const typeLabel = typeLabels[a.anomaly_type] || a.anomaly_type || 'Anomalia';
-                    const message = a.description || a.title || 'Detectado';
-                    return `<div class="p-3 rounded-xl mb-2" style="border-left: 3px solid ${color}">
-                        <p class="text-sm font-medium mb-1"><span class="badge" style="background: ${color}; color: white">${typeLabel}</span></p>
-                        <p class="text-sm text-[var(--text-secondary)]">${message}</p>
+                    const color = typeColors[a.type] || 'var(--accent-blue)';
+                    const severityColor = a.severity === 'high' ? 'var(--accent-coral)' : a.severity === 'medium' ? 'var(--accent-yellow)' : 'var(--accent-blue)';
+                    const savings = a.potential_savings ? `<p class="text-xs mt-1" style="color: var(--accent-green)">Ahorro potencial: ${formatMoney(a.potential_savings)}</p>` : '';
+                    return `<div class="p-3 rounded-xl mb-2" style="border-left: 3px solid ${color}; background: var(--bg-tertiary)">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="${a.icon || 'alert-circle'}" class="w-4 h-4 mt-0.5" style="color: ${severityColor}"></i>
+                            <div>
+                                <p class="text-sm font-medium">${a.title || 'Detectado'}</p>
+                                <p class="text-sm text-[var(--text-secondary)]">${a.description}</p>
+                                ${savings}
+                            </div>
+                        </div>
                     </div>`;
                 }).join('');
             }
@@ -2141,52 +2166,67 @@
             const container = document.getElementById('ai-debt-strategy');
             container.innerHTML = '<p class="text-[var(--text-secondary)]">Calculando...</p>';
             
-            // Update tab styles
             document.querySelectorAll('[id^="tab-"]').forEach(btn => btn.classList.remove('active'));
             const tabBtn = document.getElementById(`tab-${strategy}`);
             if (tabBtn) tabBtn.classList.add('active');
             
             const data = await fetch(`/api/ai/debt-strategy?strategy=${strategy}`).then(r => r.json());
             
-            // Check for no active debts
-            if (!data.steps || data.steps.length === 0) {
-                container.innerHTML = '<p class="text-[var(--text-secondary)]">No hay deudas activas</p>';
+            if (!data.has_debts) {
+                container.innerHTML = '<p class="text-[var(--text-secondary)]">No hay deudas activas. Excelente!</p>';
                 return;
             }
             
-            const label = strategy === 'avalanche' ? 'Avalancha (mayor tasa primero)' : 'Bola de Nieve (menor saldo primero)';
             const strategyColor = strategy === 'avalanche' ? 'var(--accent-blue)' : 'var(--accent-green)';
+            const label = strategy === 'avalanche' ? 'Avalancha' : 'Bola de Nieve';
             
-            let html = `<div class="card p-4 bg-[var(--bg-tertiary)] mb-4" style="border-left: 4px solid ${strategyColor}">
-                <p class="text-sm text-[var(--text-secondary)]">Estrategia: ${label}</p>
-                <p class="text-lg font-semibold">Libre de deudas en ${data.total_months || 0} meses</p>
-                <div class="grid grid-cols-2 gap-4 mt-2">
-                    <div>
-                        <p class="text-xs text-[var(--text-tertiary)]">Interes Total</p>
-                        <p class="font-semibold text-[var(--accent-coral)]">${formatMoney(data.total_interest || 0)}</p>
+            let html = `<div class="card p-4 mb-4" style="border-left: 4px solid ${strategyColor}">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="badge" style="background: ${strategyColor}">${label}</span>
+                    <span class="text-sm text-[var(--text-secondary)]">${data.total_months_estimate || 0} meses estimado</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="bg-[var(--bg-tertiary)] p-3 rounded-lg">
+                        <p class="text-xs text-[var(--text-tertiary)]">Total Deuda</p>
+                        <p class="font-bold text-lg">${formatMoney(data.total_debt || 0)}</p>
                     </div>
-                    <div>
-                        <p class="text-xs text-[var(--text-tertiary)]">Costo Total</p>
-                        <p class="font-semibold">${formatMoney(data.total_cost || 0)}</p>
+                    <div class="bg-[var(--bg-tertiary)] p-3 rounded-lg">
+                        <p class="text-xs text-[var(--text-tertiary)]">Interes Est.</p>
+                        <p class="font-bold text-lg text-[var(--accent-coral)]">${formatMoney(data.estimated_total_interest || 0)}</p>
                     </div>
                 </div>
-                <p class="text-sm text-[var(--text-secondary)] mt-2">${data.recommendation || ''}</p>
+                <p class="text-sm text-[var(--text-secondary)] mt-3">${data.summary || ''}</p>
             </div>`;
             
-            // Show payoff order
-            if (data.payoff_order && data.payoff_order.length > 0) {
-                html += `<h4 class="font-semibold text-sm mb-2">Orden de Pago:</h4>`;
-                data.payoff_order.forEach((debt, idx) => {
-                    const bgColor = idx === 0 ? 'bg-[var(--accent-coral)]' : 'bg-[var(--bg-tertiary)]';
-                    html += `<div class="card p-3 mb-2 ${bgColor}">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">${debt.name}</span>
-                            <span class="badge badge-blue">${debt.rate}% TNA</span>
+            if (data.priority_order && data.priority_order.length > 0) {
+                html += `<h4 class="font-semibold text-sm mb-2">Orden de Prioridad:</h4>`;
+                data.priority_order.forEach((debt, idx) => {
+                    const isFirst = idx === 0;
+                    html += `<div class="card p-3 mb-2 ${isFirst ? 'border-l-4 border-[var(--accent-coral)]' : ''}">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium">${idx + 1}. ${debt.name}</p>
+                                <p class="text-xs text-[var(--text-secondary)]">${debt.reason}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="badge badge-blue">${debt.rate}%</span>
+                                <p class="text-xs mt-1">${formatMoney(debt.balance)}</p>
+                            </div>
                         </div>
-                        <p class="text-sm text-[var(--text-secondary)]">Saldo: ${formatMoney(debt.amount)}</p>
                     </div>`;
                 });
             }
+            
+            if (data.tips && data.tips.length > 0) {
+                html += `<div class="mt-4"><h4 class="font-semibold text-sm mb-2">Pasos:</h4><ol class="text-sm space-y-1">`;
+                data.tips.forEach(tip => {
+                    html += `<li class="flex items-start gap-2"><span class="text-[var(--accent-green)]">✓</span>${tip}</li>`;
+                });
+                html += `</ol></div>`;
+            }
+            
+            container.innerHTML = html;
+        }
             
             // Show steps/progress
             if (data.steps && data.steps.length > 0) {
@@ -2210,27 +2250,73 @@
         }
 
         async function runSimulation() {
-            const type = document.getElementById('sim-type').value;
+            const simType = document.getElementById('sim-type').value;
             const value = parseFloat(document.getElementById('sim-value').value) || 0;
             const result = document.getElementById('sim-result');
             result.classList.remove('hidden');
-            let body = { type, value };
-            if (type === 'refinance') {
+            let body = { scenario: simType, amount: value };
+            if (simType === 'refinance') {
                 const newRate = parseFloat(document.getElementById('sim-rate').value) || 0;
-                body = { type, value, old_rate: 12, new_rate: newRate, term_months: 24 };
+                body = { scenario: 'refinance', amount: value, new_rate: newRate };
             }
             const data = await fetch('/api/ai/simulate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             }).then(r => r.json());
+            
             if (data.error) { result.innerHTML = `<p class="text-[var(--accent-coral)]">${data.error}</p>`; return; }
-            let html = '<div class="space-y-2">';
-            for (const [k, v] of Object.entries(data)) {
-                if (k === 'scenario' || k === 'impact') continue;
-                html += `<div class="flex justify-between"><span class="text-sm text-[var(--text-secondary)]">${k}</span><span class="font-semibold">${typeof v === 'number' ? formatMoney(v) : v}</span></div>`;
+            
+            const impactColor = data.impact === 'positive' ? 'var(--accent-green)' : data.impact === 'negative' ? 'var(--accent-coral)' : 'var(--accent-blue)';
+            const impactLabel = data.impact === 'positive' ? 'Positivo' : data.impact === 'negative' ? 'Negativo' : 'Neutral';
+            
+            let html = `<div class="card p-4 bg-[var(--bg-tertiary)] mb-3" style="border-left: 4px solid ${impactColor}">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-[var(--text-secondary)]">Impacto</span>
+                    <span class="badge" style="background: ${impactColor}">${impactLabel}</span>
+                </div>
+            </div>`;
+            
+            if (data.summary) {
+                html += `<p class="text-sm font-medium mb-3 p-3 bg-[var(--accent-green)] bg-opacity-10 rounded-lg" style="border-left: 3px solid var(--accent-green)">${data.summary}</p>`;
             }
-            html += `<div class="flex justify-between mt-2"><span class="text-sm">Impacto</span><span class="${data.impact === 'positive' ? 'text-[var(--accent-green)]' : 'text-[var(--accent-coral)]'} font-semibold">${data.impact}</span></div>`;
+            
+            const skipKeys = ['scenario', 'impact', 'summary', 'debt_name'];
+            const displayLabels = {
+                'current_monthly': 'Ingreso Actual',
+                'new_monthly': 'Nuevo Ingreso',
+                'extra_available': 'Extra Disponible',
+                'recommended_savings': 'Ahorro Recom.',
+                'yearly_impact': 'Impacto Anual',
+                'current_expenses': 'Gastos Actuales',
+                'new_expenses': 'Nuevos Gastos',
+                'monthly_savings': 'Ahorro Mensual',
+                'yearly_savings': 'Ahorro Anual',
+                'current_rate': 'Tasa Actual',
+                'new_rate': 'Nueva Tasa',
+                'rate_reduction': 'Reducción Tasa',
+                'monthly_interest_current': 'Interes Mensual Actual',
+                'monthly_interest_new': 'Nuevo Interes Mensual',
+                'monthly_savings': 'Ahorro Mensual',
+                'total_savings': 'Ahorro Total',
+                'debt_name': 'Deuda',
+                'current_payment': 'Pago Actual',
+                'extra_payment': 'Pago Extra',
+                'new_payment': 'Nuevo Pago',
+                'months_saved': 'Meses Ahorrados',
+                'payoff_earlier': 'Anos Menos',
+                'interest_saved': 'Interes Ahorrado'
+            };
+            
+            html += '<div class="space-y-2">';
+            for (const [k, v] of Object.entries(data)) {
+                if (skipKeys.includes(k)) continue;
+                const label = displayLabels[k] || k;
+                html += `<div class="flex justify-between p-2 bg-[var(--bg-secondary)] rounded-lg">
+                    <span class="text-sm text-[var(--text-secondary)]">${label}</span>
+                    <span class="font-semibold">${typeof v === 'number' ? formatMoney(v) : v}</span>
+                </div>`;
+            }
             html += '</div>';
             result.innerHTML = html;
         }
