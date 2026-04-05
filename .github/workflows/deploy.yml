@@ -33,35 +33,39 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
-      - name: Deploy via SCM
+      - name: Deploy to Azure using ZIP
         run: |
-          # Get publishing credentials
-          PUBLISH_CREDENTIALS=$(az webapp deployment list-publishing-profiles \
-            --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
-            --resource-group "RGPersonalSinope" \
-            --query "[?publishMethod=='FTP'].publishPassword" \
-            --output tsv 2>/dev/null || echo "")
+          # Create ZIP package
+          zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py -x "*.pyc"
           
-          if [ -z "$PUBLISH_CREDENTIALS" ]; then
-            # Fallback: use deployment user
-            az webapp deployment list-publishing-credentials \
-              --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
-              --resource-group "RGPersonalSinope" | tee creds.json
-            
-            USERNAME=$(jq -r '.publishingUserName' creds.json)
-            PASSWORD=$(jq -r '.publishingPassword' creds.json)
-            
-            echo "Deploying via FTP..."
-            curl -T static/index.html -u "$USERNAME:$PASSWORD" https://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/static/index.html
-            curl -T main.py -u "$USERNAME:$PASSWORD" https://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/main.py
-            curl -T models.py -u "$USERNAME:$PASSWORD" https://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/models.py
-            curl -T requirements.txt -u "$USERNAME:$PASSWORD" https://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/requirements.txt
-            
-            echo "Setting startup command..."
-            az webapp config set \
-              --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
-              --resource-group "RGPersonalSinope" \
-              --startup-command "uvicorn main:app --host 0.0.0.0 --port 8000"
-          else
-            echo "Deployment profile found"
-          fi
+          # Upload and deploy using REST API
+          AZURE_WEBAPP_NAME="${{ secrets.AZURE_WEBAPP_NAME }}"
+          RESOURCE_GROUP="RGPersonalSinope"
+          SUBSCRIPTION_ID="e698d0af-e4dc-403f-9849-4b3f4e86082d"
+          
+          # Get publishing credentials
+          echo "Getting deployment credentials..."
+          CREDS=$(az webapp deployment list-publishing-credentials \
+            --name "$AZURE_WEBAPP_NAME" \
+            --resource-group "$RESOURCE_GROUP")
+          
+          USERNAME=$(echo $CREDS | jq -r '.publishingUserName')
+          PASSWORD=$(echo $CREDS | jq -r '.publishingPassword')
+          
+          # Upload ZIP via FTP
+          echo "Uploading files via FTP..."
+          curl -T package.zip -u "$USERNAME:$PASSWORD" https://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/package.zip
+          
+          # Run deployment
+          echo "Running deployment..."
+          az webapp deployment source config-zip \
+            --name "$AZURE_WEBAPP_NAME" \
+            --resource-group "$RESOURCE_GROUP" \
+            --src package.zip
+          
+          # Set startup command
+          echo "Configuring startup command..."
+          az webapp config set \
+            --name "$AZURE_WEBAPP_NAME" \
+            --resource-group "$RESOURCE_GROUP" \
+            --startup-command "uvicorn main:app --host 0.0.0.0 --port 8000"
