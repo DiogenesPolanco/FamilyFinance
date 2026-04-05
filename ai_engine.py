@@ -65,6 +65,7 @@ class AIFinanceEngine:
         today = date.today()
         current_month = today.month
         current_year = today.year
+        first_of_month = today.replace(day=1)
 
         month_incomes = (
             self.db.query(Income)
@@ -83,39 +84,253 @@ class AIFinanceEngine:
             .all()
         )
 
-        summary = f"Ingresos este mes: ${sum(i.amount for i in month_incomes):,.2f}. Gastos: ${sum(e.amount for e in month_expenses):,.2f}."
+        last_month_start = (first_of_month - timedelta(days=1)).replace(day=1)
+        last_month_end = first_of_month - timedelta(days=1)
 
-        last_month = today - timedelta(days=30)
         prev_incomes = (
             self.db.query(Income)
-            .filter(Income.date >= last_month, Income.date < today.replace(day=1))
+            .filter(
+                extract("month", Income.date) == last_month_start.month,
+                extract("year", Income.date) == last_month_start.year,
+            )
             .all()
         )
         prev_expenses = (
             self.db.query(Expense)
-            .filter(Expense.date >= last_month, Expense.date < today.replace(day=1))
+            .filter(
+                extract("month", Expense.date) == last_month_start.month,
+                extract("year", Expense.date) == last_month_start.year,
+            )
             .all()
         )
 
-        if sum(i.amount for i in prev_incomes) > 0:
-            change = (
-                (
-                    sum(e.amount for e in month_expenses)
-                    - sum(e.amount for e in prev_expenses)
+        last_3_months_start = today - timedelta(days=90)
+        last_3_incomes = (
+            self.db.query(Income).filter(Income.date >= last_3_months_start).all()
+        )
+        last_3_expenses = (
+            self.db.query(Expense).filter(Expense.date >= last_3_months_start).all()
+        )
+
+        debts = self.db.query(Debt).filter(Debt.is_paid == False).all()
+        cards = self.db.query(CreditCard).filter(CreditCard.current_balance > 0).all()
+
+        month_income_total = sum(i.amount for i in month_incomes)
+        month_expense_total = sum(e.amount for e in month_expenses)
+        prev_income_total = sum(i.amount for i in prev_incomes) if prev_incomes else 0
+        prev_expense_total = (
+            sum(e.amount for i in prev_expenses) if prev_expenses else 0
+        )
+
+        monthly_balance = month_income_total - month_expense_total
+
+        insights = {
+            "current_status": {
+                "month": today.strftime("%B %Y"),
+                "income": round(month_income_total, 2),
+                "expenses": round(month_expense_total, 2),
+                "balance": round(monthly_balance, 2),
+                "is_positive": monthly_balance >= 0,
+            },
+            "past_review": {
+                "month": last_month_start.strftime("%B %Y"),
+                "income": round(prev_income_total, 2),
+                "expenses": round(prev_expense_total, 2),
+                "balance": round(prev_income_total - prev_expense_total, 2),
+                "comparison": {},
+            },
+            "future_suggestions": [],
+            "past_feedback": [],
+        }
+
+        if prev_income_total > 0:
+            income_change = (
+                (month_income_total - prev_income_total) / prev_income_total
+            ) * 100
+            expense_change = (
+                ((month_expense_total - prev_expense_total) / prev_expense_total) * 100
+                if prev_expense_total > 0
+                else 0
+            )
+
+            insights["past_review"]["comparison"] = {
+                "income_change_pct": round(income_change, 1),
+                "expense_change_pct": round(expense_change, 1),
+            }
+
+            if income_change > 0:
+                insights["past_feedback"].append(
+                    {
+                        "type": "positive",
+                        "icon": "trending-up",
+                        "message": f"Tus ingresos aumentaron {income_change:+.1f}% respecto al mes pasado",
+                    }
                 )
-                / sum(i.amount for i in prev_incomes)
-                * 100
-            )
-            summary += f" Tus gastos cambiaron {change:+.1f}% respecto al mes anterior."
+            elif income_change < 0:
+                insights["past_feedback"].append(
+                    {
+                        "type": "warning",
+                        "icon": "trending-down",
+                        "message": f"Tus ingresos bajaron {income_change:.1f}% respecto al mes pasado",
+                    }
+                )
 
-        forecast = None
-        if month_incomes:
-            avg = sum(i.amount for i in month_incomes) / len(month_incomes)
-            forecast = (
-                f"Proyectando ingresos de ${avg * 3:,.2f} para los proximos 3 meses."
+            if expense_change > 20:
+                insights["past_feedback"].append(
+                    {
+                        "type": "negative",
+                        "icon": "alert-triangle",
+                        "message": f"Tus gastos aumentaron {expense_change:+.1f}% - Revisa gastos innecesarios",
+                    }
+                )
+            elif expense_change < -10:
+                insights["past_feedback"].append(
+                    {
+                        "type": "positive",
+                        "icon": "check-circle",
+                        "message": f"Excelente! Redujiste tus gastos en {abs(expense_change):.1f}%",
+                    }
+                )
+
+        if month_income_total > 0:
+            savings_rate = (monthly_balance / month_income_total) * 100
+            insights["past_review"]["savings_rate"] = round(savings_rate, 1)
+
+            if savings_rate < 0:
+                insights["past_feedback"].append(
+                    {
+                        "type": "negative",
+                        "icon": "alert-circle",
+                        "message": f"Gastas mas de lo que ganas ({abs(savings_rate):.1f}% deficit)",
+                    }
+                )
+            elif savings_rate < 10:
+                insights["future_suggestions"].append(
+                    {
+                        "type": "suggestion",
+                        "icon": "piggy-bank",
+                        "message": f"Tu tasa de ahorro es baja ({savings_rate:.1f}%). Intenta ahorrar al menos 20%",
+                    }
+                )
+            else:
+                insights["past_feedback"].append(
+                    {
+                        "type": "positive",
+                        "icon": "check-circle",
+                        "message": f"Buen ahorro este mes: {savings_rate:.1f}% de tus ingresos",
+                    }
+                )
+
+        avg_monthly_expense = (
+            sum(e.amount for e in last_3_expenses) / 3 if last_3_expenses else 0
+        )
+        if month_expense_total > avg_monthly_expense * 1.1:
+            insights["past_feedback"].append(
+                {
+                    "type": "warning",
+                    "icon": "alert-triangle",
+                    "message": f"Gastas {((month_expense_total / avg_monthly_expense) - 1) * 100:.0f}% mas que tu promedio de 3 meses",
+                }
             )
 
-        return {"summary": summary, "forecast": forecast}
+        if month_income_total > 0:
+            needs_limit = month_income_total * 0.50
+            wants_limit = month_income_total * 0.30
+
+            needs_spent = sum(e.amount for e in month_expenses if e.category == "needs")
+            wants_spent = sum(e.amount for e in month_expenses if e.category == "wants")
+
+            if needs_spent > needs_limit:
+                insights["future_suggestions"].append(
+                    {
+                        "type": "warning",
+                        "icon": "home",
+                        "message": f"Gastas ${needs_spent - needs_limit:,.0f} de mas en necesidades. Revisa alquiler, servicios, etc.",
+                    }
+                )
+
+            if wants_spent > wants_limit:
+                insights["future_suggestions"].append(
+                    {
+                        "type": "warning",
+                        "icon": "shopping-bag",
+                        "message": f"Gastas ${wants_spent - wants_limit:,.0f} de mas en deseos. Considera reducir suscripciones.",
+                    }
+                )
+
+        total_debt = sum(d.current_amount for d in debts)
+        if total_debt > 0:
+            insights["future_suggestions"].append(
+                {
+                    "type": "debt",
+                    "icon": "landmark",
+                    "message": f"Tienes ${total_debt:,.0f} en deudas. Prioriza pagar las de mayor interes.",
+                }
+            )
+
+        total_card_debt = sum(c.current_balance for c in cards)
+        if total_card_debt > month_income_total * 0.5:
+            insights["future_suggestions"].append(
+                {
+                    "type": "warning",
+                    "icon": "credit-card",
+                    "message": f"Tu deuda de tarjetas ({total_card_debt:,.0f}) es mas del 50% de tus ingresos. Paga rapido!",
+                }
+            )
+
+        days_until_month_end = 30 - today.day
+        if days_until_month_end > 0 and month_expense_total > 0:
+            daily_avg = month_expense_total / today.day
+            projected_total = daily_avg * 30
+            remaining_budget = month_income_total - month_expense_total
+
+            if projected_total > month_income_total:
+                insights["future_suggestions"].append(
+                    {
+                        "type": "alert",
+                        "icon": "alert-octagon",
+                        "message": f"Proyeccion: Gastaras ${projected_total - month_income_total:,.0f} de mas este mes. Te quedan ${remaining_budget:,.0f} para {days_until_month_end} dias.",
+                    }
+                )
+            else:
+                insights["future_suggestions"].append(
+                    {
+                        "type": "positive",
+                        "icon": "check-circle",
+                        "message": f"Tienes ${remaining_budget:,.0f} disponibles para los proximos {days_until_month_end} dias.",
+                    }
+                )
+
+        if month_income_total > 0 and month_expense_total > 0:
+            savings_needed = month_income_total * 0.2
+            if monthly_balance >= savings_needed:
+                insights["future_suggestions"].append(
+                    {
+                        "type": "success",
+                        "icon": "target",
+                        "message": f"Cumpliste tu meta de ahorro del 20% (${savings_needed:,.0f})",
+                    }
+                )
+
+        if not insights["past_feedback"]:
+            insights["past_feedback"].append(
+                {
+                    "type": "info",
+                    "icon": "info",
+                    "message": "Continua asi! Manten tus habitos financieros actuales.",
+                }
+            )
+
+        if not insights["future_suggestions"]:
+            insights["future_suggestions"].append(
+                {
+                    "type": "info",
+                    "icon": "thumbs-up",
+                    "message": "Vas bien! Sigue monitorizando tus gastos.",
+                }
+            )
+
+        return insights
 
     def detect_anomalies(self):
         anomalies = []
@@ -234,63 +449,147 @@ class AIFinanceEngine:
         return forecast
 
     def get_debt_payoff_strategy(self, strategy: str = "avalanche"):
-        debts = (
-            self.db.query(Debt)
-            .filter(Debt.is_paid == False)
-            .order_by(Debt.interest_rate.desc())
-            .all()
-        )
+        debts_data = self.db.query(Debt).filter(Debt.is_paid == False).all()
 
-        if not debts:
+        if not debts_data:
             return {
                 "strategy": strategy,
+                "strategy_name": "Avalancha"
+                if strategy == "avalanche"
+                else "Bola de Nieve",
                 "total_months": 0,
                 "total_interest": 0,
+                "total_cost": 0,
                 "steps": [],
+                "recommendation": "No tienes deudas activas.继续保持!",
             }
 
+        debts = []
+        for d in debts_data:
+            debts.append(
+                {
+                    "id": d.id,
+                    "name": d.name,
+                    "current_amount": d.current_amount,
+                    "monthly_payment": d.monthly_payment,
+                    "interest_rate": d.interest_rate,
+                }
+            )
+
         if strategy == "snowball":
-            debts = sorted(debts, key=lambda d: d.current_amount)
+            debts = sorted(debts, key=lambda d: d["current_amount"])
         else:
-            debts = sorted(debts, key=lambda d: d.interest_rate, reverse=True)
+            debts = sorted(debts, key=lambda d: d["interest_rate"], reverse=True)
 
         steps = []
         months = 0
         total_interest = 0
-        balance = sum(d.current_amount for d in debts)
-        extra = 1000
+        extra_payment = 1000
+        month_count = 0
 
-        while balance > 0 and months < 360:
-            months += 1
+        while month_count < 360:
+            month_count += 1
+            balance = sum(d["current_amount"] for d in debts if d["current_amount"] > 0)
+
+            if balance <= 0:
+                break
+
             month_interest = 0
-
             for d in debts:
-                if d.current_amount > 0:
-                    month_interest += d.current_amount * (d.interest_rate / 100 / 12)
+                if d["current_amount"] > 0:
+                    month_interest += d["current_amount"] * (
+                        d["interest_rate"] / 100 / 12
+                    )
 
             total_interest += month_interest
-            payment = sum(d.monthly_payment for d in debts) + extra
+
+            total_monthly = sum(
+                d["monthly_payment"] for d in debts if d["current_amount"] > 0
+            )
+            payment = total_monthly + extra_payment
+
+            if strategy == "avalanche":
+                priority_idx = 0
+                for i, d in enumerate(debts):
+                    if d["current_amount"] > 0:
+                        priority_idx = i
+                        break
+
+                priority_payment = payment
+                for i, d in enumerate(debts):
+                    if d["current_amount"] > 0:
+                        if i == priority_idx:
+                            pay = min(
+                                priority_payment,
+                                d["current_amount"]
+                                + month_interest
+                                / len([x for x in debts if x["current_amount"] > 0]),
+                            )
+                            d["current_amount"] -= pay
+                            priority_payment -= pay
+                        else:
+                            min_pay = d["monthly_payment"] * 0.5
+                            d["current_amount"] -= min_pay
+                            payment -= min_pay
+            else:
+                for d in debts:
+                    if d["current_amount"] > 0:
+                        d["current_amount"] -= d["monthly_payment"]
 
             for d in debts:
-                if d.current_amount > 0:
-                    interest = d.current_amount * (d.interest_rate / 100 / 12)
-                    d.current_amount += interest
-                    d.current_amount -= min(
-                        payment / len([x for x in debts if x.current_amount > 0]),
-                        d.current_amount,
+                if d["current_amount"] <= 0:
+                    d["current_amount"] = 0
+                    steps.append(
+                        {
+                            "month": month_count,
+                            "action": "paid_off",
+                            "name": d["name"],
+                            "message": f"{d['name']} PAGADA en mes {month_count}",
+                        }
                     )
-                    if d.current_amount <= 0:
-                        steps.append(f"Mes {months}: {d.name} PAGADA!")
-                        balance -= d.current_amount
 
-            if months % 6 == 0:
-                steps.append(f"Mes {months}: Balance total ${balance:,.2f}")
+            if month_count % 6 == 0:
+                current_balance = sum(
+                    d["current_amount"] for d in debts if d["current_amount"] > 0
+                )
+                steps.append(
+                    {
+                        "month": month_count,
+                        "action": "progress",
+                        "balance": current_balance,
+                        "message": f"Progreso: Balance ${current_balance:,.2f} | Interes acumulado ${total_interest:,.2f}",
+                    }
+                )
+
+        final_balance = sum(d["current_amount"] for d in debts)
+        total_cost = sum(d["current_amount"] for d in debts) + total_interest
+
+        recommendation = ""
+        if strategy == "avalanche":
+            recommendation = "Esta estrategia te ahorra mas dinero enfocandote en la deuda con mayor tasa de interes primero."
+        else:
+            recommendation = "Esta estrategia te da victorias rapidas Pagando primero las deudas mas pequenas."
 
         return {
             "strategy": strategy,
-            "total_months": months,
-            "total_interest": total_interest,
-            "steps": steps[:20],
+            "strategy_name": "Avalancha"
+            if strategy == "avalanche"
+            else "Bola de Nieve",
+            "total_months": month_count,
+            "total_interest": round(total_interest, 2),
+            "total_cost": round(total_cost, 2),
+            "remaining_balance": round(final_balance, 2),
+            "steps": steps[:30],
+            "payoff_order": [
+                {
+                    "name": d["name"],
+                    "rate": d["interest_rate"],
+                    "amount": d["current_amount"],
+                }
+                for d in debts
+                if d["current_amount"] > 0
+            ],
+            "recommendation": recommendation,
         }
 
     def simulate_scenario(self, scenario: dict):

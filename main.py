@@ -87,7 +87,6 @@ from models import (
 )
 
 
-
 @app.get("/")
 def read_root():
     return FileResponse("static/index.html")
@@ -788,36 +787,95 @@ def get_report(
         )
 
         return {
-            "current": {
-                "period": "1-15",
-                "total_income": sum(i.amount for i in current_incomes),
-                "total_expenses": sum(e.amount for e in current_expenses),
-            },
-            "previous": {
-                "period": "16-end",
-                "total_income": sum(i.amount for i in prev_incomes),
-                "total_expenses": sum(e.amount for e in prev_expenses),
+            "type": "fortnightly",
+            "periods": [
+                {
+                    "period": "previous",
+                    "label": f"16-{prev_period_start.day} al {prev_period_end.day} {prev_period_end.strftime('%b')}",
+                    "start_date": str(prev_period_start),
+                    "end_date": str(prev_period_end),
+                    "total_income": sum(i.amount for i in prev_incomes),
+                    "total_expenses": sum(e.amount for e in prev_expenses),
+                    "balance": sum(i.amount for i in prev_incomes)
+                    - sum(e.amount for e in prev_expenses),
+                },
+                {
+                    "period": "current",
+                    "label": f"1-15 {today.strftime('%b')}",
+                    "start_date": str(current_period_start),
+                    "end_date": str(current_period_end),
+                    "total_income": sum(i.amount for i in current_incomes),
+                    "total_expenses": sum(e.amount for e in current_expenses),
+                    "balance": sum(i.amount for i in current_incomes)
+                    - sum(e.amount for e in current_expenses),
+                },
+            ],
+            "comparison": {
+                "income_change": sum(i.amount for i in current_incomes)
+                - sum(i.amount for i in prev_incomes),
+                "expense_change": sum(e.amount for e in current_expenses)
+                - sum(e.amount for e in prev_expenses),
             },
         }
 
     elif report_type == "monthly":
         first_of_month = today.replace(day=1)
-        incomes = db.query(Income).filter(Income.date >= first_of_month).all()
-        expenses = db.query(Expense).filter(Expense.date >= first_of_month).all()
+        last_month_start = (first_of_month - timedelta(days=1)).replace(day=1)
+        last_month_end = first_of_month - timedelta(days=1)
+
+        this_incomes = db.query(Income).filter(Income.date >= first_of_month).all()
+        this_expenses = db.query(Expense).filter(Expense.date >= first_of_month).all()
+        prev_incomes = (
+            db.query(Income)
+            .filter(Income.date >= last_month_start, Income.date <= last_month_end)
+            .all()
+        )
+        prev_expenses = (
+            db.query(Expense)
+            .filter(Expense.date >= last_month_start, Expense.date <= last_month_end)
+            .all()
+        )
 
         by_category = {"needs": 0, "wants": 0, "culture": 0, "unexpected": 0}
         by_type = {"fixed": 0, "variable": 0, "occasional": 0}
 
-        for e in expenses:
+        for e in this_expenses:
             by_category[e.category] = by_category.get(e.category, 0) + e.amount
             by_type[e.kakebo_type] = by_type.get(e.kakebo_type, 0) + e.amount
 
+        this_income_total = sum(i.amount for i in this_incomes)
+        this_expense_total = sum(e.amount for e in this_expenses)
+        prev_income_total = sum(i.amount for i in prev_incomes)
+        prev_expense_total = sum(e.amount for e in prev_expenses)
+
         return {
-            "total_income": sum(i.amount for i in incomes),
-            "total_expenses": sum(e.amount for e in expenses),
-            "balance": sum(i.amount for i in incomes) - sum(e.amount for e in expenses),
+            "type": "monthly",
+            "periods": [
+                {
+                    "period": "previous",
+                    "label": last_month_start.strftime("%B %Y"),
+                    "start_date": str(last_month_start),
+                    "end_date": str(last_month_end),
+                    "total_income": prev_income_total,
+                    "total_expenses": prev_expense_total,
+                    "balance": prev_income_total - prev_expense_total,
+                },
+                {
+                    "period": "current",
+                    "label": today.strftime("%B %Y"),
+                    "start_date": str(first_of_month),
+                    "end_date": str(today),
+                    "total_income": this_income_total,
+                    "total_expenses": this_expense_total,
+                    "balance": this_income_total - this_expense_total,
+                },
+            ],
             "by_category": by_category,
             "by_type": by_type,
+            "comparison": {
+                "income_change": this_income_total - prev_income_total,
+                "expense_change": this_expense_total - prev_expense_total,
+            },
         }
 
     elif report_type == "quarterly":
@@ -845,20 +903,162 @@ def get_report(
                 .all()
             )
 
+            inc_total = sum(i.amount for i in month_incomes)
+            exp_total = sum(e.amount for e in month_expenses)
+
             months.append(
                 {
-                    "month": month_date.strftime("%Y-%m"),
+                    "period": f"month_{i + 1}",
                     "label": month_date.strftime("%B %Y"),
-                    "total_income": sum(i.amount for i in month_incomes),
-                    "total_expenses": sum(e.amount for e in month_expenses),
+                    "start_date": str(month_date),
+                    "end_date": str(month_end),
+                    "total_income": inc_total,
+                    "total_expenses": exp_total,
+                    "balance": inc_total - exp_total,
+                }
+            )
+
+        avg_income = sum(m["total_income"] for m in months) / 3
+        avg_expenses = sum(m["total_expenses"] for m in months) / 3
+        current_month = months[-1]["total_expenses"] if months else 0
+
+        return {
+            "type": "quarterly",
+            "periods": months,
+            "averages": {
+                "income": avg_income,
+                "expenses": avg_expenses,
+            },
+            "comparison": {
+                "vs_average_expense": current_month - avg_expenses,
+                "trend": "increasing" if current_month > avg_expenses else "decreasing",
+            },
+        }
+
+    elif report_type == "yearly":
+        first_of_year = today.replace(month=1, day=1)
+
+        monthly_data = []
+        for m in range(1, 13):
+            if m > today.month:
+                break
+            month_start = date(today.year, m, 1)
+            if m == 12:
+                month_end = date(today.year + 1, 1, 1) - timedelta(days=1)
+            else:
+                month_end = date(today.year, m + 1, 1) - timedelta(days=1)
+
+            month_incomes = (
+                db.query(Income)
+                .filter(Income.date >= month_start, Income.date <= month_end)
+                .all()
+            )
+            month_expenses = (
+                db.query(Expense)
+                .filter(Expense.date >= month_start, Expense.date <= month_end)
+                .all()
+            )
+
+            inc_total = sum(i.amount for i in month_incomes)
+            exp_total = sum(e.amount for e in month_expenses)
+
+            monthly_data.append(
+                {
+                    "period": f"month_{m}",
+                    "label": month_start.strftime("%B"),
+                    "total_income": inc_total,
+                    "total_expenses": exp_total,
+                    "balance": inc_total - exp_total,
+                }
+            )
+
+        total_income = sum(m["total_income"] for m in monthly_data)
+        total_expenses = sum(m["total_expenses"] for m in monthly_data)
+
+        return {
+            "type": "yearly",
+            "periods": monthly_data,
+            "totals": {
+                "income": total_income,
+                "expenses": total_expenses,
+                "balance": total_income - total_expenses,
+            },
+        }
+
+    elif report_type == "kakebo":
+        first_of_month = today.replace(day=1)
+
+        expenses = db.query(Expense).filter(Expense.date >= first_of_month).all()
+
+        by_kakebo = {"needs": 0, "wants": 0, "culture": 0, "unexpected": 0}
+        by_type = {"fixed": 0, "variable": 0, "occasional": 0}
+        total = 0
+
+        for e in expenses:
+            by_kakebo[e.category] = by_kakebo.get(e.category, 0) + e.amount
+            by_type[e.kakebo_type] = by_type.get(e.kakebo_type, 0) + e.amount
+            total += e.amount
+
+        total_income = sum(
+            i.amount
+            for i in db.query(Income).filter(Income.date >= first_of_month).all()
+        )
+
+        return {
+            "type": "kakebo",
+            "periods": [
+                {
+                    "period": "current",
+                    "label": today.strftime("%B %Y"),
+                    "total_expenses": total,
+                    "total_income": total_income,
+                }
+            ],
+            "by_category": by_kakebo,
+            "by_type": by_type,
+            "percentages": {
+                k: round((v / total * 100) if total > 0 else 0, 1)
+                for k, v in by_kakebo.items()
+            },
+            "budget_recommendations": {
+                "needs": total_income * 0.50,
+                "wants": total_income * 0.30,
+                "culture": total_income * 0.10,
+                "unexpected": total_income * 0.10,
+            },
+        }
+
+    elif report_type == "debts":
+        debts = db.query(Debt).all()
+
+        debt_history = []
+        for d in debts:
+            debt_history.append(
+                {
+                    "id": d.id,
+                    "name": d.name,
+                    "initial_amount": d.initial_amount,
+                    "current_amount": d.current_amount,
+                    "progress": round(
+                        (1 - d.current_amount / d.initial_amount) * 100, 1
+                    )
+                    if d.initial_amount > 0
+                    else 0,
+                    "is_paid": d.is_paid,
+                    "interest_rate": d.interest_rate,
                 }
             )
 
         return {
-            "monthly_trend": months,
-            "averages": {
-                "income": sum(m["total_income"] for m in months) / 3,
-                "expenses": sum(m["total_expenses"] for m in months) / 3,
+            "type": "debts",
+            "periods": [],
+            "debts": debt_history,
+            "totals": {
+                "initial": sum(d["initial_amount"] for d in debt_history),
+                "current": sum(d["current_amount"] for d in debt_history),
+                "paid": sum(
+                    d["initial_amount"] - d["current_amount"] for d in debt_history
+                ),
             },
         }
 
@@ -1007,6 +1207,105 @@ def get_debt_comparison(
 ):
     ai = AIFinanceEngine(db)
     return ai.get_debt_comparison()
+
+
+@app.get("/api/debt-compare/full")
+def get_full_debt_comparison(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    debts = db.query(Debt).filter(Debt.is_paid == False).all()
+    cards = db.query(CreditCard).all()
+
+    debt_items = []
+    card_items = []
+    all_items = []
+
+    for d in debts:
+        monthly_rate = d.interest_rate / 100 / 12
+        months = d.current_amount / d.monthly_payment if d.monthly_payment > 0 else 0
+        if monthly_rate > 0 and months > 0:
+            total_paid = d.monthly_payment * months
+            total_interest = total_paid - d.current_amount
+        else:
+            total_interest = 0
+
+        item = {
+            "id": d.id,
+            "name": d.name,
+            "type": "debt",
+            "current_amount": d.current_amount,
+            "interest_rate": d.interest_rate,
+            "monthly_payment": d.monthly_payment,
+            "total_interest": max(0, total_interest),
+            "total_cost": d.current_amount + max(0, total_interest),
+            "months_to_payoff": round(months) if months > 0 else 0,
+        }
+        debt_items.append(item)
+        all_items.append(item)
+
+    for c in cards:
+        if c.current_balance <= 0:
+            continue
+        monthly_rate = c.interest_rate / 100 / 12
+        min_payment = c.limit * 0.05
+        months = 12
+        if monthly_rate > 0:
+            if min_payment > c.current_balance * monthly_rate:
+                months = c.current_balance / (
+                    min_payment - c.current_balance * monthly_rate
+                )
+            else:
+                months = 60
+        total_interest = c.current_balance * monthly_rate * max(1, int(months))
+
+        item = {
+            "id": c.id,
+            "name": c.name,
+            "type": "card",
+            "current_amount": c.current_balance,
+            "interest_rate": c.interest_rate,
+            "monthly_payment": round(min_payment, 2),
+            "total_interest": max(0, total_interest),
+            "total_cost": c.current_balance + max(0, total_interest),
+            "months_to_payoff": max(1, min(60, int(months))),
+            "limit": c.limit,
+            "usage_percent": round(c.current_balance / c.limit * 100)
+            if c.limit > 0
+            else 0,
+        }
+        card_items.append(item)
+        all_items.append(item)
+
+    debt_items.sort(key=lambda x: x["interest_rate"], reverse=True)
+    card_items.sort(key=lambda x: x["interest_rate"], reverse=True)
+    all_items.sort(key=lambda x: x["interest_rate"], reverse=True)
+
+    total_debt_principal = sum(d["current_amount"] for d in debt_items)
+    total_debt_interest = sum(d["total_interest"] for d in debt_items)
+    total_card_principal = sum(c["current_amount"] for c in card_items)
+    total_card_interest = sum(c["total_interest"] for c in card_items)
+
+    highest_rate = all_items[0] if all_items else None
+    lowest_rate = all_items[-1] if all_items else None
+
+    return {
+        "debts": debt_items,
+        "cards": card_items,
+        "all_items": all_items,
+        "summary": {
+            "total_debts": len(debt_items),
+            "total_cards": len(card_items),
+            "total_principal_debts": total_debt_principal,
+            "total_interest_debts": total_debt_interest,
+            "total_principal_cards": total_card_principal,
+            "total_interest_cards": total_card_interest,
+            "total_principal": total_debt_principal + total_card_principal,
+            "total_interest": total_debt_interest + total_card_interest,
+            "highest_rate_item": highest_rate,
+            "lowest_rate_item": lowest_rate,
+        },
+    }
 
 
 @app.get("/api/credit-card/{card_id}/projection")
