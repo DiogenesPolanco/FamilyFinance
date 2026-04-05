@@ -1301,7 +1301,7 @@
                     <div class="space-y-2">`;
                 
                 insights.future_suggestions.forEach(sg => {
-                    const color = sg.type === 'warning' ? 'var(--accent-yellow)' : (sg.type === 'debt' ? 'var(--accent-coral)' : (sg.type === 'success' ? 'var(--accent-green)' : 'var(--accent-blue)');
+                    const color = sg.type === 'warning' ? 'var(--accent-yellow)' : sg.type === 'debt' ? 'var(--accent-coral)' : sg.type === 'success' ? 'var(--accent-green)' : 'var(--accent-blue)';
                     html += `<div class="flex items-start gap-2 p-2 rounded-lg" style="border-left: 3px solid ${color}; background: var(--bg-tertiary)">
                         <i data-lucide="${sg.icon || 'lightbulb'}" class="w-4 h-4 mt-0.5" style="color: ${color}"></i>
                         <p class="text-sm">${sg.message}</p>
