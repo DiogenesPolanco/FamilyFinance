@@ -32,12 +32,8 @@ jobs:
         run: |
           zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py -x "*.pyc"
           
-          FTP_HOST="waws-prod-dm1-209.ftp.azurewebsites.net"
-          USERNAME="$MyFamilyFinance\$MyFamilyFinance"
-          PASSWORD="ERNhgS1byc7jGSGZbBayvkAKmHhrQRtw8m30klfNdlgqGPifNzFyqXWqYTpA"
-          
           echo "Uploading via FTP..."
-          curl --ftp-ssl -T package.zip -u "$USERNAME:$PASSWORD" "ftp://$FTP_HOST/site/wwwroot/"
+          curl --ftp-ssl -T package.zip -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" "ftp://${{ secrets.FTP_HOST }}/site/wwwroot/"
           
           echo "Upload complete!"
 
