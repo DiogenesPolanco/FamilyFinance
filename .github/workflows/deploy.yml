@@ -36,7 +36,7 @@ jobs:
           USERNAME="$MyFamilyFinance\$MyFamilyFinance"
           PASSWORD="ERNhgS1byc7jGSGZbBayvkAKmHhrQRtw8m30klfNdlgqGPifNzFyqXWqYTpA"
           
-          echo "Uploading via FTPS..."
-          curl -TLS -T package.zip -u "$USERNAME:$PASSWORD" "ftps://$FTP_HOST/site/wwwroot/package.zip"
+          echo "Uploading via FTP..."
+          curl --ftp-ssl -T package.zip -u "$USERNAME:$PASSWORD" "ftp://$FTP_HOST/site/wwwroot/"
           
           echo "Upload complete!"
