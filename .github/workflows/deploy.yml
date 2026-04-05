@@ -33,22 +33,16 @@ jobs:
           # Create package
           zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py -x "*.pyc"
           
-          # Azure credentials from secrets
-          AZURE_CRED=${{ secrets.AZURE_CREDENTIALS }}
-          
-          # Extract subscription ID
-          SUB_ID=$(echo $AZURE_CREDENTIALS | jq -r '.subscriptionId')
-          
-          # Get deployment credentials via API
-          TOKEN=$(curl -s -X POST "https://login.microsoftonline.com/$(echo $AZURE_CREDENTIALS | jq -r '.tenantId')/oauth2/v2.0/token" \
-            -H "Content-Type=application/x-www-form-urlencoded" \
-            -d "client_id=$(echo $AZURE_CREDENTIALS | jq -r '.clientId')" \
+          # Get token via API
+          TOKEN=$(curl -s -X POST "https://login.microsoftonline.com/${{ secrets.AZURE_TENANT_ID }}/oauth2/v2.0/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "client_id=${{ secrets.AZURE_CLIENT_ID }}" \
             -d "scope=https://management.azure.com/.default" \
-            -d "client_secret=$(echo $AZURE_CREDENTIALS | jq -r '.clientSecret')" \
+            -d "client_secret=${{ secrets.AZURE_CLIENT_SECRET }}" \
             -d "grant_type=client_credentials" | jq -r '.access_token')
           
           # Get publishing profile
-          PROFILE=$(curl -s -X GET "https://management.azure.com/subscriptions/$SUB_ID/resourceGroups/RGPersonalSinope/providers/Microsoft.Web/sites/${{ secrets.AZURE_WEBAPP_NAME }}/publishingprofile?api-version=2022-03-01" \
+          PROFILE=$(curl -s -X GET "https://management.azure.com/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP }}/providers/Microsoft.Web/sites/${{ secrets.AZURE_WEBAPP_NAME }}/publishingprofile?api-version=2022-03-01" \
             -H "Authorization: Bearer $TOKEN")
           
           FTP_URL=$(echo $PROFILE | jq -r '.publishingProfile.ftpPublishing.url')
