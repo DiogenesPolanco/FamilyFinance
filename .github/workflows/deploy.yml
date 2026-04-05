@@ -16,7 +16,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
       
       - name: Install dependencies
         run: |
@@ -28,48 +28,37 @@ jobs:
           python validate_frontend.py
           node test_translations.js
       
-      - name: Upload to Azure Web App via FTP
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Deploy to Azure Web App
         run: |
           # Create package
           zip -r package.zip static/ main.py models.py requirements.txt ai_engine.py -x "*.pyc"
           
-          # Get token via API
-          TOKEN_RESPONSE=$(curl -s -X POST "https://login.microsoftonline.com/${{ secrets.AZURE_TENANT_ID }}/oauth2/v2.0/token" \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "client_id=${{ secrets.AZURE_CLIENT_ID }}" \
-            -d "scope=https://management.azure.com/.default" \
-            -d "client_secret=${{ secrets.AZURE_CLIENT_SECRET }}" \
-            -d "grant_type=client_credentials")
+          # Set subscription
+          az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
           
-          echo "Token response: $TOKEN_RESPONSE"
-          TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
+          # Get publishing credentials
+          az webapp deployment list-publishing-credentials \
+            --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" | tee creds.json
           
-          if [ "$TOKEN" = "null" ] || [ -z "$TOKEN" ]; then
-            echo "Failed to get token. Check credentials."
-            exit 1
-          fi
+          USERNAME=$(jq -r '.publishingUserName' creds.json)
+          PASSWORD=$(jq -r '.publishingPassword' creds.json)
           
-          # Get publishing credentials with proper headers
-          echo "Getting publishing credentials..."
-          CREDS=$(curl -s -X POST "https://management.azure.com/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP }}/providers/Microsoft.Web/sites/${{ secrets.AZURE_WEBAPP_NAME }}/listPublishingCredentials?api-version=2022-03-01" \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "Content-Type: application/json" \
-            -H "Content-Length: 0")
+          echo "Got credentials for: $USERNAME"
           
-          echo "Creds response: $CREDS"
+          # Upload via FTP
+          echo "Uploading via FTP..."
+          curl -T package.zip -u "$USERNAME:$PASSWORD" "ftp://myfamilyfinance.ftp.azurewebsites.net/site/wwwroot/package.zip"
           
-          USERNAME=$(echo "$CREDS" | jq -r '.publishingUserName')
-          PASSWORD=$(echo "$CREDS" | jq -r '.publishingPassword')
+          echo "Setting startup command..."
+          az webapp config set \
+            --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --startup-command "uvicorn main:app --host 0.0.0.0 --port 8000"
           
-          echo "Username: $USERNAME"
-          
-          if [ "$USERNAME" = "null" ] || [ -z "$USERNAME" ]; then
-            echo "Failed to get publishing credentials"
-            exit 1
-          fi
-          
-          # Upload via FTPS (explicit TLS)
-          echo "Uploading files via FTPS..."
-          curl -TLS -T package.zip -u "$USERNAME:$PASSWORD" "ftps://myfamilyfinance.ftps.azurewebsites.net/site/wwwroot/package.zip"
-          
-          echo "Upload complete!"
+          echo "Deployment complete!"
