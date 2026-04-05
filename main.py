@@ -24,15 +24,8 @@ security = HTTPBearer(auto_error=False)
 
 
 def lifespan(app):
-    from sqlalchemy import inspect
-    from sqlalchemy.exc import OperationalError
-
-    try:
-        # Create tables if they don't exist
-        Base.metadata.create_all(bind=engine, checkfirst=True)
-    except OperationalError:
-        # Tables already exist, continue
-        pass
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
     yield
 
 
