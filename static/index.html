@@ -1352,7 +1352,7 @@
 
         function loadCards() {
             const list = document.getElementById('card-list');
-            fetch('/api/credit-card')
+            apiFetch('/api/credit-card')
                 .then(r => r.json())
                 .then(cards => {
                     if (!cards.length) {
@@ -1591,14 +1591,14 @@
         }
 
         async function loadDashboard() {
-            const summary = await fetch('/api/dashboard/summary').then(r => r.json());
+            const summary = await apiFetch('/api/dashboard/summary').then(r => r.json());
             document.getElementById('dash-balance').textContent = formatMoney(summary.balance || 0);
             document.getElementById('dash-income').textContent = formatMoney(summary.monthly_income || 0);
             document.getElementById('dash-expenses').textContent = formatMoney(summary.monthly_expenses || 0);
             document.getElementById('dash-debt').textContent = formatMoney(summary.total_debt || 0);
 
             // Kakebo - use by_category
-            const kakebo = await fetch('/api/expense/kakebo').then(r => r.json());
+            const kakebo = await apiFetch('/api/expense/kakebo').then(r => r.json());
             const cats = kakebo.by_category || {};
             document.getElementById('kakebo-needs').textContent = formatMoney(cats.needs || 0);
             document.getElementById('kakebo-wants').textContent = formatMoney(cats.wants || 0);
@@ -1606,7 +1606,7 @@
             document.getElementById('kakebo-unexpected').textContent = formatMoney(cats.unexpected || 0);
 
             // Upcoming payments
-            const upcoming = await fetch('/api/dashboard/upcoming').then(r => r.json());
+            const upcoming = await apiFetch('/api/dashboard/upcoming').then(r => r.json());
             const container = document.getElementById('upcoming-payments');
             if (!upcoming.length) {
                 container.innerHTML = '<p class="text-[var(--text-secondary)] text-sm" data-i18n="no_upcoming"></p>';
@@ -1657,7 +1657,7 @@
 
         async function loadIncome() {
             const list = document.getElementById('income-list');
-            const incomes = await fetch('/api/income').then(r => r.json());
+            const incomes = await apiFetch('/api/income').then(r => r.json());
             
             // Filter by current month
             const now = new Date();
@@ -1704,7 +1704,7 @@
 
         async function loadIncomeAll() {
             const list = document.getElementById('income-list');
-            const incomes = await fetch('/api/income').then(r => r.json());
+            const incomes = await apiFetch('/api/income').then(r => r.json());
             
             const total = incomes.reduce((sum, i) => sum + i.amount, 0);
             
@@ -1737,7 +1737,7 @@
             if (sectionTitle) sectionTitle.textContent = t('gastos_kakebo');
             
             const list = document.getElementById('expense-list');
-            const expenses = await fetch('/api/expense').then(r => r.json());
+            const expenses = await apiFetch('/api/expense').then(r => r.json());
             
             // Filter by current month
             const now = new Date();
@@ -1787,7 +1787,7 @@
             if (sectionTitle) sectionTitle.textContent = t('gastos_kakebo');
             
             const list = document.getElementById('expense-list');
-            const expenses = await fetch('/api/expense').then(r => r.json());
+            const expenses = await apiFetch('/api/expense').then(r => r.json());
             
             const total = expenses.reduce((sum, e) => sum + e.amount, 0);
             
@@ -1815,7 +1815,7 @@
 
         async function loadDebts() {
             const list = document.getElementById('debt-list');
-            const debts = await fetch('/api/debt').then(r => r.json());
+            const debts = await apiFetch('/api/debt').then(r => r.json());
             if (!debts.length) {
                 list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_debts">No hay deudas registradas</p>';
                 return;
@@ -1849,7 +1849,7 @@
 
         async function loadServices() {
             const list = document.getElementById('service-list');
-            const services = await fetch('/api/service').then(r => r.json());
+            const services = await apiFetch('/api/service').then(r => r.json());
             if (!services.length) {
                 list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_services">No hay servicios registrados</p>';
                 return;
@@ -1874,7 +1874,7 @@
 
         async function loadAI() {
             // Insights (now first and enhanced)
-            const insights = await fetch('/api/ai/insights').then(r => r.json());
+            const insights = await apiFetch('/api/ai/insights').then(r => r.json());
             const insightContainer = document.getElementById('ai-insights');
             let html = '';
             
@@ -1965,7 +1965,7 @@
             insightContainer.innerHTML = html || '<p class="text-[var(--text-secondary)]">' + t('no_sufficient_data') + '</p>';
 
             // Recommendations
-            const recs = await fetch('/api/ai/recommendations').then(r => r.json());
+            const recs = await apiFetch('/api/ai/recommendations').then(r => r.json());
             const recContainer = document.getElementById('ai-recommendations');
             if (!recs || !recs.length) {
                 recContainer.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('no_recommendations') + '</p>';
@@ -1990,7 +1990,7 @@
             }
 
             // Anomalies & Opportunities
-            const anomalies = await fetch('/api/ai/anomalies').then(r => r.json());
+            const anomalies = await apiFetch('/api/ai/anomalies').then(r => r.json());
             const anomContainer = document.getElementById('ai-anomalies');
             if (!anomalies || !anomalies.length) {
                 anomContainer.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('no_anomalies') + '</p>';
@@ -2270,7 +2270,7 @@
             container.innerHTML = '<div class="card p-6"><p class="text-[var(--text-secondary)]">' + t('loading') + '</p></div>';
             
             try {
-                const data = await fetch('/api/debt-compare/full').then(r => r.json());
+                const data = await apiFetch('/api/debt-compare/full').then(r => r.json());
                 const sum = data.summary;
                 
                 if (!sum.total_debts && !sum.total_cards) {
@@ -2623,7 +2623,7 @@
         }
 
         async function editExpense(expenseId) {
-            const expenses = await fetch('/api/expense').then(r => r.json());
+            const expenses = await apiFetch('/api/expense').then(r => r.json());
             const expense = expenses.find(e => e.id === expenseId);
             if (!expense) return;
             
@@ -2667,7 +2667,7 @@
         }
 
         async function editCard(cardId) {
-            const cards = await fetch('/api/credit-card').then(r => r.json());
+            const cards = await apiFetch('/api/credit-card').then(r => r.json());
             const card = cards.find(c => c.id === cardId);
             if (!card) return;
             
@@ -2710,7 +2710,7 @@
         }
 
         async function editDebt(debtId) {
-            const debts = await fetch('/api/debt').then(r => r.json());
+            const debts = await apiFetch('/api/debt').then(r => r.json());
             const debt = debts.find(d => d.id === debtId);
             if (!debt) return;
             
@@ -2826,7 +2826,7 @@
         }
 
         async function toggleService(id) {
-            const services = await fetch('/api/service').then(r => r.json());
+            const services = await apiFetch('/api/service').then(r => r.json());
             const service = services.find(s => s.id === id);
             if (!service) return;
             
@@ -2845,7 +2845,7 @@
 
         async function loadBudget() {
             const container = document.getElementById('budget-content');
-            const data = await fetch('/api/budget').then(r => r.json());
+            const data = await apiFetch('/api/budget').then(r => r.json());
             const catNames = { needs: t('needs'), wants: t('wants'), culture: t('culture'), unexpected: t('unexpected') };
             const catColors = { needs: 'var(--accent-blue)', wants: 'var(--accent-coral)', culture: 'var(--accent-purple)', unexpected: 'var(--accent-yellow)' };
             let html = `<div class="card p-4 mb-4"><p class="text-sm text-[var(--text-secondary)]">${t('monthly_income_label')} <span class="font-semibold text-[var(--accent-green)]">${formatMoney(data.total_income)}</span></p></div>`;
@@ -2949,7 +2949,7 @@
                 const newRate = parseFloat(document.getElementById('sim-rate').value) || 0;
                 body = { scenario: 'refinance', amount: value, new_rate: newRate };
             }
-            const data = await fetch('/api/ai/simulate', {
+            const data = await apiFetch('/api/ai/simulate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
@@ -3024,12 +3024,29 @@
         });
 
         async function init() {
+            const savedToken = localStorage.getItem('token');
+            
+            if (savedToken) {
+                try {
+                    const resp = await fetch('/api/dashboard/summary', {
+                        headers: { 'Authorization': 'Bearer ' + savedToken }
+                    });
+                    if (resp.ok) {
+                        showMainApp();
+                        showSection('dashboard');
+                        return;
+                    }
+                } catch (e) {
+                    localStorage.removeItem('token');
+                }
+            }
+            
             const status = await fetch('/api/auth/status').then(r => r.json());
             if (status.is_setup) {
                 document.getElementById('login-form').classList.remove('hidden');
                 document.getElementById('setup-form').classList.add('hidden');
             }
-            document.getElementById('login-screen').classList.remove('hidden');
+            showLoginScreen();
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
@@ -3047,8 +3064,10 @@
                 error.classList.remove('hidden');
                 return;
             }
-            await fetch('/api/setup', { method: 'POST', body: new URLSearchParams({ password: p1 }) });
-            login(p1);
+            const resp = await fetch('/api/setup', { method: 'POST', body: new URLSearchParams({ password: p1 }) });
+            if (resp.ok) {
+                login(p1);
+            }
         }
 
         async function login(password) {
@@ -3061,12 +3080,41 @@
                 body: new URLSearchParams({ password })
             });
             if (resp.ok) {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
+                const data = await resp.json();
+                localStorage.setItem('token', data.access_token);
+                showMainApp();
                 showSection('dashboard');
             } else {
                 error.classList.remove('hidden');
             }
+        }
+
+        async function apiFetch(url, options = {}) {
+            const token = localStorage.getItem('token');
+            options.headers = options.headers || {};
+            if (token) {
+                options.headers['Authorization'] = 'Bearer ' + token;
+            }
+            const resp = await fetch(url, options);
+            if (resp.status === 401) {
+                localStorage.removeItem('token');
+                showLoginScreen();
+                throw new Error('Unauthorized');
+            }
+            return resp;
+        }
+
+        function showLoginScreen() {
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('setup-form').classList.add('hidden');
+            document.getElementById('login-error').classList.add('hidden');
+        }
+
+        function showMainApp() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
         }
 
         function showSection(section) {
@@ -3121,7 +3169,7 @@
             
             try {
                 showToast('Cargando datos...', 'info');
-                const resp = await fetch('/api/seed/dummy', { method: 'POST' });
+                const resp = await apiFetch('/api/seed/dummy', { method: 'POST' });
                 const data = await resp.json();
                 
                 if (resp.ok) {
@@ -3168,7 +3216,7 @@
                 </span>`;
             }
             
-            const expenses = await fetch('/api/expense').then(r => r.json());
+            const expenses = await apiFetch('/api/expense').then(r => r.json());
             
             // Filter by current month AND category
             const now = new Date();
