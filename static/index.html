@@ -626,6 +626,169 @@
         let confirmCallback = null;
         let promptCallback = null;
 
+        const bilingualTranslations = {
+            card_limit_usage: { es: 'Límite: {limit} | {usage}% usado | Tasa: {rate}%', en: 'Limit: {limit} | {usage}% used | Rate: {rate}%' },
+            current_balance_label: { es: 'Saldo actual', en: 'Current balance' },
+            view_projection_short: { es: 'Ver Proyección', en: 'View Projection' },
+            amount_label: { es: 'Monto', en: 'Amount' },
+            description_label: { es: 'Descripción', en: 'Description' },
+            category_label: { es: 'Categoría', en: 'Category' },
+            date_label: { es: 'Fecha', en: 'Date' },
+            name_label: { es: 'Nombre', en: 'Name' },
+            initial_amount_label: { es: 'Monto Inicial', en: 'Initial Amount' },
+            current_amount_label: { es: 'Monto Actual', en: 'Current Amount' },
+            interest_rate_pct: { es: 'Tasa de Interés (%)', en: 'Interest Rate (%)' },
+            monthly_payment_label: { es: 'Pago Mensual', en: 'Monthly Payment' },
+            start_date_label: { es: 'Fecha de Inicio', en: 'Start Date' },
+            next_payment_label: { es: 'Próximo Pago', en: 'Next Payment' },
+            limit_label: { es: 'Límite', en: 'Limit' },
+            actual_balance_label: { es: 'Saldo Actual', en: 'Actual Balance' },
+            cutoff_day_label: { es: 'Día de Corte (1-31)', en: 'Cutoff Day (1-31)' },
+            provider_label: { es: 'Proveedor', en: 'Provider' },
+            monthly_amount_label: { es: 'Monto Mensual', en: 'Monthly Amount' },
+            payment_day_label: { es: 'Día de Pago (1-31)', en: 'Payment Day (1-31)' },
+            reminder_days_label: { es: 'Días de Recordatorio', en: 'Reminder Days' },
+            save_label: { es: 'Guardar', en: 'Save' },
+            salary_label: { es: 'Salario', en: 'Salary' },
+            freelance_label: { es: 'Freelance', en: 'Freelance' },
+            investment_label: { es: 'Inversión', en: 'Investment' },
+            gift_label: { es: 'Regalo', en: 'Gift' },
+            other_income_label: { es: 'Otro', en: 'Other' },
+            kakebo_category_label: { es: 'Categoría Kakebo', en: 'Kakebo Category' },
+            needs_label: { es: 'Necesidades', en: 'Needs' },
+            wants_label: { es: 'Deseos', en: 'Wants' },
+            culture_label: { es: 'Cultura', en: 'Culture' },
+            unexpected_label: { es: 'Inesperado', en: 'Unexpected' },
+            this_month: { es: 'Este mes', en: 'This month' },
+            view_all_count: { es: 'Ver todo ({count})', en: 'View all ({count})' },
+            no_income_month: { es: 'No hay ingresos este mes', en: 'No income this month' },
+            no_description: { es: 'Sin descripción', en: 'No description' },
+            all_income_label: { es: 'Todos los ingresos', en: 'All income' },
+            view_current_month: { es: 'Ver mes actual', en: 'View current month' },
+            no_expenses_month: { es: 'No hay gastos este mes', en: 'No expenses this month' },
+            all_expenses_label: { es: 'Todos los gastos', en: 'All expenses' },
+            pay_immediately: { es: 'Pagar de Inmediato', en: 'Pay Immediately' },
+            pay_overdue: { es: 'Pagar Vencido', en: 'Pay Overdue' },
+            pay_early: { es: 'Pagar Adelantado', en: 'Pay Early' },
+            today_urgent: { es: 'Hoy - URGENTE', en: 'Today - URGENT' },
+            overdue_label: { es: 'Vencido', en: 'Overdue' },
+            in_days: { es: 'En {days} día{daysPlural}', en: 'In {days} day{daysPlural}' },
+            payment_month: { es: 'Pago: {amount}/mes', en: 'Payment: {amount}/month' },
+            inactive_label: { es: 'Inactivo', en: 'Inactive' },
+            last_payment_label: { es: 'Último pago', en: 'Last payment' },
+            days_ago_label: { es: 'días', en: 'days' },
+            no_payments_label: { es: 'Sin pagos registrados', en: 'No payments registered' },
+            deactivate_label: { es: 'Desactivar', en: 'Deactivate' },
+            activate_label: { es: 'Activar', en: 'Activate' },
+            service_deactivated: { es: 'Servicio desactivado', en: 'Service deactivated' },
+            service_activated: { es: 'Servicio activado', en: 'Service activated' },
+            confirm_pay_service: { es: 'Registrar pago de este servicio?', en: 'Register payment for this service?' },
+            payment_registered: { es: 'Pago registrado', en: 'Payment registered' },
+            past_feedback: { es: 'Retroalimentación del Pasado', en: 'Past Feedback' },
+            income_vs_month: { es: 'Ingresos vs mes anterior', en: 'Income vs last month' },
+            expenses_vs_month: { es: 'Gastos vs mes anterior', en: 'Expenses vs last month' },
+            future_suggestions: { es: 'Sugerencias a Futuro', en: 'Future Suggestions' },
+            no_sufficient_data: { es: 'No hay datos suficientes para generar insights', en: 'Not enough data to generate insights' },
+            no_recommendations: { es: 'No hay recomendaciones', en: 'No recommendations' },
+            no_anomalies: { es: 'No se detectaron anomalías ni oportunidades', en: 'No anomalies or opportunities detected' },
+            potential_savings: { es: 'Ahorro potencial', en: 'Potential savings' },
+            detected_label: { es: 'Detectado', en: 'Detected' },
+            calculating: { es: 'Calculando...', en: 'Calculating...' },
+            no_debts_excellent: { es: 'No hay deudas activas. ¡Excelente!', en: 'No active debts. Excellent!' },
+            months_estimate: { es: '{months} meses estimado', en: '{months} months estimated' },
+            priority_order: { es: 'Orden de Prioridad', en: 'Priority Order' },
+            steps_label: { es: 'Pasos', en: 'Steps' },
+            no_data_period: { es: 'No hay datos para este período', en: 'No data for this period' },
+            comparison_prev: { es: 'Comparación con período anterior', en: 'Comparison with previous period' },
+            averages_label: { es: 'Promedios', en: 'Averages' },
+            avg_income_label: { es: 'Prom. Ingresos', en: 'Avg Income' },
+            avg_expenses_label: { es: 'Prom. Gastos', en: 'Avg Expenses' },
+            kakebo_this_month: { es: 'Kakebo - Este Mes', en: 'Kakebo - This Month' },
+            recommended_budget: { es: 'Presupuesto Recomendado (Regla 50/30/20)', en: 'Recommended Budget (Rule 50/30/20)' },
+            spent_label: { es: 'Gastado', en: 'Spent' },
+            remaining_label: { es: 'Restante', en: 'Remaining' },
+            exceeded_label: { es: 'Excedido', en: 'Exceeded' },
+            debt_history: { es: 'Historial de Deudas', en: 'Debt History' },
+            rate_label: { es: 'Tasa', en: 'Rate' },
+            original_label: { es: 'Original', en: 'Original' },
+            actual_label: { es: 'Actual', en: 'Actual' },
+            progress_label: { es: 'Progreso', en: 'Progress' },
+            summary_label: { es: 'Resumen', en: 'Summary' },
+            total_original_label: { es: 'Total Original', en: 'Total Original' },
+            total_pending_label: { es: 'Total Pendiente', en: 'Total Pending' },
+            total_paid_label: { es: 'Total Pagado', en: 'Total Paid' },
+            total_debt_label: { es: 'Total Deuda', en: 'Total Debt' },
+            total_interest_label: { es: 'Total Intereses', en: 'Total Interest' },
+            higher_rate_label: { es: 'Mayor Tasa', en: 'Higher Rate' },
+            lower_rate_label: { es: 'Menor Tasa', en: 'Lower Rate' },
+            priority_badge: { es: 'PRIORIDAD', en: 'PRIORITY' },
+            higher_rate_interest: { es: 'Mayor tasa de interés', en: 'Higher interest rate' },
+            loan_label: { es: 'Préstamo', en: 'Loan' },
+            credit_card_label: { es: 'Tarjeta de Crédito', en: 'Credit Card' },
+            balance_label: { es: 'Saldo', en: 'Balance' },
+            est_interest: { es: 'Interés Est.', en: 'Est. Interest' },
+            total_cost_label: { es: 'Costo Total', en: 'Total Cost' },
+            est_months: { es: 'Meses Est.', en: 'Est. Months' },
+            high_risk: { es: 'ALTO RIESGO', en: 'HIGH RISK' },
+            medium_risk: { es: 'MEDIO', en: 'MEDIUM' },
+            low_risk: { es: 'BAJO', en: 'LOW' },
+            ranking_rate: { es: 'Ranking por Tasa de Interés (Mayor a Menor)', en: 'Ranking by Interest Rate (High to Low)' },
+            loans_label: { es: 'Préstamos', en: 'Loans' },
+            credit_cards_label: { es: 'Tarjetas de Crédito', en: 'Credit Cards' },
+            error_comparison: { es: 'Error al cargar comparación', en: 'Error loading comparison' },
+            recommendation_pay_first: { es: 'Recomendación: Pagar este primero para ahorrar en intereses', en: 'Recommendation: Pay this first to save on interest' },
+            months_to_pay_label: { es: 'Meses para pagar', en: 'Months to pay' },
+            cost_total_label: { es: 'Costo total', en: 'Total cost' },
+            payments_count: { es: 'Pagos ({total} meses)', en: 'Payments ({total} months)' },
+            month_label: { es: 'Mes', en: 'Month' },
+            interest_label: { es: 'Interés', en: 'Interest' },
+            error_projection: { es: 'Error al cargar proyección', en: 'Error loading projection' },
+            months_remaining_label: { es: 'Meses restantes', en: 'Months remaining' },
+            payment_label: { es: 'Pago', en: 'Payment' },
+            balance_label_short: { es: 'Saldo', en: 'Balance' },
+            confirm_delete_income: { es: '¿Estás seguro de eliminar este ingreso?', en: 'Are you sure you want to delete this income?' },
+            confirm_delete_expense: { es: '¿Estás seguro de eliminar este gasto?', en: 'Are you sure you want to delete this expense?' },
+            confirm_delete_card: { es: '¿Estás seguro de eliminar esta tarjeta?', en: 'Are you sure you want to delete this card?' },
+            confirm_delete_debt: { es: '¿Estás seguro de eliminar esta deuda?', en: 'Are you sure you want to delete this debt?' },
+            income_deleted: { es: 'Ingreso eliminado', en: 'Income deleted' },
+            expense_deleted: { es: 'Gasto eliminado', en: 'Expense deleted' },
+            card_deleted: { es: 'Tarjeta eliminada', en: 'Card deleted' },
+            debt_deleted: { es: 'Deuda eliminada', en: 'Debt deleted' },
+            pay_debt_title: { es: 'Pagar Deuda', en: 'Pay Debt' },
+            payment_amount_label: { es: 'Monto del pago:', en: 'Payment amount:' },
+            payment_error: { es: 'Error al registrar pago', en: 'Error registering payment' },
+            payment_success: { es: 'Pago registrado', en: 'Payment registered' },
+            error_save: { es: 'Error al guardar', en: 'Error saving' },
+            saved_successfully: { es: 'Guardado correctamente', en: 'Saved successfully' },
+            connection_error: { es: 'Error de conexión', en: 'Connection error' },
+            error_loading_report: { es: 'Error al cargar el reporte', en: 'Error loading report' },
+            charge_amount_label: { es: 'Monto del cargo:', en: 'Charge amount:' },
+            charge_description_label: { es: 'Descripción del cargo:', en: 'Charge description:' },
+            charge_added: { es: 'Cargo agregado', en: 'Charge added' },
+            error_add_charge: { es: 'Error al agregar cargo', en: 'Error adding charge' },
+            monthly_income_label: { es: 'Ingreso mensual:', en: 'Monthly income:' },
+            quick_add_title: { es: 'Agregar Rápido', en: 'Quick Add' },
+            quick_add_prompt_input: { es: 'Escribe "i" para ingreso o "g" para gasto:', en: 'Type "i" for income or "g" for expense:' },
+            loading_data: { es: 'Cargando datos...', en: 'Loading data...' },
+            data_loaded: { es: '✓ Datos cargados', en: '✓ Data loaded' },
+            error_loading_demo: { es: 'Error al cargar datos', en: 'Error loading data' },
+            export_prompt: { es: 'Recurso a exportar:', en: 'Resource to export:' },
+            no_expenses_category: { es: 'No hay gastos en {category} este mes', en: 'No expenses in {category} this month' },
+            view_all_expenses: { es: 'Ver todos los gastos', en: 'View all expenses' },
+            registros_mes: { es: 'registros de este mes', en: 'records this month' },
+            total_this_month: { es: 'Total este mes:', en: 'Total this month:' },
+            amount_of: { es: '{current} de {initial} | {rate}%', en: '{current} of {initial} | {rate}%' },
+            sim_current_monthly: { es: 'Ingreso Actual', en: 'Current Monthly' },
+            sim_current_payment: { es: 'Pago Actual', en: 'Current Payment' },
+            sim_extra_payment: { es: 'Pago Extra', en: 'Extra Payment' },
+            sim_new_payment: { es: 'Nuevo Pago', en: 'New Payment' },
+            sim_months_saved: { es: 'Meses Ahorrados', en: 'Months Saved' },
+            sim_years_less: { es: 'Años Menos', en: 'Years Less' },
+            sim_interest_saved: { es: 'Interés Ahorrado', en: 'Interest Saved' },
+            add_income_title: { es: 'Agregar Ingreso', en: 'Add Income' },
+            add_expense_title: { es: 'Agregar Gasto', en: 'Add Expense' },
+        };
+
         const translations = {
             es: {
                 app_name: 'FamilyFinance',
@@ -839,6 +1002,14 @@
                 balance: 'Saldo',
                 interest_est: 'Interés Est.',
                 estimated: 'Estimado',
+                no_income_this_month: 'No hay ingresos este mes',
+                no_expenses_this_month: 'No hay gastos este mes',
+                error_loading_report: 'Error al cargar el reporte',
+                error_loading_comparison: 'Error al cargar comparación',
+                error_loading_projection: 'Error al cargar proyección',
+                all_income_label: 'Todos los Ingresos',
+                calculating: 'Calculando...',
+                no_debts_excellent: 'No hay deudas activas. ¡Excelente!',
             },
             en: {
                 app_name: 'FamilyFinance',
@@ -1052,38 +1223,16 @@
                 balance: 'Balance',
                 interest_est: 'Interest Est.',
                 estimated: 'Estimated',
-                
-                // NEW i18n keys added
-                card_limit_usage: { es: 'Límite: {limit} | {usage}% usado | Tasa: {rate}%', en: 'Limit: {limit} | {usage}% used | Rate: {rate}%' },
-                current_balance_label: { es: 'Saldo actual', en: 'Current balance' },
-                view_projection_short: { es: 'Ver Proyección', en: 'View Projection' },
-                amount_label: { es: 'Monto', en: 'Amount' },
-                description_label: { es: 'Descripción', en: 'Description' },
-                category_label: { es: 'Categoría', en: 'Category' },
-                date_label: { es: 'Fecha', en: 'Date' },
-                name_label: { es: 'Nombre', en: 'Name' },
-                initial_amount_label: { es: 'Monto Inicial', en: 'Initial Amount' },
-                current_amount_label: { es: 'Monto Actual', en: 'Current Amount' },
-                interest_rate_pct: { es: 'Tasa de Interés (%)', en: 'Interest Rate (%)' },
-                monthly_payment_label: { es: 'Pago Mensual', en: 'Monthly Payment' },
-                start_date_label: { es: 'Fecha de Inicio', en: 'Start Date' },
-                next_payment_label: { es: 'Próximo Pago', en: 'Next Payment' },
-                limit_label: { es: 'Límite', en: 'Limit' },
-                actual_balance_label: { es: 'Saldo Actual', en: 'Actual Balance' },
-                cutoff_day_label: { es: 'Día de Corte (1-31)', en: 'Cutoff Day (1-31)' },
-                provider_label: { es: 'Proveedor', en: 'Provider' },
-                monthly_amount_label: { es: 'Monto Mensual', en: 'Monthly Amount' },
-                payment_day_label: { es: 'Día de Pago (1-31)', en: 'Payment Day (1-31)' },
-                reminder_days_label: { es: 'Días de Recordatorio', en: 'Reminder Days' },
-                save_label: { es: 'Guardar', en: 'Save' },
-                salary_label: { es: 'Salario', en: 'Salary' },
-                freelance_label: { es: 'Freelance', en: 'Freelance' },
-                investment_label: { es: 'Inversión', en: 'Investment' },
-                gift_label: { es: 'Regalo', en: 'Gift' },
-                other_income_label: { es: 'Otro', en: 'Other' },
-                kakebo_category_label: { es: 'Categoría Kakebo', en: 'Kakebo Category' },
-                needs_label: { es: 'Necesidades', en: 'Needs' },
-                wants_label: { es: 'Deseos', en: 'Wants' },
+                no_income_this_month: 'No income this month',
+                no_expenses_this_month: 'No expenses this month',
+                error_loading_report: 'Error loading report',
+                error_loading_comparison: 'Error loading comparison',
+                error_loading_projection: 'Error loading projection',
+                all_income_label: 'All Income',
+                calculating: 'Calculating...',
+                no_debts_excellent: 'No active debts. Excellent!',
+            },
+            es: {
                 culture_label: { es: 'Cultura', en: 'Culture' },
                 unexpected_label: { es: 'Inesperado', en: 'Unexpected' },
                 this_month: { es: 'Este mes', en: 'This month' },
@@ -1235,11 +1384,14 @@
         let currentLang = localStorage.getItem('ff-lang') || 'es';
 
         function t(key) {
-            // Support both simple strings and {es, en} objects
-            const value = translations[currentLang]?.[key] || translations.es?.[key];
-            if (value && typeof value === 'object' && value.es !== undefined) {
-                return value[currentLang] || value.es || key;
+            // Check bilingualTranslations first for {es, en} objects
+            const bilingualValue = bilingualTranslations[key];
+            if (bilingualValue && typeof bilingualValue === 'object' && bilingualValue.es !== undefined) {
+                return bilingualValue[currentLang] || bilingualValue.es || key;
             }
+            
+            // Then check regular translations
+            const value = translations[currentLang]?.[key] || translations.es?.[key];
             return value || key;
         }
 
@@ -1665,7 +1817,7 @@
             const monthlyIncomes = incomes.filter(i => i.date >= firstOfMonth);
             
             if (!incomes.length) {
-                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_income">No hay ingresos registrados</p>';
+                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_income">' + t('no_income') + '</p>';
                 return;
             }
             
@@ -1681,7 +1833,7 @@
             </div>`;
             
             if (!monthlyIncomes.length) {
-                list.innerHTML = header + '<p class="text-[var(--text-secondary)] text-center py-8">No hay ingresos este mes</p>';
+                list.innerHTML = header + '<p class="text-[var(--text-secondary)] text-center py-8">' + t('no_income_this_month') + '</p>';
                 return;
             }
             
@@ -1745,7 +1897,7 @@
             const monthlyExpenses = expenses.filter(e => e.date >= firstOfMonth);
             
             if (!expenses.length) {
-                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_expenses">No hay gastos registrados</p>';
+                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_expenses">' + t('no_expenses') + '</p>';
                 return;
             }
             
@@ -1761,7 +1913,7 @@
             </div>`;
             
             if (!monthlyExpenses.length) {
-                list.innerHTML = header + '<p class="text-[var(--text-secondary)] text-center py-8">No hay gastos este mes</p>';
+                list.innerHTML = header + '<p class="text-[var(--text-secondary)] text-center py-8">' + t('no_expenses_this_month') + '</p>';
                 return;
             }
             
@@ -1817,7 +1969,7 @@
             const list = document.getElementById('debt-list');
             const debts = await apiFetch('/api/debt').then(r => r.json());
             if (!debts.length) {
-                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_debts">No hay deudas registradas</p>';
+                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_debts">' + t('no_debts') + '</p>';
                 return;
             }
             list.innerHTML = debts.map(d => {
@@ -1851,7 +2003,7 @@
             const list = document.getElementById('service-list');
             const services = await apiFetch('/api/service').then(r => r.json());
             if (!services.length) {
-                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_services">No hay servicios registrados</p>';
+                list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_services">' + t('no_services') + '</p>';
                 return;
             }
             list.innerHTML = services.map(s => {
@@ -2020,7 +2172,7 @@
         async function loadReport(type) {
             currentReportType = type;
             const container = document.getElementById('report-content');
-            container.innerHTML = '<p class="text-[var(--text-secondary)]">Cargando...</p>';
+            container.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('loading') + '</p>';
             
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             const tabBtn = document.getElementById('tab-' + type);
@@ -2041,7 +2193,7 @@
                 
                 container.innerHTML = html;
             } catch (e) {
-                container.innerHTML = '<p class="text-[var(--accent-coral)]">Error al cargar el reporte: ' + e.message + '</p>';
+                container.innerHTML = '<p class="text-[var(--accent-coral)]">' + t('error_loading_report') + ': ' + e.message + '</p>';
             }
         }
         
@@ -2455,7 +2607,7 @@
                 
                 container.innerHTML = html;
             } catch (e) {
-                container.innerHTML = '<div class="card p-6"><p class="text-[var(--accent-coral)]">Error al cargar comparacion</p></div>';
+                container.innerHTML = '<div class="card p-6"><p class="text-[var(--accent-coral)]">' + t('error_loading_comparison') + '</p></div>';
                 console.error(e);
             }
         }
@@ -2465,7 +2617,7 @@
             container.classList.toggle('hidden');
             if (container.classList.contains('hidden')) return;
             
-            container.innerHTML = '<p class="text-sm text-[var(--text-secondary)]">Cargando...</p>';
+            container.innerHTML = '<p class="text-sm text-[var(--text-secondary)]">' + t('loading') + '</p>';
             
             try {
                 const data = await fetch(`/api/credit-card/${cardId}/projection`).then(r => r.json());
@@ -2512,7 +2664,7 @@
                 html += '</div>';
                 container.innerHTML = html;
             } catch (e) {
-                container.innerHTML = '<p class="text-[var(--accent-coral)]">Error al cargar proyeccion</p>';
+                container.innerHTML = '<p class="text-[var(--accent-coral)]">' + t('error_loading_projection') + '</p>';
             }
         }
 
@@ -3055,12 +3207,12 @@
             const p2 = document.getElementById('setup-password-confirm').value;
             const error = document.getElementById('setup-error');
             if (p1 !== p2) {
-                error.textContent = 'Las contraseñas no coinciden';
+                error.textContent = t('password_mismatch');
                 error.classList.remove('hidden');
                 return;
             }
             if (p1.length < 4) {
-                error.textContent = 'La contraseña debe tener al menos 4 caracteres';
+                error.textContent = t('password_min_length');
                 error.classList.remove('hidden');
                 return;
             }
@@ -3275,7 +3427,7 @@
             currentCategoryFilter = null;
             const sectionTitle = document.querySelector('#section-expenses h1');
             if (sectionTitle) {
-                sectionTitle.textContent = 'Gastos (Kakebo)';
+                sectionTitle.textContent = t('expenses');
             }
             loadExpenses();
         }
