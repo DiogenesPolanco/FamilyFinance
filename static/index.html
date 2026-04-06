@@ -22,6 +22,20 @@
             --accent-yellow: #FDCB6E;
             --border: #E8E4DF;
         }
+        body.dark-mode {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f3460;
+            --text-primary: #eaeaea;
+            --text-secondary: #b8b8b8;
+            --text-tertiary: #6c6c6c;
+            --accent-green: #4ecdc4;
+            --accent-coral: #ff6b6b;
+            --accent-blue: #4dabf7;
+            --accent-purple: #9775fa;
+            --accent-yellow: #ffd43b;
+            --border: #2d2d44;
+        }
         body {
             font-family: 'DM Sans', sans-serif;
             background: var(--bg-primary);
@@ -185,8 +199,8 @@
             }
         }
         /* Toast - Global styles */
-        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { padding: 14px 24px; border-radius: 12px; color: white; font-size: 14px; font-weight: 500; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-width: 380px; line-height: 1.4; }
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; max-width: 100vw; padding: 0 20px; }
+        .toast { padding: 14px 24px; border-radius: 12px; color: white; font-size: 14px; font-weight: 500; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-width: 380px; line-height: 1.4; pointer-events: auto; margin-left: auto; }
         .toast-success { background: var(--accent-green); border-left: 4px solid #3d8b73; }
         .toast-error { background: var(--accent-coral); border-left: 4px solid #c4513e; }
         .toast-info { background: var(--accent-blue); border-left: 4px solid #5a9fd9; }
@@ -243,6 +257,9 @@
     </style>
 </head>
 <body class="min-h-screen">
+    <!-- Toast Container - Fixed position top right -->
+    <div id="toast-container"></div>
+    
     <div id="app" class="min-h-screen">
         <!-- Login Screen -->
         <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 hidden">
@@ -299,7 +316,10 @@
                 <button onclick="showSection('ai')" class="nav-btn p-3 rounded-xl" data-section="ai">
                     <i data-lucide="sparkles" class="w-6 h-6"></i>
                 </button>
-                <button onclick="toggleLanguage()" class="p-3 rounded-xl hover:bg-[var(--bg-tertiary)] mt-auto" title="Toggle language">
+                <button onclick="toggleTheme()" class="p-3 rounded-xl hover:bg-[var(--bg-tertiary)]" title="Toggle theme" id="theme-toggle">
+                    <i data-lucide="moon" class="w-6 h-6" id="theme-icon"></i>
+                </button>
+                <button onclick="toggleLanguage()" class="p-3 rounded-xl hover:bg-[var(--bg-tertiary)]" title="Toggle language">
                     <i data-lucide="languages" class="w-6 h-6"></i>
                 </button>
             </nav>
@@ -495,53 +515,98 @@
                         <h1 class="text-2xl font-semibold" data-i18n="ai_assistant">Asistente IA</h1>
                     </div>
 
-                    <div class="card p-6 mb-6">
-                        <h2 class="text-lg font-semibold mb-4" data-i18n="financial_summary">Resumen Financiero</h2>
-                        <div id="ai-insights" class="space-y-4">
-                            <p class="text-[var(--text-secondary)]" data-i18n="loading_insights">Cargando insights...</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="card p-4 text-center">
+                            <p class="text-sm text-[var(--text-secondary)] mb-1" data-i18n="income">Ingresos</p>
+                            <p class="text-xl font-bold" style="color: var(--accent-green)" id="ai-summary-income">-</p>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <p class="text-sm text-[var(--text-secondary)] mb-1" data-i18n="expenses">Gastos</p>
+                            <p class="text-xl font-bold" style="color: var(--accent-coral)" id="ai-summary-expenses">-</p>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <p class="text-sm text-[var(--text-secondary)] mb-1" data-i18n="balance">Balance</p>
+                            <p class="text-xl font-bold" id="ai-summary-balance">-</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="card p-6">
+                            <h3 class="font-semibold mb-4 flex items-center gap-2">
+                                <i data-lucide="trending-up" class="w-5 h-5" style="color: var(--accent-blue)"></i>
+                                <span data-i18n="past_feedback">Retroalimentación del Pasado</span>
+                            </h3>
+                            <div id="ai-insights" class="space-y-3">
+                                <p class="text-[var(--text-secondary)]" data-i18n="loading">Cargando...</p>
+                            </div>
+                        </div>
+
+                        <div class="card p-6">
+                            <h3 class="font-semibold mb-4 flex items-center gap-2">
+                                <i data-lucide="lightbulb" class="w-5 h-5" style="color: var(--accent-yellow)"></i>
+                                <span data-i18n="future_suggestions">Sugerencias a Futuro</span>
+                            </h3>
+                            <div id="ai-future" class="space-y-3">
+                                <p class="text-[var(--text-secondary)]" data-i18n="loading">Cargando...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="card p-6">
+                            <h3 class="font-semibold mb-4 flex items-center gap-2">
+                                <i data-lucide="list-checks" class="w-5 h-5" style="color: var(--accent-green)"></i>
+                                <span data-i18n="recommendations">Recomendaciones</span>
+                            </h3>
+                            <div id="ai-recommendations" class="space-y-2">
+                                <p class="text-[var(--text-secondary)]" data-i18n="loading">Cargando...</p>
+                            </div>
+                        </div>
+
+                        <div class="card p-6">
+                            <h3 class="font-semibold mb-4 flex items-center gap-2">
+                                <i data-lucide="alert-circle" class="w-5 h-5" style="color: var(--accent-coral)"></i>
+                                <span data-i18n="anomaly_detection">Detección de Anomalías</span>
+                            </h3>
+                            <div id="ai-anomalies" class="space-y-2">
+                                <p class="text-[var(--text-secondary)]" data-i18n="loading">Cargando...</p>
+                            </div>
                         </div>
                     </div>
 
                     <div class="card p-6 mb-6">
-                        <h2 class="text-lg font-semibold mb-4" data-i18n="recommendations">Recomendaciones</h2>
-                        <div id="ai-recommendations" class="space-y-3">
-                            <p class="text-[var(--text-secondary)]" data-i18n="loading_recommendations">Cargando recomendaciones...</p>
-                        </div>
-                    </div>
-
-                    <div class="card p-6 mb-6">
-                        <h2 class="text-lg font-semibold mb-4" data-i18n="anomaly_detection">Detección de Anomalías</h2>
-                        <div id="ai-anomalies" class="space-y-3">
-                            <p class="text-[var(--text-secondary)]" data-i18n="loading_anomalies">Cargando anomalías...</p>
-                        </div>
-                    </div>
-
-                    <div class="card p-6 mb-6">
-                        <h2 class="text-lg font-semibold mb-4" data-i18n="debt_strategy">Estrategia de Pago de Deudas</h2>
+                        <h3 class="font-semibold mb-4 flex items-center gap-2">
+                            <i data-lucide="credit-card" class="w-5 h-5" style="color: var(--accent-purple)"></i>
+                            <span data-i18n="debt_strategy">Estrategia de Pago de Deudas</span>
+                        </h3>
                         <div class="flex gap-2 mb-4">
-<button onclick="loadDebtStrategy('avalanche')" class="tab-btn active" id="tab-avalanche" data-i18n="avalanche">Avalancha</button>
-                                <button onclick="loadDebtStrategy('snowball')" class="tab-btn" id="tab-snowball" data-i18n="snowball">Bola de Nieve</button>
+                            <button onclick="loadDebtStrategy('avalanche')" class="tab-btn active" id="tab-avalanche" data-i18n="avalanche">Avalancha</button>
+                            <button onclick="loadDebtStrategy('snowball')" class="tab-btn" id="tab-snowball" data-i18n="snowball">Bola de Nieve</button>
                         </div>
-                        <div id="ai-debt-strategy" class="space-y-3">
+                        <div id="ai-debt-strategy">
                             <p class="text-[var(--text-secondary)]" data-i18n="select_strategy">Selecciona una estrategia</p>
                         </div>
                     </div>
 
                     <div class="card p-6">
-                        <h2 class="text-lg font-semibold mb-4" data-i18n="whatif_simulator">Simulador What-If</h2>
-                        <div class="grid grid-cols-2 gap-3 mb-4">
-                            <select id="sim-type" class="input col-span-2">
+                        <h3 class="font-semibold mb-4 flex items-center gap-2">
+                            <i data-lucide="calculator" class="w-5 h-5" style="color: var(--accent-blue)"></i>
+                            <span data-i18n="whatif_simulator">Simulador What-If</span>
+                        </h3>
+                        <div class="space-y-3">
+                            <select id="sim-type" class="input w-full">
                                 <option value="income_change" data-i18n="income_change">Cambio en Ingresos</option>
                                 <option value="expense_reduction" data-i18n="expense_reduction">Reducción de Gastos</option>
                                 <option value="extra_debt_payment" data-i18n="extra_debt_payment">Pago Extra de Deuda</option>
                                 <option value="refinance" data-i18n="refinance">Refinanciamiento</option>
                             </select>
-                            <input type="number" id="sim-value" class="input" data-i18n-placeholder="amount_placeholder" placeholder="Monto ($)">
-                            <input type="number" id="sim-rate" class="input hidden" data-i18n-placeholder="new_rate_placeholder" placeholder="Nueva tasa (%)">
-                            <button onclick="runSimulation()" class="btn btn-primary col-span-2">Simular</button>
+                            <div class="flex gap-3">
+                                <input type="number" id="sim-value" class="input flex-1" data-i18n-placeholder="amount_placeholder" placeholder="Monto ($)">
+                                <input type="number" id="sim-rate" class="input flex-1 hidden" data-i18n-placeholder="new_rate_placeholder" placeholder="Nueva tasa (%)">
+                            </div>
+                            <button onclick="runSimulation()" class="btn btn-primary w-full" data-i18n="simulate">Simular</button>
                         </div>
-                        <div id="sim-result" class="hidden card p-4 bg-[var(--bg-tertiary)]">
-                        </div>
+                        <div id="sim-result" class="hidden mt-4 space-y-2"></div>
                     </div>
                 </section>
             </main>
@@ -593,9 +658,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Toast Container -->
-    <div id="toast-container"></div>
 
     <!-- Confirm Dialog -->
     <div id="confirm-overlay">
@@ -772,6 +834,8 @@
             loading_data: { es: 'Cargando datos...', en: 'Loading data...' },
             data_loaded: { es: '✓ Datos cargados', en: '✓ Data loaded' },
             error_loading_demo: { es: 'Error al cargar datos', en: 'Error loading data' },
+            error_unknown: { es: 'Error desconocido', en: 'Unknown error' },
+            load_demo_confirm: { es: '¿Cargar datos de demostración?\n\nEsto agregará datos ficticios a todos los módulos para pruebas.', en: 'Load demonstration data?\n\nThis will add dummy data to all modules for testing.' },
             export_prompt: { es: 'Recurso a exportar:', en: 'Resource to export:' },
             no_expenses_category: { es: 'No hay gastos en {category} este mes', en: 'No expenses in {category} this month' },
             view_all_expenses: { es: 'Ver todos los gastos', en: 'View all expenses' },
@@ -1231,8 +1295,131 @@
                 all_income_label: 'All Income',
                 calculating: 'Calculating...',
                 no_debts_excellent: 'No active debts. Excellent!',
+                potential_savings: 'Potential savings',
+                detected_label: 'Detected',
+                months_estimate: '{months} months estimated',
+                priority_order: 'Priority Order',
+                steps_label: 'Steps',
+                no_data_period: 'No data for this period',
+                averages_label: 'Averages',
+                avg_income_label: 'Avg Income',
+                avg_expenses_label: 'Avg Expenses',
+                spent_label: 'Spent',
+                remaining_label: 'Remaining',
+                exceeded_label: 'Exceeded',
+                rate_label: 'Rate',
+                original_label: 'Original',
+                actual_label: 'Actual',
+                progress_label: 'Progress',
+                summary_label: 'Summary',
+                total_original_label: 'Total Original',
+                total_pending_label: 'Total Pending',
+                total_paid_label: 'Total Paid',
+                total_debt_label: 'Total Debt',
+                total_interest_label: 'Total Interest',
+                higher_rate_label: 'Higher Rate',
+                lower_rate_label: 'Lower Rate',
+                priority_badge: 'PRIORITY',
+                loan_label: 'Loan',
+                credit_card_label: 'Credit Card',
+                balance_label: 'Balance',
+                est_interest: 'Est. Interest',
+                total_cost_label: 'Total Cost',
+                est_months: 'Est. Months',
+                high_risk: 'HIGH RISK',
+                medium_risk: 'MEDIUM',
+                low_risk: 'LOW',
+                loans_label: 'Loans',
+                credit_cards_label: 'Credit Cards',
+                error_comparison: 'Error loading comparison',
+                recommendation_pay_first: 'Recommendation: Pay this first to save on interest',
+                months_to_pay_label: 'Months to pay',
+                cost_total_label: 'Total cost',
+                payments_count: 'Payments ({total} months)',
+                month_label: 'Month',
+                interest_label: 'Interest',
+                error_projection: 'Error loading projection',
+                months_remaining_label: 'Months remaining',
+                payment_label: 'Payment',
+                balance_label_short: 'Balance',
+                confirm_delete_income: 'Are you sure you want to delete this income?',
+                confirm_delete_expense: 'Are you sure you want to delete this expense?',
+                confirm_delete_card: 'Are you sure you want to delete this card?',
+                confirm_delete_debt: 'Are you sure you want to delete this debt?',
+                income_deleted: 'Income deleted',
+                expense_deleted: 'Expense deleted',
+                card_deleted: 'Card deleted',
+                debt_deleted: 'Debt deleted',
+                pay_debt_title: 'Pay Debt',
+                payment_amount_label: 'Payment amount:',
+                payment_error: 'Error registering payment',
+                payment_success: 'Payment registered',
+                error_save: 'Error saving',
+                saved_successfully: 'Saved successfully',
+                connection_error: 'Connection error',
+                charge_amount_label: 'Charge amount:',
+                charge_description_label: 'Charge description:',
+                charge_added: 'Charge added',
+                error_add_charge: 'Error adding charge',
+                monthly_income_label: 'Monthly income:',
+                quick_add_title: 'Quick Add',
+                quick_add_prompt_input: 'Type "i" for income or "g" for expense:',
+                loading_data: 'Loading data...',
+                data_loaded: '✓ Data loaded',
+                error_loading_demo: 'Error loading data',
+                export_prompt: 'Resource to export:',
+                no_expenses_category: 'No expenses in {category} this month',
+                view_all_expenses: 'View all expenses',
+                registros_mes: 'records this month',
+                total_this_month: 'Total this month:',
+                amount_of: '{current} of {initial} | {rate}%',
+                // Note: Simulator translations are in bilingualTranslations above
+                add_income_title: 'Add Income',
+                add_expense_title: 'Add Expense',
             },
             es: {
+                // === CLAVES BÁSICAS FALTANTES ===
+                enter: 'Entrar',
+                incorrect_password: 'Contraseña incorrecta',
+                begin: 'Comenzar',
+                demo_data: 'Datos Demo',
+                // Placeholders
+                password: 'Contraseña',
+                create_password: 'Crea una contraseña',
+                confirm_password: 'Confirma la contraseña',
+                amount_placeholder: 'Monto ($)',
+                new_rate_placeholder: 'Nueva tasa (%)',
+                // Labels
+                current_balance_label: 'Saldo actual',
+                amount_label: 'Monto',
+                description_label: 'Descripción',
+                category_label: 'Categoría',
+                date_label: 'Fecha',
+                name_label: 'Nombre',
+                initial_amount_label: 'Monto Inicial',
+                current_amount_label: 'Monto Actual',
+                interest_rate_pct: 'Tasa de Interés (%)',
+                monthly_payment_label: 'Pago Mensual',
+                start_date_label: 'Fecha de Inicio',
+                next_payment_label: 'Próximo Pago',
+                limit_label: 'Límite',
+                actual_balance_label: 'Saldo Actual',
+                cutoff_day_label: 'Día de Corte (1-31)',
+                provider_label: 'Proveedor',
+                monthly_amount_label: 'Monto Mensual',
+                payment_day_label: 'Día de Pago (1-31)',
+                reminder_days_label: 'Días de Recordatorio',
+                save_label: 'Guardar',
+                salary_label: 'Salario',
+                freelance_label: 'Freelance',
+                investment_label: 'Inversión',
+                gift_label: 'Regalo',
+                other_income_label: 'Otro',
+                kakebo_category_label: 'Categoría Kakebo',
+                needs_label: 'Necesidades',
+                wants_label: 'Deseos',
+                culture_label: 'Cultura',
+                unexpected_label: 'Inesperado',
                 culture_label: { es: 'Cultura', en: 'Culture' },
                 unexpected_label: { es: 'Inesperado', en: 'Unexpected' },
                 this_month: { es: 'Este mes', en: 'This month' },
@@ -1349,39 +1536,214 @@
                 data_loaded: { es: '✓ Datos cargados', en: '✓ Data loaded' },
                 error_loading_demo: { es: 'Error al cargar datos', en: 'Error loading data' },
                 export_prompt: { es: 'Recurso a exportar:', en: 'Resource to export:' },
-                no_expenses_category: { es: 'No hay gastos en {category} este mes', en: 'No expenses in {category} this month' },
-                view_all_expenses: { es: 'Ver todos los gastos', en: 'View all expenses' },
-                registros_mes: { es: 'registros de este mes', en: 'records this month' },
-                total_this_month: { es: 'Total este mes:', en: 'Total this month:' },
-                amount_of: { es: '{current} de {initial} | {rate}%', en: '{current} of {initial} | {rate}%' },
-                sim_current_monthly: { es: 'Ingreso Actual', en: 'Current Monthly' },
-                sim_new_monthly: { es: 'Nuevo Ingreso', en: 'New Monthly' },
-                sim_extra_available: { es: 'Extra Disponible', en: 'Extra Available' },
-                sim_recommended_savings: { es: 'Ahorro Recom.', en: 'Rec. Savings' },
-                sim_yearly_impact: { es: 'Impacto Anual', en: 'Yearly Impact' },
-                sim_current_expenses: { es: 'Gastos Actuales', en: 'Current Expenses' },
-                sim_new_expenses: { es: 'Nuevos Gastos', en: 'New Expenses' },
-                sim_monthly_savings: { es: 'Ahorro Mensual', en: 'Monthly Savings' },
-                sim_yearly_savings: { es: 'Ahorro Anual', en: 'Yearly Savings' },
-                sim_current_rate: { es: 'Tasa Actual', en: 'Current Rate' },
-                sim_new_rate: { es: 'Nueva Tasa', en: 'New Rate' },
-                sim_rate_reduction: { es: 'Reducción Tasa', en: 'Rate Reduction' },
-                sim_monthly_interest_current: { es: 'Interés Mensual Actual', en: 'Current Monthly Interest' },
-                sim_monthly_interest_new: { es: 'Nuevo Interés Mensual', en: 'New Monthly Interest' },
-                sim_total_savings: { es: 'Ahorro Total', en: 'Total Savings' },
-                sim_debt_name: { es: 'Deuda', en: 'Debt' },
-                sim_current_payment: { es: 'Pago Actual', en: 'Current Payment' },
-                sim_extra_payment: { es: 'Pago Extra', en: 'Extra Payment' },
-                sim_new_payment: { es: 'Nuevo Pago', en: 'New Payment' },
-                sim_months_saved: { es: 'Meses Ahorrados', en: 'Months Saved' },
-                sim_years_less: { es: 'Años Menos', en: 'Years Less' },
-                sim_interest_saved: { es: 'Interés Ahorrado', en: 'Interest Saved' },
-                add_income_title: { es: 'Agregar Ingreso', en: 'Add Income' },
-                add_expense_title: { es: 'Agregar Gasto', en: 'Add Expense' },
+                no_expenses_category: 'No hay gastos en {category} este mes',
+                view_all_expenses: 'Ver todos los gastos',
+                registros_mes: 'registros de este mes',
+                total_this_month: 'Total este mes:',
+                amount_of: '{current} de {initial} | {rate}%',
+                sim_current_monthly: 'Ingreso Actual',
+                sim_new_monthly: 'Nuevo Ingreso',
+                sim_extra_available: 'Extra Disponible',
+                sim_recommended_savings: 'Ahorro Recom.',
+                sim_yearly_impact: 'Impacto Anual',
+                sim_current_expenses: 'Gastos Actuales',
+                sim_new_expenses: 'Nuevos Gastos',
+                sim_monthly_savings: 'Ahorro Mensual',
+                sim_yearly_savings: 'Ahorro Anual',
+                sim_current_rate: 'Tasa Actual',
+                sim_new_rate: 'Nueva Tasa',
+                sim_rate_reduction: 'Reducción Tasa',
+                sim_monthly_interest_current: 'Interés Mensual Actual',
+                sim_monthly_interest_new: 'Nuevo Interés Mensual',
+                sim_total_savings: 'Ahorro Total',
+                sim_debt_name: 'Deuda',
+                sim_current_payment: 'Pago Actual',
+                sim_extra_payment: 'Pago Extra',
+                sim_new_payment: 'Nuevo Pago',
+                sim_months_saved: 'Meses Ahorrados',
+                sim_years_less: 'Años Menos',
+                sim_interest_saved: 'Interés Ahorrado',
+                add_income_title: 'Agregar Ingreso',
+                add_expense_title: 'Agregar Gasto',
+                // === CLAVES FALTANTES AGREGADAS ===
+                fortnightly: 'Quincenal',
+                monthly: 'Mensual',
+                quarterly: 'Trimestral',
+                yearly: 'Anual',
+                kakebo: 'Kakebo',
+                debts: 'Deudas',
+                div: 'Dividir',
+                no_cards: 'No hay tarjetas registradas',
+                add_charge: 'Agregar Cargo',
+                edit: 'Editar',
+                add_income: 'Agregar Ingreso',
+                add_expense: 'Agregar Gasto',
+                new_debt: 'Nueva Deuda',
+                new_card: 'Nueva Tarjeta',
+                new_service: 'Nuevo Servicio',
+                no_upcoming: 'No hay pagos próximos',
+                no_income: 'No hay ingresos registrados',
+                no_income_this_month: 'No hay ingresos este mes',
+                gastos_kakebo: 'Gastos (Kakebo)',
+                no_expenses: 'No hay gastos registrados',
+                no_expenses_this_month: 'No hay gastos este mes',
+                no_debts: 'No hay deudas registradas',
+                paid: 'Pagado',
+                active: 'Activo',
+                pay: 'Pagar',
+                no_services: 'No hay servicios registrados',
+                loading: 'Cargando...',
+                income: 'Ingresos',
+                expenses: 'Gastos',
+                needs: 'Necesidades',
+                wants: 'Deseos',
+                culture: 'Cultura',
+                unexpected: 'Inesperado',
+                no_debts_cards_compare: 'No hay deudas ni tarjetas para comparar',
+                used: 'usado',
+                error_loading_comparison: 'Error al cargar comparación',
+                card_projection: 'Proyección de Tarjeta',
+                error_loading_projection: 'Error al cargar proyección',
+                amortization_table: 'Tabla de Amortización',
+                edit_expense: 'Editar Gasto',
+                delete: 'Eliminar',
+                save: 'Guardar',
+                edit_card: 'Editar Tarjeta',
+                edit_debt: 'Editar Deuda',
+                avalanche: 'Avalancha',
+                snowball: 'Bola de Nieve',
+                positive: 'Positivo',
+                negative: 'Negativo',
+                neutral: 'Neutral',
+                impact: 'Impacto',
+                sim_new_monthly: 'Nuevo Ingreso',
+                sim_extra_available: 'Extra Disponible',
+                sim_recommended_savings: 'Ahorro Recom.',
+                sim_yearly_impact: 'Impacto Anual',
+                sim_current_expenses: 'Gastos Actuales',
+                sim_new_expenses: 'Nuevos Gastos',
+                sim_monthly_savings: 'Ahorro Mensual',
+                sim_yearly_savings: 'Ahorro Anual',
+                sim_current_rate: 'Tasa Actual',
+                sim_new_rate: 'Nueva Tasa',
+                sim_rate_reduction: 'Reducción Tasa',
+                sim_monthly_interest_current: 'Interés Mensual Actual',
+                sim_monthly_interest_new: 'Nuevo Interés Mensual',
+                sim_total_savings: 'Ahorro Total',
+                sim_debt_name: 'Deuda',
+                password_mismatch: 'Las contraseñas no coinciden',
+                password_min_length: 'La contraseña debe tener al menos 4 caracteres',
+                export_csv: 'Exportar CSV',
+                // === CLAVES FALTANTES (antes solo en translations.en) ===
+                stress_free_finance: 'Gestión financiera sin estrés',
+                summary: 'Resumen',
+                add: 'Agregar',
+                balance: 'Balance',
+                income: 'Ingresos',
+                expenses: 'Gastos',
+                debt: 'Deuda',
+                needs: 'Necesidades',
+                wants: 'Deseos',
+                culture: 'Cultura',
+                unexpected: 'Inesperado',
+                upcoming_payments: 'Próximos Pagos',
+                no_upcoming: 'No hay pagos próximos',
+                add_income: 'Agregar Ingreso',
+                no_income: 'No hay ingresos registrados',
+                add_expense: 'Agregar Gasto',
+                no_expenses: 'No hay gastos registrados',
+                compare_all: 'Comparar Todo',
+                new_debt: 'Nueva Deuda',
+                no_debts: 'No hay deudas registradas',
+                new_card: 'Nueva Tarjeta',
+                no_cards: 'No hay tarjetas registradas',
+                new_service: 'Nuevo Servicio',
+                no_services: 'No hay servicios registrados',
+                reports: 'Reportes',
+                fortnightly: 'Quincenal',
+                monthly: 'Mensual',
+                quarterly: 'Trimestral',
+                yearly: 'Anual',
+                kakebo: 'Kakebo',
+                debts: 'Deudas',
+                select_period: 'Selecciona un período',
+                budgets: 'Presupuestos',
+                loading_budgets: 'Cargando presupuestos...',
+                ai_assistant: 'Asistente IA',
+                financial_summary: 'Resumen Financiero',
+                loading_insights: 'Cargando insights...',
+                recommendations: 'Recomendaciones',
+                loading_recommendations: 'Cargando recomendaciones...',
+                anomaly_detection: 'Detección de Anomalías',
+                loading_anomalies: 'Cargando anomalías...',
+                debt_strategy: 'Estrategia de Pago de Deudas',
+                avalanche: 'Avalancha',
+                snowball: 'Bola de Nieve',
+                select_strategy: 'Selecciona una estrategia',
+                whatif_simulator: 'Simulador What-If',
+                income_change: 'Cambio en Ingresos',
+                expense_reduction: 'Reducción de Gastos',
+                extra_debt_payment: 'Pago Extra de Deuda',
+                refinance: 'Refinanciamiento',
+                simulate: 'Simular',
+                modal: 'Modal',
+                confirm: 'Confirmar',
+                are_you_sure: '¿Estás seguro?',
+                cancel: 'Cancelar',
+                prompt_title: 'Ingresar',
+                ok: 'Aceptar',
+                div: 'Dividir',
+                add_charge: 'Agregar Cargo',
+                edit: 'Editar',
+                view_projection_short: 'Ver Proyección',
+                no_income_this_month: 'No hay ingresos este mes',
+                gastos_kakebo: 'Gastos (Kakebo)',
+                no_expenses_this_month: 'No hay gastos este mes',
+                paid: 'Pagado',
+                active: 'Activo',
+                pay: 'Pagar',
+                no_debts_cards_compare: 'No hay deudas ni tarjetas para comparar',
+                used: 'usado',
+                error_loading_comparison: 'Error al cargar comparación',
+                card_projection: 'Proyección de Tarjeta',
+                error_loading_projection: 'Error al cargar proyección',
+                amortization_table: 'Tabla de Amortización',
+                edit_expense: 'Editar Gasto',
+                delete: 'Eliminar',
+                save: 'Guardar',
+                edit_card: 'Editar Tarjeta',
+                edit_debt: 'Editar Deuda',
+                positive: 'Positivo',
+                negative: 'Negativo',
+                neutral: 'Neutral',
+                impact: 'Impacto',
+                sim_new_monthly: 'Nuevo Ingreso',
+                sim_extra_available: 'Extra Disponible',
+                sim_recommended_savings: 'Ahorro Recom.',
+                sim_yearly_impact: 'Impacto Anual',
+                sim_current_expenses: 'Gastos Actuales',
+                sim_new_expenses: 'Nuevos Gastos',
+                sim_monthly_savings: 'Ahorro Mensual',
+                sim_yearly_savings: 'Ahorro Anual',
+                sim_current_rate: 'Tasa Actual',
+                sim_new_rate: 'Nueva Tasa',
+                sim_rate_reduction: 'Reducción Tasa',
+                sim_monthly_interest_current: 'Interés Mensual Actual',
+                sim_monthly_interest_new: 'Nuevo Interés Mensual',
+                sim_total_savings: 'Ahorro Total',
+                sim_debt_name: 'Deuda',
+                password_mismatch: 'Las contraseñas no coinciden',
+                password_min_length: 'La contraseña debe tener al menos 4 caracteres',
+                loading: 'Cargando...',
             }
         };
 
-        let currentLang = localStorage.getItem('ff-lang') || 'es';
+        // Force Spanish as default - ignore any stored English preference
+        let currentLang = 'es';
+        // Still store the preference for future sessions
+        if (localStorage.getItem('ff-lang')) {
+            currentLang = localStorage.getItem('ff-lang');
+        }
 
         function t(key) {
             // Check bilingualTranslations first for {es, en} objects
@@ -1391,8 +1753,14 @@
             }
             
             // Then check regular translations
-            const value = translations[currentLang]?.[key] || translations.es?.[key];
-            return value || key;
+            let value = translations[currentLang]?.[key] || translations.es?.[key];
+            
+            // Handle bilingual objects that might have slipped into translations.es
+            if (value && typeof value === 'object' && value.es !== undefined) {
+                value = value[currentLang] || value.es;
+            }
+            
+            return typeof value === 'string' ? value : key;
         }
 
         // Helper to replace placeholders in translation strings
@@ -1410,6 +1778,32 @@
             currentLang = lang;
             localStorage.setItem('ff-lang', lang);
             applyTranslations();
+            showSection(currentSection);
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('ff-theme', 'light');
+                icon.setAttribute('data-lucide', 'moon');
+            } else {
+                body.classList.add('dark-mode');
+                localStorage.setItem('ff-theme', 'dark');
+                icon.setAttribute('data-lucide', 'sun');
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem('ff-theme') || 'light';
+            const icon = document.getElementById('theme-icon');
+            if (saved === 'dark') {
+                document.body.classList.add('dark-mode');
+                if (icon) icon.setAttribute('data-lucide', 'sun');
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         function applyTranslations() {
@@ -1764,7 +2158,11 @@
                 container.innerHTML = '<p class="text-[var(--text-secondary)] text-sm" data-i18n="no_upcoming"></p>';
                 container.textContent = t('no_upcoming');
             } else {
-                container.innerHTML = upcoming.map(p => {
+                const maxShow = 5;
+                const showItems = upcoming.slice(0, maxShow);
+                const remaining = upcoming.length - maxShow;
+                
+                container.innerHTML = showItems.map(p => {
                     const daysUntil = Math.ceil((new Date(p.due_date) - new Date()) / (1000 * 60 * 60 * 24));
                     const isToday = daysUntil === 0;
                     const isPast = daysUntil < 0;
@@ -1772,38 +2170,43 @@
                     
                     let label, btnColor, btnBg, btnHover;
                     if (isToday) {
-                        label = 'Pagar de Inmediato';
+                        label = t('pay_immediately');
                         btnColor = 'white';
                         btnBg = 'var(--accent-green)';
                         btnHover = '#4a9580';
                     } else if (isPast) {
-                        label = 'Pagar Vencido';
+                        label = t('pay_overdue');
                         btnColor = 'white';
                         btnBg = 'var(--accent-coral)';
                         btnHover = '#d35f45';
                     } else {
-                        label = 'Pagar Adelantado';
+                        label = t('pay_early');
                         btnColor = 'white';
                         btnBg = 'var(--accent-blue)';
                         btnHover = '#5a9fd9';
                     }
                     
                     const statusColor = isToday ? 'var(--accent-green)' : (isPast ? 'var(--accent-coral)' : 'var(--accent-blue)');
-                    const statusText = isToday ? 'Hoy - URGENTE' : (isPast ? 'Vencido' : `En ${daysUntil} dia${daysUntil > 1 ? 's' : ''}`);
+                    const statusText = isToday ? t('today_urgent') : (isPast ? t('overdue_label') : tr('in_days', { days: daysUntil, daysPlural: daysUntil > 1 ? 's' : '' }));
                     
-                    let payBtn = '';
                     const payAction = p.type === 'debt' ? `payDebt(${p.id})` : `payService(${p.id})`;
-                    payBtn = `<button onclick="${payAction}" style="background: ${btnBg}; color: ${btnColor}; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" onmouseover="this.style.background='${btnHover}'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='${btnBg}'; this.style.transform='translateY(0)'">${label}</button>`;
+                    const payBtn = `<button onclick="${payAction}" style="background: ${btnBg}; color: ${btnColor}; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" onmouseover="this.style.background='${btnHover}'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='${btnBg}'; this.style.transform='translateY(0)'">${label}</button>`;
                     
-                    return `<div class="flex items-center justify-between p-4 bg-[var(--bg-tertiary)] rounded-xl mb-2" style="${isToday ? 'border-left: 4px solid var(--accent-green)' : (isPast ? 'border-left: 4px solid var(--accent-coral)' : 'border-left: 4px solid var(--accent-blue)')}">
-                        <div>
-                            <p class="font-semibold">${p.name}</p>
+                    return `<div class="flex items-center justify-between p-3 bg-[var(--bg-tertiary)] rounded-xl mb-2" style="${isToday ? 'border-left: 3px solid var(--accent-green)' : (isPast ? 'border-left: 3px solid var(--accent-coral)' : 'border-left: 3px solid var(--accent-blue)')}">
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold truncate">${p.name}</p>
                             <p class="text-sm font-medium" style="color: ${statusColor}">${statusText}</p>
-                            <p class="text-lg font-bold text-[var(--text-primary)]">${formatMoney(p.amount)}</p>
+                            <p class="text-base font-bold">${formatMoney(p.amount)}</p>
                         </div>
                         ${payBtn}
                     </div>`;
                 }).join('');
+                
+                if (remaining > 0) {
+                    container.innerHTML += `<div class="text-center pt-2">
+                        <span class="text-sm text-[var(--text-secondary)]">+${remaining} más</span>
+                    </div>`;
+                }
             }
         }
 
@@ -2025,148 +2428,121 @@
         }
 
         async function loadAI() {
-            // Insights (now first and enhanced)
             const insights = await apiFetch('/api/ai/insights').then(r => r.json());
-            const insightContainer = document.getElementById('ai-insights');
-            let html = '';
+            
+            const incomeEl = document.getElementById('ai-summary-income');
+            const expensesEl = document.getElementById('ai-summary-expenses');
+            const balanceEl = document.getElementById('ai-summary-balance');
             
             if (insights.current_status) {
                 const cs = insights.current_status;
-                const balanceColor = cs.is_positive ? 'var(--accent-green)' : 'var(--accent-coral)';
-                html += `<div class="card p-4 mb-4" style="border-left: 4px solid ${balanceColor}">
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: ${balanceColor}">
-                            <i data-lucide="${cs.is_positive ? 'trending-up' : 'trending-down'}" class="w-5 h-5 text-white"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-[var(--text-secondary)]">${cs.month}</p>
-                            <p class="text-2xl font-bold" style="color: ${balanceColor}">${formatMoney(cs.balance)}</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">${t('income')}:</span>
-                            <span class="font-medium text-[var(--accent-green)]">${formatMoney(cs.income)}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">${t('expenses')}:</span>
-                            <span class="font-medium text-[var(--accent-coral)]">${formatMoney(cs.expenses)}</span>
-                        </div>
-                    </div>
-                </div>`;
+                incomeEl.textContent = formatMoney(cs.income);
+                expensesEl.textContent = formatMoney(cs.expenses);
+                balanceEl.textContent = formatMoney(cs.balance);
+                balanceEl.style.color = cs.is_positive ? 'var(--accent-green)' : 'var(--accent-coral)';
+            } else {
+                incomeEl.textContent = '-';
+                expensesEl.textContent = '-';
+                balanceEl.textContent = '-';
             }
             
-            if (insights.past_review) {
-                const pr = insights.past_review;
-                html += `<div class="mb-4">
-                    <h3 class="font-semibold text-sm mb-2 flex items-center gap-2">
-                        <i data-lucide="history" class="w-4 h-4"></i> ${t('past_feedback')}
-                    </h3>
-                    <p class="text-xs text-[var(--text-secondary)] mb-2">${pr.month}</p>
-                    <div class="space-y-2">`;
+            const insightContainer = document.getElementById('ai-insights');
+            const futureContainer = document.getElementById('ai-future');
+            let insightsHtml = '';
+            let futureHtml = '';
+            
+            if (insights.past_review && insights.past_review.comparison) {
+                const comp = insights.past_review.comparison;
                 
-                if (pr.comparison) {
-                    const comp = pr.comparison;
-                    if (comp.income_change_pct !== undefined) {
-                        const color = comp.income_change_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
-                        html += `<div class="flex justify-between text-sm p-2 bg-[var(--bg-tertiary)] rounded-lg">
-                            <span>${t('income_vs_month')}:</span>
-                            <span style="color: ${color}; font-weight: 600">${comp.income_change_pct >= 0 ? '+' : ''}${comp.income_change_pct}%</span>
-                        </div>`;
-                    }
-                    if (comp.expense_change_pct !== undefined) {
-                        const color = comp.expense_change_pct <= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
-                        html += `<div class="flex justify-between text-sm p-2 bg-[var(--bg-tertiary)] rounded-lg">
-                            <span>${t('expenses_vs_month')}:</span>
-                            <span style="color: ${color}; font-weight: 600">${comp.expense_change_pct >= 0 ? '+' : ''}${comp.expense_change_pct}%</span>
-                        </div>`;
-                    }
+                if (comp.income_change_pct !== undefined) {
+                    const color = comp.income_change_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
+                    const pct = Math.abs(comp.income_change_pct);
+                    insightsHtml += `<div class="mb-3">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span data-i18n="income_vs_month">${t('income_vs_month')}</span>
+                            <span style="color: ${color}; font-weight: 600">${comp.income_change_pct >= 0 ? '+' : '-'}${pct}%</span>
+                        </div>
+                        <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2">
+                            <div class="h-2 rounded-full" style="width: ${Math.min(pct, 100)}%; background: ${color}"></div>
+                        </div>
+                    </div>`;
                 }
                 
-                if (insights.past_feedback && insights.past_feedback.length) {
-                    insights.past_feedback.forEach(fb => {
-                        const color = fb.type === 'positive' ? 'var(--accent-green)' : (fb.type === 'warning' ? 'var(--accent-yellow)' : (fb.type === 'negative' ? 'var(--accent-coral)' : 'var(--accent-blue)'));
-                        html += `<div class="flex items-start gap-2 p-2 rounded-lg" style="border-left: 3px solid ${color}; background: var(--bg-tertiary)">
-                            <i data-lucide="${fb.icon || 'info'}" class="w-4 h-4 mt-0.5" style="color: ${color}"></i>
-                            <p class="text-sm">${fb.message}</p>
-                        </div>`;
-                    });
+                if (comp.expense_change_pct !== undefined) {
+                    const color = comp.expense_change_pct <= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
+                    const pct = Math.abs(comp.expense_change_pct);
+                    insightsHtml += `<div class="mb-3">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span data-i18n="expenses_vs_month">${t('expenses_vs_month')}</span>
+                            <span style="color: ${color}; font-weight: 600">${comp.expense_change_pct >= 0 ? '+' : '-'}${pct}%</span>
+                        </div>
+                        <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2">
+                            <div class="h-2 rounded-full" style="width: ${Math.min(pct, 100)}%; background: ${color}"></div>
+                        </div>
+                    </div>`;
                 }
-                
-                html += '</div></div>';
+            }
+            
+            if (insights.past_feedback && insights.past_feedback.length) {
+                insights.past_feedback.slice(0, 3).forEach(fb => {
+                    const color = fb.type === 'positive' ? 'var(--accent-green)' : (fb.type === 'warning' ? 'var(--accent-yellow)' : (fb.type === 'negative' ? 'var(--accent-coral)' : 'var(--accent-blue)'));
+                    insightsHtml += `<div class="flex items-start gap-2 p-2 rounded-lg" style="border-left: 3px solid ${color}">
+                        <i data-lucide="${fb.icon || 'info'}" class="w-4 h-4 mt-0.5" style="color: ${color}"></i>
+                        <p class="text-sm">${fb.message}</p>
+                    </div>`;
+                });
             }
             
             if (insights.future_suggestions && insights.future_suggestions.length) {
-                html += `<div class="mb-4">
-                    <h3 class="font-semibold text-sm mb-2 flex items-center gap-2">
-                        <i data-lucide="lightbulb" class="w-4 h-4"></i> ${t('future_suggestions')}
-                    </h3>
-                    <div class="space-y-2">`;
-                
-                insights.future_suggestions.forEach(sg => {
+                insights.future_suggestions.slice(0, 3).forEach(sg => {
                     const color = sg.type === 'warning' ? 'var(--accent-yellow)' : sg.type === 'debt' ? 'var(--accent-coral)' : sg.type === 'success' ? 'var(--accent-green)' : 'var(--accent-blue)';
-                    html += `<div class="flex items-start gap-2 p-2 rounded-lg" style="border-left: 3px solid ${color}; background: var(--bg-tertiary)">
+                    futureHtml += `<div class="flex items-start gap-2 p-2 rounded-lg" style="border-left: 3px solid ${color}">
                         <i data-lucide="${sg.icon || 'lightbulb'}" class="w-4 h-4 mt-0.5" style="color: ${color}"></i>
                         <p class="text-sm">${sg.message}</p>
                     </div>`;
                 });
-                
-                html += '</div></div>';
             }
             
-            insightContainer.innerHTML = html || '<p class="text-[var(--text-secondary)]">' + t('no_sufficient_data') + '</p>';
-
-            // Recommendations
+            insightContainer.innerHTML = insightsHtml || '<p class="text-[var(--text-secondary)]">' + t('no_sufficient_data') + '</p>';
+            futureContainer.innerHTML = futureHtml || '<p class="text-[var(--text-secondary)]">' + t('no_sufficient_data') + '</p>';
+            
             const recs = await apiFetch('/api/ai/recommendations').then(r => r.json());
             const recContainer = document.getElementById('ai-recommendations');
             if (!recs || !recs.length) {
                 recContainer.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('no_recommendations') + '</p>';
             } else {
-                const typeColors = {
-                    'critical': 'var(--accent-coral)',
-                    'warning': 'var(--accent-yellow)',
-                    'opportunity': 'var(--accent-green)',
-                    'suggestion': 'var(--accent-blue)',
-                    'success': 'var(--accent-green)',
-                    'info': 'var(--text-secondary)'
-                };
-                recContainer.innerHTML = recs.map(r => {
+                const typeColors = { 'critical': 'var(--accent-coral)', 'warning': 'var(--accent-yellow)', 'opportunity': 'var(--accent-green)', 'suggestion': 'var(--accent-blue)', 'success': 'var(--accent-green)', 'info': 'var(--text-secondary)' };
+                recContainer.innerHTML = recs.slice(0, 5).map(r => {
                     const color = typeColors[r.type] || 'var(--accent-blue)';
-                    return `<div class="p-3 rounded-xl mb-2" style="border-left: 3px solid ${color}; background: var(--bg-tertiary)">
-                        <div class="flex items-start gap-2">
-                            <i data-lucide="${r.icon || 'lightbulb'}" class="w-4 h-4 mt-0.5" style="color: ${color}"></i>
-                            <p class="text-sm">${r.message}</p>
-                        </div>
+                    return `<div class="flex items-start gap-2 p-2 rounded-lg" style="border-left: 3px solid ${color}">
+                        <i data-lucide="${r.icon || 'lightbulb'}" class="w-4 h-4 mt-0.5" style="color: ${color}"></i>
+                        <p class="text-sm">${r.message}</p>
                     </div>`;
                 }).join('');
             }
-
-            // Anomalies & Opportunities
+            
             const anomalies = await apiFetch('/api/ai/anomalies').then(r => r.json());
             const anomContainer = document.getElementById('ai-anomalies');
             if (!anomalies || !anomalies.length) {
                 anomContainer.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('no_anomalies') + '</p>';
             } else {
-                const typeColors = {
-                    'anomaly': 'var(--accent-coral)',
-                    'opportunity': 'var(--accent-green)'
-                };
-                anomContainer.innerHTML = anomalies.map(a => {
+                const typeColors = { 'anomaly': 'var(--accent-coral)', 'opportunity': 'var(--accent-green)' };
+                anomContainer.innerHTML = anomalies.slice(0, 5).map(a => {
                     const color = typeColors[a.type] || 'var(--accent-blue)';
                     const severityColor = a.severity === 'high' ? 'var(--accent-coral)' : a.severity === 'medium' ? 'var(--accent-yellow)' : 'var(--accent-blue)';
                     const savings = a.potential_savings ? `<p class="text-xs mt-1" style="color: var(--accent-green)">${t('potential_savings')}: ${formatMoney(a.potential_savings)}</p>` : '';
-                    return `<div class="p-3 rounded-xl mb-2" style="border-left: 3px solid ${color}; background: var(--bg-tertiary)">
-                        <div class="flex items-start gap-2">
-                            <i data-lucide="${a.icon || 'alert-circle'}" class="w-4 h-4 mt-0.5" style="color: ${severityColor}"></i>
-                            <div>
-                                <p class="text-sm font-medium">${a.title || t('detected_label')}</p>
-                                <p class="text-sm text-[var(--text-secondary)]">${a.description}</p>
-                                ${savings}
-                            </div>
+                    return `<div class="flex items-start gap-2 p-2 rounded-lg" style="border-left: 3px solid ${color}">
+                        <i data-lucide="${a.icon || 'alert-circle'}" class="w-4 h-4 mt-0.5" style="color: ${severityColor}"></i>
+                        <div>
+                            <p class="text-sm font-medium">${a.title || t('detected_label')}</p>
+                            <p class="text-xs text-[var(--text-secondary)]">${a.description}</p>
+                            ${savings}
                         </div>
                     </div>`;
                 }).join('');
             }
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         async function loadReport(type) {
@@ -3110,17 +3486,25 @@
             if (data.error) { result.innerHTML = `<p class="text-[var(--accent-coral)]">${data.error}</p>`; return; }
             
             const impactColor = data.impact === 'positive' ? 'var(--accent-green)' : data.impact === 'negative' ? 'var(--accent-coral)' : 'var(--accent-blue)';
+            const impactIcon = data.impact === 'positive' ? 'trending-up' : data.impact === 'negative' ? 'trending-down' : 'minus';
             const impactLabel = data.impact === 'positive' ? t('positive') : data.impact === 'negative' ? t('negative') : t('neutral');
             
-            let html = `<div class="card p-4 bg-[var(--bg-tertiary)] mb-3" style="border-left: 4px solid ${impactColor}">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-[var(--text-secondary)]">${t('impact')}</span>
-                    <span class="badge" style="background: ${impactColor}">${impactLabel}</span>
+            let html = `<div class="card p-4" style="border-left: 4px solid ${impactColor}">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: ${impactColor}">
+                        <i data-lucide="${impactIcon}" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm text-[var(--text-secondary)]">${t('impact')}</p>
+                        <p class="font-bold" style="color: ${impactColor}">${impactLabel}</p>
+                    </div>
                 </div>
             </div>`;
             
             if (data.summary) {
-                html += `<p class="text-sm font-medium mb-3 p-3 bg-[var(--accent-green)] bg-opacity-10 rounded-lg" style="border-left: 3px solid var(--accent-green)">${data.summary}</p>`;
+                html += `<div class="p-3 bg-[var(--bg-tertiary)] rounded-lg" style="border-left: 3px solid var(--accent-green)">
+                    <p class="text-sm">${data.summary}</p>
+                </div>`;
             }
             
             const skipKeys = ['scenario', 'impact', 'summary', 'debt_name'];
@@ -3152,14 +3536,20 @@
             html += '<div class="space-y-2">';
             for (const [k, v] of Object.entries(data)) {
                 if (skipKeys.includes(k)) continue;
+                // Skip null, undefined, objects, and arrays - only display primitives
+                if (v === null || v === undefined) continue;
+                if (typeof v !== 'string' && typeof v !== 'number' && typeof v !== 'boolean') continue;
                 const label = displayLabels[k] || k;
-                html += `<div class="flex justify-between p-2 bg-[var(--bg-secondary)] rounded-lg">
+                const isSavings = k.includes('savings') || k.includes('saved');
+                const valueColor = isSavings ? 'var(--accent-green)' : 'var(--text-primary)';
+                html += `<div class="flex justify-between items-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
                     <span class="text-sm text-[var(--text-secondary)]">${label}</span>
-                    <span class="font-semibold">${typeof v === 'number' ? formatMoney(v) : v}</span>
+                    <span class="font-semibold" style="color: ${valueColor}">${typeof v === 'number' ? formatMoney(v) : String(v)}</span>
                 </div>`;
             }
             html += '</div>';
             result.innerHTML = html;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -3176,6 +3566,9 @@
         });
 
         async function init() {
+            // Apply translations on init
+            applyTranslations();
+            
             const savedToken = localStorage.getItem('token');
             
             if (savedToken) {
@@ -3314,13 +3707,13 @@
 
         async function loadDummyData() {
             const ok = await showConfirm(
-                'Datos Demo',
-                '¿Cargar datos de demostración?\n\nEsto agregará datos ficticios a todos los módulos para pruebas.'
+                t('demo_data'),
+                t('load_demo_confirm')
             );
             if (!ok) return;
             
             try {
-                showToast('Cargando datos...', 'info');
+                showToast(t('loading_data'), 'info');
                 const resp = await apiFetch('/api/seed/dummy', { method: 'POST' });
                 const data = await resp.json();
                 
@@ -3329,7 +3722,7 @@
                     const msg = Object.entries(counts)
                         .map(([k, v]) => `${k}: ${v}`)
                         .join(', ');
-                    showToast('✓ Datos cargados: ' + msg, 'success');
+                    showToast(t('data_loaded') + ': ' + msg, 'success');
                     loadDashboard();
                     loadIncome();
                     loadExpenses();
@@ -3337,10 +3730,10 @@
                     loadCards();
                     loadServices();
                 } else {
-                    showToast('Error al cargar: ' + (data.detail || 'Error desconocido'), 'error');
+                    showToast(t('error_loading_demo') + ': ' + (data.detail || t('error_unknown')), 'error');
                 }
             } catch (e) {
-                showToast('Error de conexión', 'error');
+                showToast(t('connection_error'), 'error');
             }
         }
 
@@ -3433,6 +3826,7 @@
         }
 
         function startApp() {
+            initTheme();
             init();
             applyTranslations();
             if (typeof lucide !== 'undefined') lucide.createIcons();
