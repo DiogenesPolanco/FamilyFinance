@@ -234,27 +234,124 @@
         #prompt-cancel:hover { background: #e0ddd8; }
         #prompt-ok { background: var(--accent-green); color: white; }
         #prompt-ok:hover { background: #4a9580; transform: translateY(-1px); }
-        @media (min-width: 769px) {
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                width: 80px;
-                background: var(--bg-secondary);
-                border-right: 1px solid var(--border);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 20px 0;
-                gap: 8px;
-                z-index: 100;
-            }
-            .main-content {
-                margin-left: 80px;
-            }
-        }
-    </style>
+@media (min-width: 769px) {
+.sidebar {
+position: fixed;
+left: 0;
+top: 0;
+bottom: 0;
+width: 80px;
+background: var(--bg-secondary);
+border-right: 1px solid var(--border);
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 20px 0;
+gap: 8px;
+z-index: 100;
+}
+.main-content {
+margin-left: 80px;
+}
+}
+/* Thermometer Chart */
+.thermometer {
+position: relative;
+width: 60px;
+height: 180px;
+margin: 0 auto;
+}
+.thermometer-track {
+position: absolute;
+left: 50%;
+transform: translateX(-50%);
+width: 20px;
+height: 150px;
+background: linear-gradient(to top, #e74c3c 0%, #f39c12 40%, #27ae60 100%);
+border-radius: 10px 10px 20px 20px;
+overflow: hidden;
+}
+.thermometer-fill {
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+background: var(--bg-secondary);
+border-radius: 10px 10px 20px 20px;
+transition: height 0.5s ease;
+}
+.thermometer-bulb {
+position: absolute;
+bottom: 0;
+left: 50%;
+transform: translateX(-50%);
+width: 40px;
+height: 40px;
+border-radius: 50%;
+transition: background 0.5s ease;
+}
+.thermometer-markers {
+position: absolute;
+right: 0;
+top: 0;
+height: 150px;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+font-size: 10px;
+color: var(--text-secondary);
+}
+.thermometer-label {
+position: absolute;
+bottom: -25px;
+left: 50%;
+transform: translateX(-50%);
+font-size: 12px;
+font-weight: 600;
+white-space: nowrap;
+}
+/* Pie Chart */
+.pie-chart {
+position: relative;
+width: 200px;
+height: 200px;
+border-radius: 50%;
+margin: 0 auto;
+}
+.pie-chart-inner {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 80px;
+height: 80px;
+background: var(--bg-secondary);
+border-radius: 50%;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+}
+.pie-legend {
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+justify-content: center;
+margin-top: 16px;
+}
+.pie-legend-item {
+display: flex;
+align-items: center;
+gap: 4px;
+font-size: 12px;
+}
+.pie-legend-color {
+width: 12px;
+height: 12px;
+border-radius: 3px;
+}
+</style>
 </head>
 <body class="min-h-screen">
     <!-- Toast Container - Fixed position top right -->
@@ -446,6 +543,13 @@
                     <div id="debt-list" class="space-y-3">
                         <p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_debts">No hay deudas registradas</p>
                     </div>
+                    <div class="mt-6">
+                        <button onclick="toggleDebtHistory()" class="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                            <i data-lucide="history" class="w-4 h-4" id="debt-history-icon"></i>
+                            <span data-i18n="payment_history">Historial de Pagos</span>
+                        </button>
+                        <div id="debt-history" class="hidden mt-3 space-y-2"></div>
+                    </div>
                 </section>
 
                 <!-- Credit Cards -->
@@ -458,6 +562,13 @@
                     </div>
                     <div id="card-list" class="space-y-3">
                         <p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_cards">No hay tarjetas registradas</p>
+                    </div>
+                    <div class="mt-6">
+                        <button onclick="toggleCardPaymentHistory()" class="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                            <i data-lucide="history" class="w-4 h-4" id="card-payment-history-icon"></i>
+                            <span data-i18n="card_payment_history">Historial de Pagos</span>
+                        </button>
+                        <div id="card-payment-history" class="hidden mt-3 space-y-2"></div>
                     </div>
                 </section>
 
@@ -473,6 +584,13 @@
                     <div id="service-list" class="space-y-3">
                         <p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_services">No hay servicios registrados</p>
                     </div>
+                    <div class="mt-6">
+                        <button onclick="toggleServicePaymentHistory()" class="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                            <i data-lucide="history" class="w-4 h-4" id="service-payment-history-icon"></i>
+                            <span data-i18n="service_payment_history">Historial de Pagos</span>
+                        </button>
+                        <div id="service-payment-history" class="hidden mt-3 space-y-2"></div>
+                    </div>
                 </section>
 
                 <!-- Reports -->
@@ -480,19 +598,16 @@
                     <div class="flex items-center justify-between mb-6">
                         <h1 class="text-2xl font-semibold" data-i18n="reports">Reportes</h1>
                         <button onclick="exportCSV()" class="btn btn-primary">
-                            <i data-lucide="download" class="w-4 h-4 inline mr-1"></i>Exportar CSV
+                            <i data-lucide="download" class="w-4 h-4 inline mr-1"></i><span data-i18n="export_csv">Exportar CSV</span>
                         </button>
                     </div>
-                    <div class="flex gap-2 mb-4 overflow-x-auto pb-2">
-<button onclick="loadReport('fortnightly')" class="tab-btn active whitespace-nowrap" id="tab-fortnightly" data-i18n="fortnightly">Quincenal</button>
-                                <button onclick="loadReport('monthly')" class="tab-btn whitespace-nowrap" id="tab-monthly" data-i18n="monthly">Mensual</button>
-                                <button onclick="loadReport('quarterly')" class="tab-btn whitespace-nowrap" id="tab-quarterly" data-i18n="quarterly">Trimestral</button>
-                                <button onclick="loadReport('yearly')" class="tab-btn whitespace-nowrap" id="tab-yearly" data-i18n="yearly">Anual</button>
-                                <button onclick="loadReport('kakebo')" class="tab-btn whitespace-nowrap" id="tab-kakebo" data-i18n="kakebo">Kakebo</button>
-                                <button onclick="loadReport('debts')" class="tab-btn whitespace-nowrap" id="tab-debts" data-i18n="debts">Deudas</button>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <button onclick="loadReport('monthly')" class="tab-btn whitespace-nowrap" id="tab-monthly" data-i18n="monthly">Mensual</button>
+                        <button onclick="loadReport('kakebo')" class="tab-btn whitespace-nowrap" id="tab-kakebo" data-i18n="kakebo">Kakebo</button>
+                        <button onclick="loadReport('debts')" class="tab-btn whitespace-nowrap" id="tab-debts" data-i18n="debts">Deudas</button>
                     </div>
-                    <div id="report-content" class="card p-6">
-                        <p class="text-[var(--text-secondary)]" data-i18n="select_period">Selecciona un período</p>
+                    <div id="report-content" class="space-y-4">
+                        <p class="text-[var(--text-secondary)] text-center py-8" data-i18n="select_period">Selecciona un período</p>
                     </div>
                 </section>
 
@@ -762,6 +877,9 @@
             steps_label: { es: 'Pasos', en: 'Steps' },
             no_data_period: { es: 'No hay datos para este período', en: 'No data for this period' },
             comparison_prev: { es: 'Comparación con período anterior', en: 'Comparison with previous period' },
+            by_category: { es: 'Por Categoría', en: 'By Category' },
+            total: { es: 'Total', en: 'Total' },
+            months: { es: 'Meses', en: 'Months' },
             averages_label: { es: 'Promedios', en: 'Averages' },
             avg_income_label: { es: 'Prom. Ingresos', en: 'Avg Income' },
             avg_expenses_label: { es: 'Prom. Gastos', en: 'Avg Expenses' },
@@ -1463,6 +1581,9 @@
                 steps_label: { es: 'Pasos', en: 'Steps' },
                 no_data_period: { es: 'No hay datos para este período', en: 'No data for this period' },
                 comparison_prev: { es: 'Comparación con período anterior', en: 'Comparison with previous period' },
+                by_category: { es: 'Por Categoría', en: 'By Category' },
+                total: { es: 'Total', en: 'Total' },
+                months: { es: 'Meses', en: 'Months' },
                 averages_label: { es: 'Promedios', en: 'Averages' },
                 avg_income_label: { es: 'Prom. Ingresos', en: 'Avg Income' },
                 avg_expenses_label: { es: 'Prom. Gastos', en: 'Avg Expenses' },
@@ -1472,6 +1593,12 @@
                 remaining_label: { es: 'Restante', en: 'Remaining' },
                 exceeded_label: { es: 'Excedido', en: 'Exceeded' },
                 debt_history: { es: 'Historial de Deudas', en: 'Debt History' },
+                payment_history: { es: 'Historial de Pagos', en: 'Payment History' },
+                card_payment_history: { es: 'Historial de Pagos', en: 'Payment History' },
+                service_payment_history: { es: 'Historial de Pagos', en: 'Payment History' },
+                no_payments_yet: { es: 'No hay pagos registrados', en: 'No payments yet' },
+                enter_amount_to_pay: { es: 'Ingrese el monto a pagar:', en: 'Enter amount to pay:' },
+                current_period: { es: 'Período Actual', en: 'Current Period' },
                 rate_label: { es: 'Tasa', en: 'Rate' },
                 original_label: { es: 'Original', en: 'Original' },
                 actual_label: { es: 'Actual', en: 'Actual' },
@@ -1923,6 +2050,7 @@
                             </div>
                             <div id="card-projection-${c.id}" class="hidden mt-3"></div>
                             <div class="flex gap-2 mt-3">
+                                <button onclick="payCard(${c.id})" class="btn-pay text-xs flex-1">${t('pay')}</button>
                                 <button onclick="addCardCharge(${c.id})" class="btn btn-primary text-xs flex-1">${t('add_charge')}</button>
                                 <button onclick="showCardProjection(${c.id})" class="btn text-xs flex-1">${t('view_projection_short')}</button>
                                 <button onclick="editCard(${c.id})" class="btn text-xs flex-1">${t('edit')}</button>
@@ -1931,6 +2059,46 @@
                     }).join('');
                     if (typeof lucide !== "undefined") lucide.createIcons();
                 });
+        }
+
+        async function loadCardPaymentHistory() {
+            const container = document.getElementById('card-payment-history');
+            try {
+                const payments = await apiFetch('/api/credit-card/payments').then(r => r.json());
+                if (!payments.length) {
+                    container.innerHTML = '<p class="text-sm text-[var(--text-secondary)]">' + t('no_payments_yet') + '</p>';
+                    return;
+                }
+                container.innerHTML = payments.map(p => `
+                    <div class="card p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-semibold">${p.card_name}</p>
+                                <p class="text-sm text-[var(--text-secondary)]">${formatDate(p.payment_date)}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-[var(--accent-green)]">${formatMoney(p.amount)}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 mt-2 pt-2 border-t border-[var(--bg-secondary)]">
+                            <span class="text-xs"><span class="text-[var(--text-secondary)]">${t('balance')}:</span> ${formatMoney(p.balance_before)} → ${formatMoney(p.balance_after)}</span>
+                            <span class="text-xs"><span class="text-[var(--text-secondary)]">${t('limit')}:</span> ${formatMoney(p.limit)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                container.innerHTML = '<p class="text-sm text-[var(--accent-coral)]">' + t('error_loading') + '</p>';
+            }
+        }
+
+        function toggleCardPaymentHistory() {
+            const container = document.getElementById('card-payment-history');
+            const icon = document.getElementById('card-payment-history-icon');
+            container.classList.toggle('hidden');
+            if (!container.classList.contains('hidden') && container.innerHTML.trim() === '') {
+                loadCardPaymentHistory();
+            }
+            icon.style.transform = container.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         }
 
         function closeModal() {
@@ -2402,6 +2570,47 @@
             if (typeof lucide !== "undefined") lucide.createIcons();
         }
 
+        async function loadDebtPaymentHistory() {
+            const container = document.getElementById('debt-history');
+            try {
+                const payments = await apiFetch('/api/debt/payments').then(r => r.json());
+                if (!payments.length) {
+                    container.innerHTML = '<p class="text-sm text-[var(--text-secondary)]">' + t('no_payments_yet') + '</p>';
+                    return;
+                }
+                container.innerHTML = payments.map(p => `
+                    <div class="card p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-semibold">${p.debt_name}</p>
+                                <p class="text-sm text-[var(--text-secondary)]">${formatDate(p.payment_date)}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-[var(--accent-green)]">${formatMoney(p.amount)}</p>
+                                <p class="text-xs text-[var(--text-secondary)]">${t('remaining')}: ${formatMoney(p.remaining_balance)}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 mt-2 pt-2 border-t border-[var(--bg-secondary)]">
+                            <span class="text-xs"><span class="text-[var(--text-secondary)]">${t('interest_rate')}:</span> ${p.interest_rate}%</span>
+                            <span class="text-xs"><span class="text-[var(--text-secondary)]">${t('original')}:</span> ${formatMoney(p.original_amount)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                container.innerHTML = '<p class="text-sm text-[var(--accent-coral)]">' + t('error_loading') + '</p>';
+            }
+        }
+
+        function toggleDebtHistory() {
+            const container = document.getElementById('debt-history');
+            const icon = document.getElementById('debt-history-icon');
+            container.classList.toggle('hidden');
+            if (!container.classList.contains('hidden') && container.innerHTML.trim() === '') {
+                loadDebtPaymentHistory();
+            }
+            icon.style.transform = container.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
         async function loadServices() {
             const list = document.getElementById('service-list');
             const services = await apiFetch('/api/service').then(r => r.json());
@@ -2425,6 +2634,43 @@
                     </div>
                 </div>`;
             }).join('');
+        }
+
+        async function loadServicePaymentHistory() {
+            const container = document.getElementById('service-payment-history');
+            try {
+                const payments = await apiFetch('/api/service/payments').then(r => r.json());
+                if (!payments.length) {
+                    container.innerHTML = '<p class="text-sm text-[var(--text-secondary)]">' + t('no_payments_yet') + '</p>';
+                    return;
+                }
+                container.innerHTML = payments.map(p => `
+                    <div class="card p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-semibold">${p.service_name}</p>
+                                <p class="text-sm text-[var(--text-secondary)]">${p.provider || ''}</p>
+                                <p class="text-sm text-[var(--text-secondary)]">${formatDate(p.payment_date)}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-[var(--accent-green)]">${formatMoney(p.amount)}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                container.innerHTML = '<p class="text-sm text-[var(--accent-coral)]">' + t('error_loading') + '</p>';
+            }
+        }
+
+        function toggleServicePaymentHistory() {
+            const container = document.getElementById('service-payment-history');
+            const icon = document.getElementById('service-payment-history-icon');
+            container.classList.toggle('hidden');
+            if (!container.classList.contains('hidden') && container.innerHTML.trim() === '') {
+                loadServicePaymentHistory();
+            }
+            icon.style.transform = container.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         }
 
         async function loadAI() {
@@ -2548,11 +2794,10 @@
         async function loadReport(type) {
             currentReportType = type;
             const container = document.getElementById('report-content');
-            container.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('loading') + '</p>';
+            container.innerHTML = '<div class="card p-6 text-center"><p class="text-[var(--text-secondary)]">' + t('loading') + '</p></div>';
             
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            const tabBtn = document.getElementById('tab-' + type);
-            if (tabBtn) tabBtn.classList.add('active');
+            document.getElementById('tab-' + type)?.classList.add('active');
             
             try {
                 const data = await fetch(`/api/reports/${type}`).then(r => r.json());
@@ -2569,153 +2814,166 @@
                 
                 container.innerHTML = html;
             } catch (e) {
-                container.innerHTML = '<p class="text-[var(--accent-coral)]">' + t('error_loading_report') + ': ' + e.message + '</p>';
+                container.innerHTML = '<div class="card p-6"><p class="text-[var(--accent-coral)]">' + t('error_loading_report') + '</p></div>';
             }
         }
         
         function renderFinancialReport(data, type) {
             if (!data.periods || !data.periods.length) {
-                return '<p class="text-[var(--text-secondary)]">' + t('no_data_period') + '</p>';
+                return '<div class="card p-6"><p class="text-[var(--text-secondary)]">' + t('no_data_period') + '</p></div>';
             }
             
-            let html = '<div class="space-y-4">';
+            const catNames = { needs: t('needs'), wants: t('wants'), culture: t('culture'), unexpected: t('unexpected') };
+            const catColors = { needs: '#3498db', wants: '#e74c3c', culture: '#9b59b6', unexpected: '#f39c12' };
+            const totalByCat = data.by_category ? Object.values(data.by_category).reduce((a, b) => a + b, 0) : 0;
             
-            const typeLabels = {
-                fortnightly: t('fortnightly'),
-                monthly: t('monthly'),
-                quarterly: t('quarterly'),
-                yearly: t('yearly')
-            };
+            let pieChartHtml = '';
+            if (data.by_category && totalByCat > 0) {
+                let gradientParts = [];
+                let currentAngle = 0;
+                
+                Object.keys(data.by_category).forEach(cat => {
+                    const amount = data.by_category[cat] || 0;
+                    if (amount > 0) {
+                        const percentage = (amount / totalByCat) * 100;
+                        gradientParts.push(`${catColors[cat]} ${currentAngle}% ${currentAngle + percentage}%`);
+                        currentAngle += percentage;
+                    }
+                });
+                
+                const gradient = gradientParts.length > 0 
+                    ? `conic-gradient(${gradientParts.join(', ')})` 
+                    : 'var(--bg-tertiary)';
+                
+                let legendItems = '';
+                Object.keys(data.by_category).forEach(cat => {
+                    const amount = data.by_category[cat] || 0;
+                    const percentage = totalByCat > 0 ? ((amount / totalByCat) * 100).toFixed(0) : 0;
+                    if (amount > 0) {
+                        legendItems += `<div class="flex items-center gap-2">
+                            <div class="pie-legend-color" style="background: ${catColors[cat]}"></div>
+                            <span class="text-sm">${catNames[cat]}: ${formatMoney(amount)} (${percentage}%)</span>
+                        </div>`;
+                    }
+                });
+                
+                pieChartHtml = `<div class="card p-4">
+                    <h4 class="font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4"></i>
+                        ${t('expenses')} ${t('by_category')}
+                    </h4>
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="pie-chart" style="background: ${gradient}">
+                            <div class="pie-chart-inner">
+                                <span class="text-lg font-bold">${formatMoney(totalByCat)}</span>
+                                <span class="text-xs text-[var(--text-secondary)]">${t('total')}</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1 w-full">${legendItems}</div>
+                    </div>
+                </div>`;
+            }
             
-            html += `<h3 class="font-semibold text-lg mb-4">${typeLabels[type] || type}</h3>`;
+            const sortedPeriods = [...data.periods].sort((a, b) => {
+                if (a.period === 'current') return -1;
+                if (b.period === 'current') return 1;
+                return new Date(b.start_date) - new Date(a.start_date);
+            });
             
-            data.periods.forEach(p => {
-                const hasData = p.total_income > 0 || p.total_expenses > 0;
+            let periodsHtml = '';
+            sortedPeriods.forEach(p => {
                 const balance = p.total_income - p.total_expenses;
-                const balanceColor = balance >= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
+                const isPositive = balance >= 0;
                 const isCurrent = p.period === 'current';
                 
-                html += `<div class="p-4 ${isCurrent ? 'bg-[var(--accent-green)] bg-opacity-10' : 'bg-[var(--bg-tertiary)]'} rounded-xl" style="${isCurrent ? 'border-left: 4px solid var(--accent-green)' : ''}">
-                    <div class="flex justify-between items-center mb-3">
-                        <h4 class="font-semibold">${p.label || p.period}</h4>
-                        <span class="font-semibold text-lg" style="color: ${balanceColor}">${formatMoney(balance)}</span>
+                const statusColor = isPositive ? 'var(--accent-green)' : 'var(--accent-coral)';
+                const statusIcon = isPositive ? '↑' : '↓';
+                
+                periodsHtml += `<div class="card p-4 ${isCurrent ? 'ring-2 ring-[var(--accent-blue)]' : ''}">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <p class="font-semibold text-lg">${p.label || p.period}</p>
+                            ${isCurrent ? '<span class="text-xs px-2 py-0.5 bg-[var(--accent-blue)] text-white rounded-full">' + t('current_period') + '</span>' : ''}
+                        </div>
+                        <div class="flex items-center gap-1 text-2xl font-bold" style="color: ${statusColor}">
+                            <span>${statusIcon}</span>
+                            <span>${formatMoney(Math.abs(balance))}</span>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">${t('income')}:</span>
-                            <span class="text-[var(--accent-green)] font-medium">${formatMoney(p.total_income)}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">${t('expenses')}:</span>
-                            <span class="text-[var(--accent-coral)] font-medium">${formatMoney(p.total_expenses)}</span>
-                        </div>
-                    </div>
-                    <div class="mt-3 pt-3 border-t border-[var(--border)]">
-                        <div class="w-full bg-[var(--bg-secondary)] rounded-full h-3">
-                            <div class="h-3 rounded-full bg-[var(--accent-green)]" style="width: ${Math.min(p.total_income > 0 ? (p.total_expenses / p.total_income * 100) : 0, 100)}%"></div>
-                        </div>
+                    <div class="flex justify-between items-center mt-2 text-sm">
+                        <span class="text-[var(--text-secondary)]">${t('income')}: <span class="font-medium" style="color: var(--accent-green)">${formatMoney(p.total_income)}</span></span>
+                        <span class="text-[var(--text-secondary)]">${t('expenses')}: <span class="font-medium" style="color: var(--accent-coral)">${formatMoney(p.total_expenses)}</span></span>
                     </div>
                 </div>`;
             });
             
-            if (data.comparison) {
-                const comp = data.comparison;
-                if (comp.income_change !== undefined || comp.expense_change !== undefined) {
-                    html += `<div class="card p-4 mt-4">
-                        <h4 class="font-semibold mb-2">${t('comparison_prev')}</h4>
-                        <div class="grid grid-cols-2 gap-3 text-sm">`;
-                    if (comp.income_change !== undefined) {
-                        const color = comp.income_change >= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
-                        html += `<div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">${t('income')}:</span>
-                            <span style="color: ${color}">${comp.income_change >= 0 ? '+' : ''}${formatMoney(comp.income_change)}</span>
-                        </div>`;
-                    }
-                    if (comp.expense_change !== undefined) {
-                        const color = comp.expense_change <= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
-                        html += `<div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">${t('expenses')}:</span>
-                            <span style="color: ${color}">${comp.expense_change >= 0 ? '+' : ''}${formatMoney(comp.expense_change)}</span>
-                        </div>`;
-                    }
-                    html += `</div></div>`;
-                }
-            }
+            const periodsColumn = `<div class="space-y-4"><h3 class="font-semibold text-lg">${t('months') || 'Meses'}</h3>${periodsHtml}</div>`;
             
-            if (data.averages) {
-                html += `<div class="card p-4 mt-4">
-                    <h4 class="font-semibold mb-2">${t('averages_label')}</h4>
-                    <div class="grid grid-cols-2 gap-3 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">${t('avg_income_label')}:</span>
-                            <span class="font-medium">${formatMoney(data.averages.income)}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-[var(--text-secondary)]">${t('avg_expenses_label')}:</span>
-                            <span class="font-medium">${formatMoney(data.averages.expenses)}</span>
-                        </div>
-                    </div>
+            if (pieChartHtml) {
+                return `<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="lg:col-span-1">${pieChartHtml}</div>
+                    <div class="lg:col-span-2">${periodsColumn}</div>
                 </div>`;
+            } else {
+                return `<div class="space-y-4"><h3 class="font-semibold text-lg">${t('months') || 'Meses'}</h3>${periodsHtml}</div>`;
             }
-            
-            html += '</div>';
-            return html;
         }
         
         function renderKakeboReport(data) {
             if (!data.by_category) {
-                return '<p class="text-[var(--text-secondary)]">' + t('no_data_period') + '</p>';
+                return '<div class="card p-6"><p class="text-[var(--text-secondary)]">' + t('no_data_period') + '</p></div>';
             }
             
             const catNames = { needs: t('needs'), wants: t('wants'), culture: t('culture'), unexpected: t('unexpected') };
-            const catColors = { needs: 'var(--accent-blue)', wants: 'var(--accent-coral)', culture: 'var(--accent-purple)', unexpected: 'var(--accent-yellow)' };
+            const catColors = { needs: '#3498db', wants: '#e74c3c', culture: '#9b59b6', unexpected: '#f39c12' };
             const catIcons = { needs: 'home', wants: 'shopping-bag', culture: 'book-open', unexpected: 'alert-triangle' };
             
             let html = '<div class="space-y-4">';
-            html += '<h3 class="font-semibold text-lg mb-4">' + t('kakebo_this_month') + '</h3>';
+            html += '<h3 class="font-semibold text-lg">' + t('kakebo_this_month') + '</h3>';
             
-            html += `<div class="grid grid-cols-2 gap-4 mb-6">`;
             Object.keys(catNames).forEach(cat => {
-                const amount = data.by_category[cat] || 0;
+                const spent = data.by_category[cat] || 0;
+                const budget = data.budget_recommendations ? data.budget_recommendations[cat] || 0 : 0;
                 const pct = data.percentages[cat] || 0;
+                
+                let barColor = '#27ae60';
+                let statusIcon = '✓';
+                if (pct > 100) {
+                    barColor = '#e74c3c';
+                    statusIcon = '!';
+                } else if (pct > 80) {
+                    barColor = '#f39c12';
+                    statusIcon = '!';
+                }
+                
+                const barWidth = Math.min(pct, 100);
+                
                 html += `<div class="card p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: ${catColors[cat]}">
-                            <i data-lucide="${catIcons[cat]}" class="w-5 h-5 text-white"></i>
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: ${catColors[cat]}">
+                                <i data-lucide="${catIcons[cat]}" class="w-4 h-4 text-white"></i>
+                            </div>
+                            <span class="font-semibold">${catNames[cat]}</span>
                         </div>
-                        <div>
-                            <p class="font-semibold">${catNames[cat]}</p>
-                            <p class="text-xs text-[var(--text-secondary)]">${pct}%</p>
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg font-bold" style="color: ${barColor}">${spent.toLocaleString()}</span>
+                            <span class="w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold" style="background: ${barColor}">${statusIcon}</span>
                         </div>
                     </div>
-                    <p class="text-xl font-bold">${formatMoney(amount)}</p>
-                    <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2 mt-2">
-                        <div class="h-2 rounded-full" style="width: ${pct}%; background: ${catColors[cat]}"></div>
+                    
+                    <div class="relative">
+                        <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-4 overflow-hidden">
+                            <div class="h-full rounded-full transition-all" style="width: ${barWidth}%; background: ${barColor}"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-2 text-xs">
+                        <span style="color: ${barColor}">${pct.toFixed(0)}%</span>
+                        ${budget > 0 ? `<span class="text-[var(--text-secondary)]">Presupuesto: ${budget.toLocaleString()}</span>` : ''}
                     </div>
                 </div>`;
             });
-            html += '</div>';
-            
-            if (data.budget_recommendations) {
-                html += `<div class="card p-4">
-                    <h4 class="font-semibold mb-3">${t('recommended_budget')}</h4>
-                    <div class="space-y-2 text-sm">`;
-                Object.keys(data.budget_recommendations).forEach(cat => {
-                    const rec = data.budget_recommendations[cat];
-                    const spent = data.by_category[cat] || 0;
-                    const diff = rec - spent;
-                    const color = diff >= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
-                    html += `<div class="flex justify-between">
-                        <span>${catNames[cat]}:</span>
-                        <span class="font-medium">${formatMoney(rec)}</span>
-                    </div>
-                    <div class="flex justify-between text-xs text-[var(--text-secondary)]">
-                        <span>${t('spent_label')}: ${formatMoney(spent)}</span>
-                        <span style="color: ${color}">${diff >= 0 ? t('remaining_label') + ': ' + formatMoney(diff) : t('exceeded_label') + ': ' + formatMoney(Math.abs(diff))}</span>
-                    </div>`;
-                });
-                html += '</div></div>';
-            }
             
             html += '</div>';
             return html;
@@ -2723,66 +2981,85 @@
         
         function renderDebtsReport(data) {
             if (!data.debts || !data.debts.length) {
-                return '<p class="text-[var(--text-secondary)]">' + t('no_debts') + '</p>';
+                return '<div class="card p-6"><p class="text-[var(--text-secondary)]">' + t('no_debts') + '</p></div>';
             }
             
-            let html = '<div class="space-y-4">';
-            html += '<h3 class="font-semibold text-lg mb-4">' + t('debt_history') + '</h3>';
-            
+            let debtsHtml = '';
             data.debts.forEach(d => {
                 const isPaid = d.is_paid;
-                const color = isPaid ? 'var(--accent-green)' : (d.interest_rate > 20 ? 'var(--accent-coral)' : 'var(--accent-yellow)');
+                const riskLevel = isPaid ? 'low' : (d.interest_rate > 20 ? 'high' : (d.interest_rate > 10 ? 'medium' : 'low'));
+                const riskColors = { high: '#e74c3c', medium: '#f39c12', low: '#27ae60' };
+                const riskLabels = { high: t('high_risk'), medium: t('medium_risk'), low: t('low_risk') };
+                const riskColor = riskColors[riskLevel];
                 
-                html += `<div class="card p-4" style="border-left: 4px solid ${color}">
-                    <div class="flex justify-between items-start mb-3">
+                debtsHtml += `<div class="card p-4 relative overflow-hidden mb-3">
+                    <div class="absolute top-0 left-0 bottom-0 w-1" style="background: ${riskColor}"></div>
+                    <div class="flex justify-between items-start mb-3 pl-3">
                         <div>
                             <p class="font-semibold">${d.name}</p>
                             <p class="text-sm text-[var(--text-secondary)]">${t('rate_label')}: ${d.interest_rate}%</p>
                         </div>
-                        <span class="badge ${isPaid ? 'badge-green' : 'badge-coral'}">${isPaid ? t('paid').toUpperCase() : t('active')}</span>
+                        <div class="text-right">
+                            <span class="inline-block px-2 py-1 rounded-full text-xs font-medium text-white" style="background: ${riskColor}">${riskLabels[riskLevel]}</span>
+                            ${isPaid ? '<span class="block mt-1 text-xs text-[var(--accent-green)]">' + t('paid') + '</span>' : ''}
+                        </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-4 text-sm mb-3">
-                        <div>
+                    <div class="grid grid-cols-3 gap-3 text-sm mb-3 pl-3">
+                        <div class="text-center p-2 bg-[var(--bg-tertiary)] rounded-lg">
                             <p class="text-xs text-[var(--text-secondary)]">${t('original_label')}</p>
-                            <p class="font-medium">${formatMoney(d.initial_amount)}</p>
+                            <p class="font-semibold">${formatMoney(d.initial_amount)}</p>
                         </div>
-                        <div>
-                            <p class="text-xs text-[var(--text-secondary)]">${t('actual_label')}</p>
-                            <p class="font-medium">${formatMoney(d.current_amount)}</p>
+                        <div class="text-center p-2 bg-[var(--bg-tertiary)] rounded-lg">
+                            <p class="text-xs text-[var(--text-secondary)]">${t('balance')}</p>
+                            <p class="font-semibold" style="color: ${isPaid ? 'var(--accent-green)' : 'var(--accent-coral)'}">${formatMoney(d.current_amount)}</p>
                         </div>
-                        <div>
+                        <div class="text-center p-2 bg-[var(--bg-tertiary)] rounded-lg">
                             <p class="text-xs text-[var(--text-secondary)]">${t('progress_label')}</p>
-                            <p class="font-medium">${d.progress}%</p>
+                            <p class="font-semibold">${d.progress}%</p>
                         </div>
                     </div>
-                    <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2">
-                        <div class="h-2 rounded-full" style="width: ${d.progress}%; background: ${color}"></div>
+                    <div class="pl-3">
+                        <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2">
+                            <div class="h-2 rounded-full transition-all" style="width: ${d.progress}%; background: ${riskColor}"></div>
+                        </div>
                     </div>
                 </div>`;
             });
             
+            let summaryHtml = '';
             if (data.totals) {
-                html += `<div class="card p-4 mt-4 bg-[var(--bg-tertiary)]">
-                    <h4 class="font-semibold mb-3">${t('summary_label')}</h4>
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div>
-                            <p class="text-xs text-[var(--text-secondary)]">${t('total_original_label')}</p>
-                            <p class="font-bold text-lg">${formatMoney(data.totals.initial)}</p>
+                summaryHtml = `<div class="card p-4">
+                    <h4 class="font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4"></i>
+                        ${t('summary_label')}
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                            <span class="text-sm text-[var(--text-secondary)]">${t('total_original_label')}</span>
+                            <span class="text-lg font-bold">${formatMoney(data.totals.initial)}</span>
                         </div>
-                        <div>
-                            <p class="text-xs text-[var(--text-secondary)]">${t('total_pending_label')}</p>
-                            <p class="font-bold text-lg text-[var(--accent-coral)]">${formatMoney(data.totals.current)}</p>
+                        <div class="flex justify-between items-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                            <span class="text-sm text-[var(--text-secondary)]">${t('total_pending_label')}</span>
+                            <span class="text-lg font-bold" style="color: var(--accent-coral)">${formatMoney(data.totals.current)}</span>
                         </div>
-                        <div>
-                            <p class="text-xs text-[var(--text-secondary)]">${t('total_paid_label')}</p>
-                            <p class="font-bold text-lg text-[var(--accent-green)]">${formatMoney(data.totals.paid)}</p>
+                        <div class="flex justify-between items-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                            <span class="text-sm text-[var(--text-secondary)]">${t('total_paid_label')}</span>
+                            <span class="text-lg font-bold" style="color: var(--accent-green)">${formatMoney(data.totals.paid)}</span>
                         </div>
                     </div>
                 </div>`;
             }
             
-            html += '</div>';
-            return html;
+            const debtsColumn = `<div><h3 class="font-semibold text-lg mb-4">${t('debt_history')}</h3>${debtsHtml}</div>`;
+            
+            if (summaryHtml) {
+                return `<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="lg:col-span-1">${summaryHtml}</div>
+                    <div class="lg:col-span-2">${debtsColumn}</div>
+                </div>`;
+            } else {
+                return debtsColumn;
+            }
         }
 
         async function loadDebtComparison() {
@@ -3353,6 +3630,32 @@
             }
         }
 
+        async function payCard(id) {
+            const cards = await apiFetch('/api/credit-card').then(r => r.json());
+            const card = cards.find(c => c.id === id);
+            if (!card) return;
+            
+            const amount = await showPrompt(t('pay'), t('enter_amount_to_pay'), card.current_balance.toString());
+            if (!amount) return;
+            
+            try {
+                const resp = await fetch(`/api/credit-card/${id}/pay`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: parseFloat(amount) })
+                });
+                if (resp.ok) {
+                    showToast(t('payment_success'), 'success');
+                    loadCards();
+                    loadDashboard();
+                } else {
+                    showToast(t('payment_error'), 'error');
+                }
+            } catch (e) {
+                showToast(t('connection_error'), 'error');
+            }
+        }
+
         async function toggleService(id) {
             const services = await apiFetch('/api/service').then(r => r.json());
             const service = services.find(s => s.id === id);
@@ -3677,7 +3980,7 @@
             else if (section === 'debts') loadDebts();
             else if (section === 'cards') loadCards();
             else if (section === 'services') loadServices();
-            else if (section === 'reports') loadReport('fortnightly');
+            else if (section === 'reports') loadReport('monthly');
             else if (section === 'budget') loadBudget();
             else if (section === 'ai') loadAI();
             

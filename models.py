@@ -77,6 +77,7 @@ class CreditCard(Base):
     created_at = Column(DateTime, default=datetime.now)
 
     charges = relationship("CreditCardCharge", back_populates="card")
+    card_payments = relationship("CreditCardPayment", back_populates="card")
 
 
 class CreditCardCharge(Base):
@@ -88,6 +89,18 @@ class CreditCardCharge(Base):
     charge_date = Column(Date, nullable=False)
 
     card = relationship("CreditCard", back_populates="charges")
+
+
+class CreditCardPayment(Base):
+    __tablename__ = "credit_card_payments"
+    id = Column(Integer, primary_key=True, index=True)
+    card_id = Column(Integer, ForeignKey("credit_cards.id"), nullable=False)
+    amount = Column(Float, nullable=False)
+    payment_date = Column(Date, nullable=False)
+    balance_before = Column(Float)
+    balance_after = Column(Float)
+
+    card = relationship("CreditCard", back_populates="card_payments")
 
 
 class HouseholdService(Base):

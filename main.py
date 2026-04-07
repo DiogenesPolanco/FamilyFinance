@@ -95,6 +95,7 @@ from models import (
     DebtPayment,
     CreditCard,
     CreditCardCharge,
+    CreditCardPayment,
     HouseholdService,
     ServicePayment,
 )
@@ -199,8 +200,25 @@ def get_upcoming_payments(
     services = (
         db.query(HouseholdService).filter(HouseholdService.is_active == True).all()
     )
+    first_of_month = date(today.year, today.month, 1)
+
     for s in services:
         if s.due_day:
+            has_payment = (
+                db.query(ServicePayment)
+                .filter(
+                    ServicePayment.service_id == s.id,
+                    ServicePayment.payment_date >= first_of_month,
+                )
+                .first()
+            )
+            was_paid = has_payment or (
+                s.last_paid_date and s.last_paid_date >= first_of_month
+            )
+
+            if was_paid:
+                continue
+
             next_date = date(today.year, today.month, min(s.due_day, 28))
             if next_date < today:
                 next_date = date(today.year, today.month + 1, min(s.due_day, 28))
@@ -522,6 +540,33 @@ def pay_debt(
     return db_debt
 
 
+@app.get("/api/debt/payments")
+def get_debt_payments(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    payments = (
+        db.query(DebtPayment)
+        .join(Debt)
+        .order_by(DebtPayment.payment_date.desc())
+        .limit(50)
+        .all()
+    )
+    return [
+        {
+            "id": p.id,
+            "debt_id": p.debt_id,
+            "debt_name": p.debt.name,
+            "amount": p.amount,
+            "payment_date": p.payment_date,
+            "remaining_balance": p.debt.current_amount,
+            "interest_rate": p.debt.interest_rate,
+            "original_amount": p.debt.initial_amount,
+        }
+        for p in payments
+    ]
+
+
 @app.delete("/api/debt/{debt_id}")
 def delete_debt(
     debt_id: int,
@@ -551,6 +596,11 @@ class CreditCardChargeCreate(BaseModel):
     amount: float
     description: Optional[str] = None
     charge_date: Optional[date] = None
+
+
+class CreditCardPaymentCreate(BaseModel):
+    amount: float
+    payment_date: Optional[date] = None
 
 
 class CreditCardResponse(CreditCardCreate):
@@ -643,9 +693,91 @@ def delete_credit_card(
         raise HTTPException(status_code=404, detail="Card not found")
 
     db.query(CreditCardCharge).filter(CreditCardCharge.card_id == card_id).delete()
+    db.query(CreditCardPayment).filter(CreditCardPayment.card_id == card_id).delete()
     db.delete(db_card)
     db.commit()
     return {"message": "Card deleted"}
+
+
+@app.post("/api/credit-card/{card_id}/pay")
+def pay_credit_card(
+    card_id: int,
+    payment: CreditCardPaymentCreate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    db_card = db.query(CreditCard).filter(CreditCard.id == card_id).first()
+    if not db_card:
+        raise HTTPException(status_code=404, detail="Card not found")
+
+    balance_before = db_card.current_balance
+    db_card.current_balance -= payment.amount
+    if db_card.current_balance < 0:
+        db_card.current_balance = 0
+
+    db_payment = CreditCardPayment(
+        card_id=card_id,
+        amount=payment.amount,
+        payment_date=payment.payment_date or date.today(),
+        balance_before=balance_before,
+        balance_after=db_card.current_balance,
+    )
+    db.add(db_payment)
+    db.commit()
+    db.refresh(db_card)
+    return db_card
+
+
+@app.get("/api/credit-card/payments")
+def get_card_payments(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    payments = (
+        db.query(CreditCardPayment)
+        .join(CreditCard)
+        .order_by(CreditCardPayment.payment_date.desc())
+        .limit(50)
+        .all()
+    )
+    return [
+        {
+            "id": p.id,
+            "card_id": p.card_id,
+            "card_name": p.card.name,
+            "amount": p.amount,
+            "payment_date": p.payment_date,
+            "balance_before": p.balance_before,
+            "balance_after": p.balance_after,
+            "limit": p.card.limit,
+        }
+        for p in payments
+    ]
+
+
+@app.get("/api/credit-card/charges")
+def get_card_charges(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    charges = (
+        db.query(CreditCardCharge)
+        .join(CreditCard)
+        .order_by(CreditCardCharge.charge_date.desc())
+        .limit(50)
+        .all()
+    )
+    return [
+        {
+            "id": p.id,
+            "card_id": p.card_id,
+            "card_name": p.card.name,
+            "amount": p.amount,
+            "description": p.description,
+            "charge_date": p.charge_date,
+        }
+        for p in charges
+    ]
 
 
 # Household Service CRUD
@@ -739,6 +871,31 @@ def pay_service(
     db.commit()
     db.refresh(db_service)
     return db_service
+
+
+@app.get("/api/service/payments")
+def get_service_payments(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    payments = (
+        db.query(ServicePayment)
+        .join(HouseholdService)
+        .order_by(ServicePayment.payment_date.desc())
+        .limit(50)
+        .all()
+    )
+    return [
+        {
+            "id": p.id,
+            "service_id": p.service_id,
+            "service_name": p.service.name,
+            "provider": p.service.provider,
+            "amount": p.amount,
+            "payment_date": p.payment_date,
+        }
+        for p in payments
+    ]
 
 
 @app.delete("/api/service/{service_id}")
