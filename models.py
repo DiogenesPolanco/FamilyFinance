@@ -74,6 +74,10 @@ class CreditCard(Base):
     current_balance = Column(Float, default=0)
     interest_rate = Column(Float, nullable=False)
     due_date = Column(Integer, nullable=False)
+    card_type = Column(String, default="visa")
+    last_four = Column(String, default="0000")
+    cardholder_name = Column(String, default="TITULAR")
+    expiration_date = Column(String, default="12/28")
     created_at = Column(DateTime, default=datetime.now)
 
     charges = relationship("CreditCardCharge", back_populates="card")

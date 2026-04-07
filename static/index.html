@@ -51,6 +51,259 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 16px rgba(45, 52, 54, 0.12);
         }
+        
+        .credit-card {
+            width: 100%;
+            height: 200px;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .credit-card.visa {
+            background: linear-gradient(135deg, #4a6fa5 0%, #3d5a80 50%, #2c4a6e 100%);
+        }
+        
+        .credit-card.visa::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.08), transparent);
+            transform: rotate(30deg);
+        }
+        
+        .credit-card.mastercard {
+            background: linear-gradient(135deg, #5c7a99 0%, #4a6275 100%);
+        }
+        
+        .credit-card.mastercard::before {
+            content: '';
+            position: absolute;
+            top: 16px;
+            right: 24px;
+            width: 50px;
+            height: 50px;
+            background: #c45a5a;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        .credit-card.mastercard::after {
+            content: '';
+            position: absolute;
+            top: 16px;
+            right: 24px;
+            width: 50px;
+            height: 50px;
+            background: #e8a045;
+            border-radius: 50%;
+            opacity: 0.8;
+            transform: translateX(-25px);
+        }
+        
+        .credit-card.amex {
+            background: linear-gradient(135deg, #5a7fa8 0%, #456285 50%, #354a6a 100%);
+        }
+        
+        .credit-card.discovers {
+            background: linear-gradient(135deg, #6a8a9a 0%, #5a7a8a 50%, #4a6a7a 100%);
+        }
+        
+        .credit-card.other {
+            background: linear-gradient(135deg, #6b7a9a 0%, #5a6a8a 100%);
+        }
+        
+        .credit-card .card-shine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(0,0,0,0.1) 100%);
+            pointer-events: none;
+        }
+        
+        .credit-card .card-chip {
+            width: 50px;
+            height: 40px;
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #d4af37 100%);
+            border-radius: 8px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .credit-card .card-chip::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border: 2px solid rgba(0,0,0,0.2);
+            border-radius: 4px;
+        }
+        
+        .credit-card .card-chip::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .credit-card .card-number {
+            font-size: 16px;
+            letter-spacing: 2px;
+            font-weight: 500;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .credit-card .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto;
+        }
+        
+        .credit-card .card-info {
+            flex: 1;
+        }
+        
+        .credit-card .card-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 1px;
+        }
+        
+        .credit-card .card-value {
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .credit-card .card-brand {
+            font-size: 24px;
+            font-weight: bold;
+            font-style: italic;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .credit-card .card-balance {
+            position: absolute;
+            top: 16px;
+            right: 44px;
+            text-align: right;
+        }
+        
+        .credit-card .balance-label {
+            font-size: 9px;
+            opacity: 0.8;
+        }
+        
+        .credit-card .balance-amount {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .credit-card .card-limit-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: rgba(0,0,0,0.3);
+        }
+        
+        .credit-card .card-limit-fill {
+            height: 100%;
+            background: var(--accent-coral);
+            transition: width 0.3s ease;
+        }
+        
+        .credit-card.visa .card-brand { color: #ffffff; }
+        .credit-card.mastercard .card-brand { color: rgba(255,255,255,0.9); }
+        .credit-card.amex .card-brand { color: #ffffff; letter-spacing: 2px; }
+        .credit-card.discovers .card-brand { color: #000; }
+        .credit-card.other .card-brand { color: #fff; }
+        
+        .card-menu-container {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 50;
+        }
+        
+        .card-menu-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: rgba(0,0,0,0.3);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            font-size: 16px;
+            color: white;
+        }
+        
+        .card-menu-btn:hover {
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .card-menu-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            min-width: 160px;
+            z-index: 100;
+            overflow: hidden;
+            display: none;
+            margin-top: 4px;
+        }
+        
+        .card-menu-dropdown.show {
+            display: block;
+        }
+        
+        .card-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+        
+        .card-menu-item:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .card-menu-item.danger {
+            color: var(--accent-coral);
+        }
+        
+        .card-menu-item.danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
         .btn {
             border-radius: 12px;
             padding: 10px 20px;
@@ -669,7 +922,7 @@ border-radius: 3px;
                             <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i><span data-i18n="new_card">Nueva Tarjeta</span>
                         </button>
                     </div>
-                    <div id="card-list" class="space-y-3">
+                    <div id="card-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-fr">
                         <p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_cards">No hay tarjetas registradas</p>
                     </div>
                     <div class="mt-6">
@@ -942,6 +1195,17 @@ border-radius: 3px;
             category_label: { es: 'Categoría', en: 'Category' },
             date_label: { es: 'Fecha', en: 'Date' },
             name_label: { es: 'Nombre', en: 'Name' },
+            cardholder_label: { es: 'Titular', en: 'Cardholder' },
+            expires_label: { es: 'Vence', en: 'Expires' },
+            limit_label: { es: 'Límite', en: 'Limit' },
+            usage_label: { es: 'Usado', en: 'Used' },
+            balance_label: { es: 'Saldo', en: 'Balance' },
+            rate_label: { es: 'Tasa', en: 'Rate' },
+            due_date_label: { es: 'Vencimiento', en: 'Due Date' },
+            last_four_label: { es: 'Últimos 4 dígitos', en: 'Last 4 digits' },
+            expiration_label: { es: 'Fecha de Vencimiento', en: 'Expiration Date' },
+            card_type_label: { es: 'Tipo de Tarjeta', en: 'Card Type' },
+            cardholder_name_label: { es: 'Nombre del Titular', en: 'Cardholder Name' },
             initial_amount_label: { es: 'Monto Inicial', en: 'Initial Amount' },
             current_amount_label: { es: 'Monto Actual', en: 'Current Amount' },
             interest_rate_pct: { es: 'Tasa de Interés (%)', en: 'Interest Rate (%)' },
@@ -1494,6 +1758,15 @@ border-radius: 3px;
                 limit: 'Limit',
                 actual_balance: 'Actual Balance',
                 cutoff_day: 'Cutoff Day (1-31)',
+                cardholder_label: 'Cardholder',
+                expires_label: 'Expires',
+                usage_label: 'Used',
+                balance_label: 'Balance',
+                due_date_label: 'Due Date',
+                last_four_label: 'Last 4 digits',
+                expiration_label: 'Expiration (MM/YY)',
+                card_type_label: 'Card Type',
+                cardholder_name_label: 'Cardholder Name',
                 provider: 'Provider',
                 monthly_amount: 'Monthly Amount',
                 payment_day: 'Payment Day (1-31)',
@@ -1652,6 +1925,15 @@ border-radius: 3px;
                 next_payment_label: 'Próximo Pago',
                 limit_label: 'Límite',
                 actual_balance_label: 'Saldo Actual',
+                cardholder_label: 'Titular',
+                expires_label: 'Vence',
+                usage_label: 'Usado',
+                balance_label: 'Saldo',
+                due_date_label: 'Vencimiento',
+                last_four_label: 'Últimos 4 dígitos',
+                expiration_label: 'Vencimiento (MM/YY)',
+                card_type_label: 'Tipo de Tarjeta',
+                cardholder_name_label: 'Nombre del Titular',
                 cutoff_day_label: 'Día de Corte (1-31)',
                 provider_label: 'Proveedor',
                 monthly_amount_label: 'Monto Mensual',
@@ -2164,32 +2446,95 @@ border-radius: 3px;
                     }
                     list.innerHTML = cards.map(c => {
                         const usage = c.limit > 0 ? (c.current_balance / c.limit * 100).toFixed(0) : 0;
-                        return `<div class="card p-4">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="font-semibold">${c.name}</p>
-                                    <p class="text-sm text-[var(--text-secondary)]">${tr('card_limit_usage', { limit: formatMoney(c.limit), usage: usage, rate: c.interest_rate })}</p>
-                                    <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2 mt-2">
-                                        <div class="bg-[var(--accent-coral)] h-2 rounded-full" style="width: ${Math.min(usage, 100)}%"></div>
+                        const cardType = c.card_type || 'visa';
+                        const lastFour = c.last_four || '0000';
+                        const cardholder = c.cardholder_name || 'TITULAR';
+                        const expDate = c.expiration_date || '12/28';
+                        const brandLogo = cardType === 'visa' ? 'VISA' : cardType === 'mastercard' ? 'MC' : cardType === 'amex' ? 'AMEX' : cardType === 'discovers' ? 'DISC' : 'CARD';
+                        const usageColor = usage > 80 ? '#ef4444' : usage > 50 ? '#f59e0b' : '#22c55e';
+                        const usageTextColor = usage > 80 ? '#ef4444' : usage > 50 ? '#f59e0b' : '#22c55e';
+                        
+                        return `<div class="h-full">
+                            <div class="credit-card ${cardType} h-full">
+                                <div class="card-menu-container">
+                                    <button onclick="toggleCardMenu('menu-${c.id}')" class="card-menu-btn">⋮</button>
+                                    <div id="menu-${c.id}" class="card-menu-dropdown">
+                                        <div class="card-menu-item" onclick="payCard(${c.id}); toggleCardMenu('menu-${c.id}');">
+                                            <span>💳</span><span>${t('pay')}</span>
+                                        </div>
+                                        <div class="card-menu-item" onclick="addCardCharge(${c.id}); toggleCardMenu('menu-${c.id}');">
+                                            <span>📝</span><span>${t('add_charge')}</span>
+                                        </div>
+                                        <div class="border-t border-[var(--border)] my-1"></div>
+                                        <div class="card-menu-item" onclick="editCard(${c.id}); toggleCardMenu('menu-${c.id}');">
+                                            <span>✏️</span><span>${t('edit')}</span>
+                                        </div>
+                                        <div class="card-menu-item" onclick="showCardProjection(${c.id}); toggleCardMenu('menu-${c.id}');">
+                                            <span>📊</span><span>${t('view_projection_short')}</span>
+                                        </div>
+                                        <div class="card-menu-item danger" onclick="deleteCardConfirm(${c.id});">
+                                            <span>🗑️</span><span>${t('delete')}</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="text-right">
-                                    <p class="text-lg font-semibold text-[var(--accent-coral)]">${formatMoney(c.current_balance)}</p>
-                                    <p class="text-xs text-[var(--text-secondary)]">${t('current_balance_label')}</p>
+                                <div class="card-shine"></div>
+                                <div class="flex justify-between items-start">
+                                    <div class="card-brand" style="font-size: 20px;">${brandLogo}</div>
+                                    <div class="card-balance">
+                                        <div class="balance-label">${t('balance_label')}</div>
+                                        <div class="balance-amount">${formatMoney(c.current_balance)}</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div id="card-projection-${c.id}" class="hidden mt-3"></div>
-                            <div class="flex gap-2 mt-3">
-                                <button onclick="payCard(${c.id})" class="btn-pay text-xs flex-1">${t('pay')}</button>
-                                <button onclick="addCardCharge(${c.id})" class="btn btn-primary text-xs flex-1">${t('add_charge')}</button>
-                                <button onclick="showCardProjection(${c.id})" class="btn text-xs flex-1">${t('view_projection_short')}</button>
-                                <button onclick="editCard(${c.id})" class="btn text-xs flex-1">${t('edit')}</button>
+                                <div class="card-number">•••• •••• •••• ${lastFour}</div>
+                                <div class="card-bottom">
+                                    <div class="card-info">
+                                        <div class="card-label">${t('cardholder_label')}</div>
+                                        <div class="card-value">${cardholder}</div>
+                                    </div>
+                                    <div class="card-info" style="text-align: center;">
+                                        <div class="card-label">${t('expires_label')}</div>
+                                        <div class="card-value">${expDate}</div>
+                                    </div>
+                                    <div class="card-info" style="text-align: right;">
+                                        <div class="card-label">${t('rate_label')}</div>
+                                        <div class="card-value">${c.interest_rate}%</div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center mt-1">
+                                    <span class="text-[10px] text-white opacity-80">${t('limit_label')}: ${formatMoney(c.limit)}</span>
+                                    <span class="text-[10px] font-bold" style="color: ${usageTextColor}">${usage}% ${t('usage_label')}</span>
+                                </div>
+                                <div class="card-limit-bar mt-1">
+                                    <div class="card-limit-fill" style="width: ${Math.min(usage, 100)}%; background: ${usageColor}"></div>
+                                </div>
+                                <div id="card-projection-${c.id}" class="hidden mt-2"></div>
                             </div>
                         </div>`;
                     }).join('');
                     if (typeof lucide !== "undefined") lucide.createIcons();
                 });
         }
+        
+        function toggleCardMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const allMenus = document.querySelectorAll('.card-menu-dropdown');
+            allMenus.forEach(m => {
+                if (m.id !== menuId) m.classList.remove('show');
+            });
+            menu.classList.toggle('show');
+        }
+        
+        function deleteCardConfirm(cardId) {
+            if (confirm(t('confirm_delete_card'))) {
+                deleteCard(cardId);
+            }
+        }
+        
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.card-menu-container')) {
+                document.querySelectorAll('.card-menu-dropdown').forEach(m => m.classList.remove('show'));
+            }
+        });
 
         async function loadCardPaymentHistory() {
             const container = document.getElementById('card-payment-history');
@@ -2339,6 +2684,30 @@ border-radius: 3px;
                         <div class="mb-3">
                             <label class="block text-sm font-medium mb-1">${t('name_label')}</label>
                             <input type="text" name="name" class="input" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">${t('card_type_label')}</label>
+                            <select name="card_type" class="input">
+                                <option value="visa">VISA</option>
+                                <option value="mastercard">Mastercard</option>
+                                <option value="amex">American Express</option>
+                                <option value="discovers">Discover</option>
+                                <option value="other">Otra</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium mb-1">${t('cardholder_name_label')}</label>
+                            <input type="text" name="cardholder_name" class="input" placeholder="NOMBRE TITULAR" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">${t('last_four_label')}</label>
+                                <input type="text" name="last_four" class="input" maxlength="4" placeholder="1234" pattern="[0-9]{4}" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">${t('expiration_label')}</label>
+                                <input type="text" name="expiration_date" class="input" placeholder="MM/YY" pattern="[0-9]{2}/[0-9]{2}" required>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium mb-1">${t('limit_label')}</label>
@@ -3853,10 +4222,39 @@ border-radius: 3px;
             title.textContent = t('edit_card');
             editingId = cardId;
             
+            const cardType = card.card_type || 'visa';
+            const lastFour = card.last_four || '0000';
+            const cardholderName = card.cardholder_name || 'TITULAR';
+            const expDate = card.expiration_date || '12/28';
+            
             form.innerHTML = `
                 <div class="mb-3">
                     <label class="block text-sm font-medium mb-1">${t('name_label')}</label>
                     <input type="text" name="name" class="input" value="${card.name}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">${t('card_type_label')}</label>
+                    <select name="card_type" class="input">
+                        <option value="visa" ${cardType === 'visa' ? 'selected' : ''}>VISA</option>
+                        <option value="mastercard" ${cardType === 'mastercard' ? 'selected' : ''}>Mastercard</option>
+                        <option value="amex" ${cardType === 'amex' ? 'selected' : ''}>American Express</option>
+                        <option value="discovers" ${cardType === 'discovers' ? 'selected' : ''}>Discover</option>
+                        <option value="other" ${cardType === 'other' ? 'selected' : ''}>Otra</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">${t('cardholder_name_label')}</label>
+                    <input type="text" name="cardholder_name" class="input" value="${cardholderName}" required>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">${t('last_four_label')}</label>
+                        <input type="text" name="last_four" class="input" maxlength="4" value="${lastFour}" pattern="[0-9]{4}" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">${t('expiration_label')}</label>
+                        <input type="text" name="expiration_date" class="input" placeholder="MM/YY" value="${expDate}" required>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="block text-sm font-medium mb-1">${t('limit_label')}</label>

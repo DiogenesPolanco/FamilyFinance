@@ -590,6 +590,10 @@ class CreditCardCreate(BaseModel):
     current_balance: float = 0
     interest_rate: float
     due_date: int
+    card_type: Optional[str] = "visa"
+    last_four: Optional[str] = "0000"
+    cardholder_name: Optional[str] = "TITULAR"
+    expiration_date: Optional[str] = "12/28"
 
 
 class CreditCardChargeCreate(BaseModel):
@@ -630,6 +634,10 @@ def create_credit_card(
         current_balance=card.current_balance,
         interest_rate=card.interest_rate,
         due_date=card.due_date,
+        card_type=card.card_type or "visa",
+        last_four=card.last_four or "0000",
+        cardholder_name=card.cardholder_name or "TITULAR",
+        expiration_date=card.expiration_date or "12/28",
         created_at=datetime.now(),
     )
     db.add(db_card)
