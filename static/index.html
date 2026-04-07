@@ -135,6 +135,115 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        @keyframes aiGlitch {
+            0%, 100% { text-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
+            25% { text-shadow: -2px 0 #ff0080, 2px 0 #00ffff; }
+            50% { text-shadow: 2px 0 #ff0080, -2px 0 #00ffff; }
+            75% { text-shadow: -1px 0 #ff0080, 1px 0 #00ffff; }
+        }
+        
+        @keyframes aiScan {
+            0% { clip-path: inset(0 100% 0 0); }
+            100% { clip-path: inset(0 0 0 0); }
+        }
+        
+        @keyframes aiPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes cardReveal {
+            0% { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95); 
+                filter: blur(4px);
+            }
+            50% {
+                opacity: 0.5;
+                filter: blur(2px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+                filter: blur(0);
+            }
+        }
+        
+        @keyframes borderGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(139, 92, 246, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.6), inset 0 0 10px rgba(139, 92, 246, 0.1); }
+        }
+        
+        .ai-card-loading {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ai-card-loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
+            animation: scanLine 1.5s infinite;
+        }
+        
+        @keyframes scanLine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .ai-card-reveal {
+            animation: cardReveal 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .ai-card-1 { animation-delay: 0.1s; }
+        .ai-card-2 { animation-delay: 0.3s; }
+        .ai-card-3 { animation-delay: 0.5s; }
+        .ai-card-4 { animation-delay: 0.7s; }
+        
+        .behavior-card {
+            border-left: 4px solid;
+            background: var(--bg-tertiary);
+        }
+        
+        .behavior-card.behavior-high {
+            border-color: #ef4444;
+        }
+        
+        .behavior-card.behavior-warning {
+            border-color: #f59e0b;
+        }
+        
+        .behavior-card.behavior-info {
+            border-color: #3b82f6;
+        }
+        
+        .behavior-action {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .behavior-action {
+                background: rgba(255, 255, 255, 0.05);
+            }
+        }
+        
+        .ai-title-glitch {
+            animation: aiGlitch 3s infinite;
+        }
+        
+        .ai-dot-pulse {
+            display: inline-block;
+            animation: aiPulse 1.5s infinite;
+        }
+        .ai-dot-pulse:nth-child(2) { animation-delay: 0.2s; }
+        .ai-dot-pulse:nth-child(3) { animation-delay: 0.4s; }
+        
         .modal {
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(4px);
@@ -623,11 +732,22 @@ border-radius: 3px;
 
                 <!-- AI -->
                 <section id="section-ai" class="fade-in hidden">
-                    <div class="flex items-center gap-2 mb-6">
-                        <div class="w-8 h-8 bg-[var(--accent-purple)] rounded-lg flex items-center justify-center">
-                            <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-[var(--accent-purple)] rounded-lg flex items-center justify-center">
+                                <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <h1 class="text-2xl font-semibold" data-i18n="ai_assistant">Asistente IA</h1>
                         </div>
-                        <h1 class="text-2xl font-semibold" data-i18n="ai_assistant">Asistente IA</h1>
+                        <button onclick="toggleAISound()" id="ai-sound-btn" class="w-10 h-10 rounded-full bg-[var(--accent-purple)] bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-colors" title="Activar/Desactivar sonidos">
+                            <i data-lucide="volume-2" class="w-5 h-5 text-[var(--accent-purple)]" id="ai-sound-icon"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="ai-reset-btn" class="hidden mb-4">
+                        <button onclick="resetAICards()" class="text-sm px-3 py-1 rounded-full border border-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors">
+                            ⟳ Mostrar tarjetas ocultas
+                        </button>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -645,47 +765,57 @@ border-radius: 3px;
                         </div>
                     </div>
 
+                    <div class="card p-6 mb-6 relative" style="border-left: 4px solid var(--accent-coral)" id="card-actionable">
+                        <button onclick="closeAICard('actionable')" class="absolute top-3 right-3 w-8 h-8 rounded-full hover:bg-[var(--bg-tertiary)] flex items-center justify-center transition-colors" title="Cerrar">
+                            <i data-lucide="x" class="w-4 h-4 text-[var(--text-secondary)]"></i>
+                        </button>
+                        <h3 class="font-semibold mb-4 flex items-center gap-2">
+                            <i data-lucide="alert-octagon" class="w-5 h-5" style="color: var(--accent-coral)"></i>
+                            <span>Acciones Importantes</span>
+                        </h3>
+                        <div id="ai-actionable" class="space-y-3">
+                            <p class="text-[var(--text-secondary)]" data-i18n="loading">Cargando...</p>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <div class="card p-6">
+                        <div class="card p-6 relative" id="card-cashflow">
+                            <button onclick="closeAICard('cashflow')" class="absolute top-3 right-3 w-8 h-8 rounded-full hover:bg-[var(--bg-tertiary)] flex items-center justify-center transition-colors" title="Cerrar">
+                                <i data-lucide="x" class="w-4 h-4 text-[var(--text-secondary)]"></i>
+                            </button>
                             <h3 class="font-semibold mb-4 flex items-center gap-2">
-                                <i data-lucide="trending-up" class="w-5 h-5" style="color: var(--accent-blue)"></i>
-                                <span data-i18n="past_feedback">Retroalimentación del Pasado</span>
+                                <i data-lucide="trending-down" class="w-5 h-5" style="color: var(--accent-coral)"></i>
+                                <span>Tu Flujo de Caja</span>
                             </h3>
-                            <div id="ai-insights" class="space-y-3">
+                            <div id="ai-cashflow" class="space-y-3">
                                 <p class="text-[var(--text-secondary)]" data-i18n="loading">Cargando...</p>
                             </div>
                         </div>
 
-                        <div class="card p-6">
+                        <div class="card p-6 relative" id="card-coach">
+                            <button onclick="closeAICard('coach')" class="absolute top-3 right-3 w-8 h-8 rounded-full hover:bg-[var(--bg-tertiary)] flex items-center justify-center transition-colors" title="Cerrar">
+                                <i data-lucide="x" class="w-4 h-4 text-[var(--text-secondary)]"></i>
+                            </button>
                             <h3 class="font-semibold mb-4 flex items-center gap-2">
-                                <i data-lucide="lightbulb" class="w-5 h-5" style="color: var(--accent-yellow)"></i>
-                                <span data-i18n="future_suggestions">Sugerencias a Futuro</span>
+                                <i data-lucide="target" class="w-5 h-5" style="color: var(--accent-green)"></i>
+                                <span>Coach de Ahorro (Regla 50/30/20)</span>
                             </h3>
-                            <div id="ai-future" class="space-y-3">
+                            <div id="ai-coach" class="space-y-3">
                                 <p class="text-[var(--text-secondary)]" data-i18n="loading">Cargando...</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <div class="card p-6">
-                            <h3 class="font-semibold mb-4 flex items-center gap-2">
-                                <i data-lucide="list-checks" class="w-5 h-5" style="color: var(--accent-green)"></i>
-                                <span data-i18n="recommendations">Recomendaciones</span>
-                            </h3>
-                            <div id="ai-recommendations" class="space-y-2">
-                                <p class="text-[var(--text-secondary)]" data-i18n="loading">Cargando...</p>
-                            </div>
-                        </div>
-
-                        <div class="card p-6">
-                            <h3 class="font-semibold mb-4 flex items-center gap-2">
-                                <i data-lucide="alert-circle" class="w-5 h-5" style="color: var(--accent-coral)"></i>
-                                <span data-i18n="anomaly_detection">Detección de Anomalías</span>
-                            </h3>
-                            <div id="ai-anomalies" class="space-y-2">
-                                <p class="text-[var(--text-secondary)]" data-i18n="loading">Cargando...</p>
-                            </div>
+                    <div class="card p-6 mb-6 relative" id="card-behavior">
+                        <button onclick="closeAICard('behavior')" class="absolute top-3 right-3 w-8 h-8 rounded-full hover:bg-[var(--bg-tertiary)] flex items-center justify-center transition-colors" title="Cerrar">
+                            <i data-lucide="x" class="w-4 h-4 text-[var(--text-secondary)]"></i>
+                        </button>
+                        <h3 class="font-semibold mb-4 flex items-center gap-2">
+                            <i data-lucide="brain" class="w-5 h-5" style="color: var(--accent-purple)"></i>
+                            <span>Patrones de Comportamiento</span>
+                        </h3>
+                        <div id="ai-behavior" class="space-y-3">
+                            <p class="text-[var(--text-secondary)]" data-i18n="loading">Cargando...</p>
                         </div>
                     </div>
 
@@ -2673,7 +2803,151 @@ border-radius: 3px;
             icon.style.transform = container.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         }
 
+        let aiSoundEnabled = true;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playAISound(type) {
+            if (!aiSoundEnabled) return;
+            
+            try {
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                if (type === 'start') {
+                    oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.15);
+                } else if (type === 'card') {
+                    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.08);
+                    oscillator.type = 'triangle';
+                    gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.1);
+                } else if (type === 'complete') {
+                    oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime + 0.2);
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'click') {
+                    oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
+                    oscillator.type = 'square';
+                    gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.05);
+                }
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+
+        function toggleAISound() {
+            aiSoundEnabled = !aiSoundEnabled;
+            const btn = document.getElementById('ai-sound-btn');
+            const icon = document.getElementById('ai-sound-icon');
+            if (btn && icon) {
+                if (aiSoundEnabled) {
+                    btn.classList.remove('bg-opacity-20');
+                    btn.classList.add('bg-opacity-40');
+                    icon.setAttribute('data-lucide', 'volume-2');
+                } else {
+                    btn.classList.remove('bg-opacity-40');
+                    btn.classList.add('bg-opacity-20');
+                    icon.setAttribute('data-lucide', 'volume-x');
+                }
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+            localStorage.setItem('ai_sound_enabled', aiSoundEnabled);
+        }
+
+        function closeAICard(cardId) {
+            const card = document.getElementById('card-' + cardId);
+            if (card) {
+                playAISound('click');
+                card.style.transition = 'all 0.3s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(-10px) scale(0.95)';
+                setTimeout(() => {
+                    card.classList.add('hidden');
+                    const closedCards = JSON.parse(localStorage.getItem('ai_closed_cards') || '[]');
+                    if (!closedCards.includes(cardId)) {
+                        closedCards.push(cardId);
+                        localStorage.setItem('ai_closed_cards', JSON.stringify(closedCards));
+                    }
+                    updateResetButton();
+                }, 300);
+            }
+        }
+
+        function resetAICards() {
+            localStorage.removeItem('ai_closed_cards');
+            ['actionable', 'cashflow', 'coach', 'behavior'].forEach(cardId => {
+                const card = document.getElementById('card-' + cardId);
+                if (card) {
+                    card.classList.remove('hidden');
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 50);
+                }
+            });
+            document.getElementById('ai-reset-btn').classList.add('hidden');
+        }
+
+        function updateResetButton() {
+            const closedCards = JSON.parse(localStorage.getItem('ai_closed_cards') || '[]');
+            const resetBtn = document.getElementById('ai-reset-btn');
+            if (resetBtn) {
+                if (closedCards.length > 0) {
+                    resetBtn.classList.remove('hidden');
+                } else {
+                    resetBtn.classList.add('hidden');
+                }
+            }
+        }
+
         async function loadAI() {
+            const closedCards = JSON.parse(localStorage.getItem('ai_closed_cards') || '[]');
+            ['actionable', 'cashflow', 'coach', 'behavior'].forEach(cardId => {
+                const card = document.getElementById('card-' + cardId);
+                if (card && closedCards.includes(cardId)) {
+                    card.classList.add('hidden');
+                } else if (card) {
+                    card.classList.remove('hidden');
+                    card.classList.add('ai-card-loading');
+                }
+            });
+            updateResetButton();
+            
+            const aiTitle = document.querySelector('#section-ai h1');
+            if (aiTitle) {
+                aiTitle.classList.add('ai-title-glitch');
+                setTimeout(() => aiTitle.classList.remove('ai-title-glitch'), 3000);
+            }
+            
+            const savedSound = localStorage.getItem('ai_sound_enabled');
+            if (savedSound !== null) {
+                aiSoundEnabled = savedSound === 'true';
+            }
+            
+            playAISound('start');
+            
             const insights = await apiFetch('/api/ai/insights').then(r => r.json());
             
             const incomeEl = document.getElementById('ai-summary-income');
@@ -2692,101 +2966,197 @@ border-radius: 3px;
                 balanceEl.textContent = '-';
             }
             
-            const insightContainer = document.getElementById('ai-insights');
-            const futureContainer = document.getElementById('ai-future');
-            let insightsHtml = '';
-            let futureHtml = '';
+            const actionableContainer = document.getElementById('ai-actionable');
+            const cashflowContainer = document.getElementById('ai-cashflow');
+            const coachContainer = document.getElementById('ai-coach');
+            const behaviorContainer = document.getElementById('ai-behavior');
             
-            if (insights.past_review && insights.past_review.comparison) {
-                const comp = insights.past_review.comparison;
-                
-                if (comp.income_change_pct !== undefined) {
-                    const color = comp.income_change_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
-                    const pct = Math.abs(comp.income_change_pct);
-                    insightsHtml += `<div class="mb-3">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span data-i18n="income_vs_month">${t('income_vs_month')}</span>
-                            <span style="color: ${color}; font-weight: 600">${comp.income_change_pct >= 0 ? '+' : '-'}${pct}%</span>
+            const cardActionable = document.getElementById('card-actionable');
+            const cardCashflow = document.getElementById('card-cashflow');
+            const cardCoach = document.getElementById('card-coach');
+            const cardBehavior = document.getElementById('card-behavior');
+            
+            const actionable = await apiFetch('/api/ai/actionable').then(r => r.json());
+            if (actionable && actionable.length) {
+                actionableContainer.innerHTML = actionable.map(item => {
+                    const color = item.type === 'urgent' ? 'var(--accent-coral)' : item.type === 'warning' ? 'var(--accent-yellow)' : 'var(--accent-blue)';
+                    return `<div class="p-3 rounded-lg bg-[var(--bg-tertiary)]">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="${item.icon || 'alert-circle'}" class="w-5 h-5 mt-0.5" style="color: ${color}"></i>
+                            <div class="flex-1">
+                                <p class="font-semibold text-sm">${item.title}</p>
+                                <p class="text-sm text-[var(--text-secondary)]">${item.description}</p>
+                                <p class="text-xs mt-1 font-medium" style="color: ${color}">→ ${item.action}</p>
+                            </div>
                         </div>
-                        <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2">
-                            <div class="h-2 rounded-full" style="width: ${Math.min(pct, 100)}%; background: ${color}"></div>
+                    </div>`;
+                }).join('');
+            } else {
+                actionableContainer.innerHTML = '<p class="text-[var(--text-secondary)]">Tu situación financiera se ve bien. ¡Sígue así!</p>';
+            }
+            if (cardActionable) {
+                cardActionable.classList.remove('ai-card-loading');
+                cardActionable.classList.add('ai-card-reveal', 'ai-card-1');
+                playAISound('card');
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            const cashflow = await apiFetch('/api/ai/cashflow').then(r => r.json());
+            if (cashflow && cashflow.has_data) {
+                let cashflowHtml = '';
+                
+                if (cashflow.warning) {
+                    const w = cashflow.warning;
+                    const color = w.type === 'critical' ? 'var(--accent-coral)' : w.type === 'warning' ? 'var(--accent-yellow)' : 'var(--accent-green)';
+                    cashflowHtml += `<div class="p-3 rounded-lg mb-3" style="background: ${color}22; border-left: 3px solid ${color}">
+                        <p class="text-sm font-medium" style="color: ${color}">${w.message}</p>
+                    </div>`;
+                }
+                
+                if (cashflow.current_situation) {
+                    const cs = cashflow.current_situation;
+                    cashflowHtml += `<div class="grid grid-cols-2 gap-2 text-sm">
+                        <div class="p-2 bg-[var(--bg-tertiary)] rounded">
+                            <p class="text-xs text-[var(--text-secondary)]">Ingreso mensual</p>
+                            <p class="font-bold" style="color: var(--accent-green)">${formatMoney(cs.monthly_income)}</p>
+                        </div>
+                        <div class="p-2 bg-[var(--bg-tertiary)] rounded">
+                            <p class="text-xs text-[var(--text-secondary)]">Gastos mensuales</p>
+                            <p class="font-bold" style="color: var(--accent-coral)">${formatMoney(cs.monthly_expense)}</p>
                         </div>
                     </div>`;
                 }
                 
-                if (comp.expense_change_pct !== undefined) {
-                    const color = comp.expense_change_pct <= 0 ? 'var(--accent-green)' : 'var(--accent-coral)';
-                    const pct = Math.abs(comp.expense_change_pct);
-                    insightsHtml += `<div class="mb-3">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span data-i18n="expenses_vs_month">${t('expenses_vs_month')}</span>
-                            <span style="color: ${color}; font-weight: 600">${comp.expense_change_pct >= 0 ? '+' : '-'}${pct}%</span>
+                if (cashflow.projections && cashflow.projections.length) {
+                    cashflowHtml += `<p class="text-xs text-[var(--text-secondary)] mt-3 mb-2">Proyección 6 meses:</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="text-xs text-[var(--text-secondary)]">
+                                    <th class="text-left pb-2">Mes</th>
+                                    <th class="text-right pb-2">Balance</th>
+                                    <th class="text-right pb-2">Después de Deudas</th>
+                                    <th class="text-center pb-2">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                    cashflow.projections.forEach(p => {
+                        const color = p.is_negative ? 'var(--accent-coral)' : p.is_critical ? 'var(--accent-yellow)' : 'var(--accent-green)';
+                        const status = p.is_negative ? '⚠️ Alerta' : p.is_critical ? '⚡ Cuidado' : '✓ Bien';
+                        cashflowHtml += `<tr class="border-t border-[var(--bg-tertiary)]">
+                            <td class="py-2">${p.label}</td>
+                            <td class="text-right font-medium" style="color: ${color}">${formatMoney(p.balance)}</td>
+                            <td class="text-right text-[var(--text-secondary)]">${formatMoney(p.after_debt)}</td>
+                            <td class="text-center" style="color: ${color}">${status}</td>
+                        </tr>`;
+                    });
+                    cashflowHtml += '</tbody></table></div>';
+                }
+                
+                cashflowContainer.innerHTML = cashflowHtml;
+            } else {
+                cashflowContainer.innerHTML = '<p class="text-[var(--text-secondary)]">No hay suficientes datos para proyectar</p>';
+            }
+            if (cardCashflow) {
+                cardCashflow.classList.remove('ai-card-loading');
+                cardCashflow.classList.add('ai-card-reveal', 'ai-card-2');
+                playAISound('card');
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            const coach = await apiFetch('/api/ai/coach').then(r => r.json());
+            if (coach && coach.has_data) {
+                let coachHtml = '';
+                const b = coach.budget;
+                
+                const needsPct = b.needs.spent > 0 ? Math.min((b.needs.spent / b.needs.budget) * 100, 100) : 0;
+                const wantsPct = b.wants.spent > 0 ? Math.min((b.wants.spent / b.wants.budget) * 100, 100) : 0;
+                const savingsPct = b.savings.actual > 0 ? Math.min((b.savings.actual / b.savings.target) * 100, 100) : 0;
+                
+                coachHtml += `<div class="space-y-3">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span>Necesidades (50%)</span>
+                            <span>${formatMoney(b.needs.spent)} / ${formatMoney(b.needs.budget)}</span>
                         </div>
                         <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2">
-                            <div class="h-2 rounded-full" style="width: ${Math.min(pct, 100)}%; background: ${color}"></div>
+                            <div class="h-2 rounded-full" style="width: ${needsPct}%; background: #3498db"></div>
                         </div>
-                    </div>`;
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span>Deseos (30%)</span>
+                            <span>${formatMoney(b.wants.spent)} / ${formatMoney(b.wants.budget)}</span>
+                        </div>
+                        <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2">
+                            <div class="h-2 rounded-full" style="width: ${wantsPct}%; background: #e74c3c"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span>Ahorro (20%)</span>
+                            <span>${formatMoney(b.savings.actual)} / ${formatMoney(b.savings.target)}</span>
+                        </div>
+                        <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2">
+                            <div class="h-2 rounded-full" style="width: ${savingsPct}%; background: #27ae60"></div>
+                        </div>
+                    </div>
+                </div>`;
+                
+                if (coach.tips && coach.tips.length) {
+                    coachHtml += '<div class="mt-3 space-y-2">';
+                    coach.tips.forEach(tip => {
+                        const color = tip.priority === 'high' ? 'var(--accent-coral)' : tip.priority === 'warning' ? 'var(--accent-yellow)' : tip.priority === 'success' ? 'var(--accent-green)' : 'var(--accent-blue)';
+                        coachHtml += `<div class="flex items-start gap-2 text-sm" style="border-left: 2px solid ${color}">
+                            <i data-lucide="${tip.icon || 'lightbulb'}" class="w-4 h-4" style="color: ${color}"></i>
+                            <span>${tip.tip}</span>
+                        </div>`;
+                    });
+                    coachHtml += '</div>';
                 }
-            }
-            
-            if (insights.past_feedback && insights.past_feedback.length) {
-                insights.past_feedback.slice(0, 3).forEach(fb => {
-                    const color = fb.type === 'positive' ? 'var(--accent-green)' : (fb.type === 'warning' ? 'var(--accent-yellow)' : (fb.type === 'negative' ? 'var(--accent-coral)' : 'var(--accent-blue)'));
-                    insightsHtml += `<div class="flex items-start gap-2 p-2 rounded-lg" style="border-left: 3px solid ${color}">
-                        <i data-lucide="${fb.icon || 'info'}" class="w-4 h-4 mt-0.5" style="color: ${color}"></i>
-                        <p class="text-sm">${fb.message}</p>
-                    </div>`;
-                });
-            }
-            
-            if (insights.future_suggestions && insights.future_suggestions.length) {
-                insights.future_suggestions.slice(0, 3).forEach(sg => {
-                    const color = sg.type === 'warning' ? 'var(--accent-yellow)' : sg.type === 'debt' ? 'var(--accent-coral)' : sg.type === 'success' ? 'var(--accent-green)' : 'var(--accent-blue)';
-                    futureHtml += `<div class="flex items-start gap-2 p-2 rounded-lg" style="border-left: 3px solid ${color}">
-                        <i data-lucide="${sg.icon || 'lightbulb'}" class="w-4 h-4 mt-0.5" style="color: ${color}"></i>
-                        <p class="text-sm">${sg.message}</p>
-                    </div>`;
-                });
-            }
-            
-            insightContainer.innerHTML = insightsHtml || '<p class="text-[var(--text-secondary)]">' + t('no_sufficient_data') + '</p>';
-            futureContainer.innerHTML = futureHtml || '<p class="text-[var(--text-secondary)]">' + t('no_sufficient_data') + '</p>';
-            
-            const recs = await apiFetch('/api/ai/recommendations').then(r => r.json());
-            const recContainer = document.getElementById('ai-recommendations');
-            if (!recs || !recs.length) {
-                recContainer.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('no_recommendations') + '</p>';
+                
+                coachContainer.innerHTML = coachHtml;
             } else {
-                const typeColors = { 'critical': 'var(--accent-coral)', 'warning': 'var(--accent-yellow)', 'opportunity': 'var(--accent-green)', 'suggestion': 'var(--accent-blue)', 'success': 'var(--accent-green)', 'info': 'var(--text-secondary)' };
-                recContainer.innerHTML = recs.slice(0, 5).map(r => {
-                    const color = typeColors[r.type] || 'var(--accent-blue)';
-                    return `<div class="flex items-start gap-2 p-2 rounded-lg" style="border-left: 3px solid ${color}">
-                        <i data-lucide="${r.icon || 'lightbulb'}" class="w-4 h-4 mt-0.5" style="color: ${color}"></i>
-                        <p class="text-sm">${r.message}</p>
-                    </div>`;
-                }).join('');
+                coachContainer.innerHTML = '<p class="text-[var(--text-secondary)]">Registra tus ingresos para ver el coach</p>';
+            }
+            if (cardCoach) {
+                cardCoach.classList.remove('ai-card-loading');
+                cardCoach.classList.add('ai-card-reveal', 'ai-card-3');
+                playAISound('card');
             }
             
-            const anomalies = await apiFetch('/api/ai/anomalies').then(r => r.json());
-            const anomContainer = document.getElementById('ai-anomalies');
-            if (!anomalies || !anomalies.length) {
-                anomContainer.innerHTML = '<p class="text-[var(--text-secondary)]">' + t('no_anomalies') + '</p>';
-            } else {
-                const typeColors = { 'anomaly': 'var(--accent-coral)', 'opportunity': 'var(--accent-green)' };
-                anomContainer.innerHTML = anomalies.slice(0, 5).map(a => {
-                    const color = typeColors[a.type] || 'var(--accent-blue)';
-                    const severityColor = a.severity === 'high' ? 'var(--accent-coral)' : a.severity === 'medium' ? 'var(--accent-yellow)' : 'var(--accent-blue)';
-                    const savings = a.potential_savings ? `<p class="text-xs mt-1" style="color: var(--accent-green)">${t('potential_savings')}: ${formatMoney(a.potential_savings)}</p>` : '';
-                    return `<div class="flex items-start gap-2 p-2 rounded-lg" style="border-left: 3px solid ${color}">
-                        <i data-lucide="${a.icon || 'alert-circle'}" class="w-4 h-4 mt-0.5" style="color: ${severityColor}"></i>
-                        <div>
-                            <p class="text-sm font-medium">${a.title || t('detected_label')}</p>
-                            <p class="text-xs text-[var(--text-secondary)]">${a.description}</p>
-                            ${savings}
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            const behavior = await apiFetch('/api/ai/behavior').then(r => r.json());
+            if (behavior && behavior.has_data && behavior.insights && behavior.insights.length) {
+                behaviorContainer.innerHTML = behavior.insights.slice(0, 4).map(bi => {
+                    const typeClass = bi.severity === 'high' ? 'behavior-high' : bi.severity === 'warning' ? 'behavior-warning' : 'behavior-info';
+                    const typeEmoji = bi.type === 'pattern' ? '📅' : bi.type === 'warning' ? '⚠️' : bi.type === 'trend' ? '📈' : bi.type === 'subscription' ? '🔄' : '💡';
+                    return `<div class="p-3 rounded-lg behavior-card ${typeClass}">
+                        <div class="flex items-start gap-3">
+                            <span class="text-xl flex-shrink-0">${typeEmoji}</span>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium">${bi.title}</p>
+                                <p class="text-sm opacity-70 mt-1">${bi.description}</p>
+                                ${bi.action ? `<div class="mt-2 p-2 rounded behavior-action"><span class="text-sm">👉 ${bi.action}</span></div>` : ''}
+                            </div>
                         </div>
                     </div>`;
                 }).join('');
+            } else {
+                behaviorContainer.innerHTML = '<p class="text-[var(--text-secondary)]">Continúa registrando gastos para detectar patrones</p>';
             }
+            if (cardBehavior) {
+                cardBehavior.classList.remove('ai-card-loading');
+                cardBehavior.classList.add('ai-card-reveal', 'ai-card-4');
+                playAISound('card');
+            }
+            
+            setTimeout(() => {
+                playAISound('complete');
+            }, 800);
             
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }

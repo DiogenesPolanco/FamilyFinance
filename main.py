@@ -334,7 +334,7 @@ def delete_income(
 class ExpenseCreate(BaseModel):
     amount: float
     description: Optional[str] = None
-    category: str
+    category: Optional[str] = None
     kakebo_type: str
     date: date
 
@@ -363,7 +363,7 @@ def create_expense(
     db_expense = Expense(
         amount=expense.amount,
         description=expense.description,
-        category=expense.category,
+        category=expense.category or expense.kakebo_type,
         kakebo_type=expense.kakebo_type,
         date=expense.date.date()
         if isinstance(expense.date, datetime)
@@ -1348,6 +1348,38 @@ def simulate_scenario(
 ):
     ai = AIFinanceEngine(db)
     return ai.simulate_scenario(scenario)
+
+
+@app.get("/api/ai/cashflow")
+def get_cashflow_timeline(
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
+):
+    ai = AIFinanceEngine(db)
+    return ai.get_cashflow_timeline()
+
+
+@app.get("/api/ai/behavior")
+def get_behavioral_insights(
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
+):
+    ai = AIFinanceEngine(db)
+    return ai.get_behavioral_insights()
+
+
+@app.get("/api/ai/coach")
+def get_savings_coach(
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
+):
+    ai = AIFinanceEngine(db)
+    return ai.get_savings_coach()
+
+
+@app.get("/api/ai/actionable")
+def get_actionable_insights(
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
+):
+    ai = AIFinanceEngine(db)
+    return ai.get_actionable_insights()
 
 
 @app.get("/api/debt/{debt_id}/interest")

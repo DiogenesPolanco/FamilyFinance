@@ -339,7 +339,7 @@ class AIFinanceEngine:
                     "icon": "alert-triangle",
                     "message": f"Gastas {((month_expense_total / avg_monthly_expense) - 1) * 100:.0f}% mas que tu promedio",
                 }
-            ) 
+            )
 
         if month_income_total > 0:
             needs_limit = month_income_total * 0.50
@@ -979,3 +979,415 @@ class AIFinanceEngine:
             else None,
             "schedule": schedule[:12],
         }
+
+    def get_cashflow_timeline(self):
+        """Predict when the family will run out of money or reach savings goals."""
+        today = date.today()
+        three_months_ago = today - timedelta(days=90)
+
+        incomes = self.db.query(Income).filter(Income.date >= three_months_ago).all()
+        expenses = self.db.query(Expense).filter(Expense.date >= three_months_ago).all()
+        debts = self.db.query(Debt).filter(Debt.is_paid == False).all()
+        cards = self.db.query(CreditCard).filter(CreditCard.current_balance > 0).all()
+
+        if not incomes:
+            return {
+                "has_data": False,
+                "message": "No hay suficientes datos de ingresos",
+            }
+
+        current_balance = sum(i.amount for i in incomes) - sum(
+            e.amount for e in expenses
+        )
+
+        avg_monthly_income = sum(i.amount for i in incomes) / 3
+        avg_monthly_expense = sum(e.amount for e in expenses) / 3
+
+        monthly_net = avg_monthly_income - avg_monthly_expense
+
+        days_until_month_end = 30 - today.day
+        remaining_this_month = monthly_net * (days_until_month_end / 30)
+
+        projected_balance = current_balance + remaining_this_month
+
+        timeline = {
+            "has_data": True,
+            "current_situation": {
+                "balance": round(current_balance, 2),
+                "monthly_income": round(avg_monthly_income, 2),
+                "monthly_expense": round(avg_monthly_expense, 2),
+                "monthly_net": round(monthly_net, 2),
+                "is_surplus": monthly_net > 0,
+            },
+            "projections": [],
+            "debt_impact": {
+                "monthly_debt_payments": round(sum(d.monthly_payment for d in debts), 2)
+                if debts
+                else 0,
+                "monthly_card_minimum": round(sum(c.limit * 0.05 for c in cards), 2)
+                if cards
+                else 0,
+            },
+        }
+
+        current_month_balance = projected_balance
+        for month in range(1, 7):
+            if monthly_net > 0:
+                current_month_balance += monthly_net
+                balance_after_debt = (
+                    current_month_balance - sum(d.monthly_payment for d in debts)
+                    if debts
+                    else current_month_balance
+                )
+
+                timeline["projections"].append(
+                    {
+                        "month": month,
+                        "label": f"Mes {month}",
+                        "balance": round(current_month_balance, 2),
+                        "after_debt": round(balance_after_debt, 2),
+                        "is_negative": current_month_balance < 0,
+                        "is_critical": current_month_balance
+                        < avg_monthly_expense * 0.5,
+                    }
+                )
+            else:
+                current_month_balance += monthly_net
+                timeline["projections"].append(
+                    {
+                        "month": month,
+                        "label": f"Mes {month}",
+                        "balance": round(current_month_balance, 2),
+                        "after_debt": round(
+                            current_month_balance
+                            - sum(d.monthly_payment for d in debts)
+                            if debts
+                            else current_month_balance,
+                            2,
+                        ),
+                        "is_negative": True,
+                        "is_critical": True,
+                    }
+                )
+
+        if monthly_net < 0:
+            months_until_zero = (
+                abs(current_balance / monthly_net) if monthly_net != 0 else 0
+            )
+            timeline["warning"] = {
+                "type": "critical",
+                "message": f"Agotaras tus ahorros en aproximadamente {int(months_until_zero)} meses",
+                "months_remaining": round(months_until_zero, 1),
+            }
+        elif current_balance < avg_monthly_expense:
+            timeline["warning"] = {
+                "type": "warning",
+                "message": "Tu ahorro es menor a un mes de gastos. Recomendamos incrementar ingresos o reducir gastos.",
+            }
+        else:
+            months_safe = current_balance / abs(monthly_net) if monthly_net > 0 else 999
+            timeline["warning"] = {
+                "type": "success",
+                "message": f"Tienes {int(current_balance / avg_monthly_expense)} meses de gastos como reserva de emergencia",
+            }
+
+        return timeline
+
+    def get_behavioral_insights(self):
+        """Analyze spending patterns and detect habits."""
+        today = date.today()
+        three_months_ago = today - timedelta(days=90)
+
+        expenses = self.db.query(Expense).filter(Expense.date >= three_months_ago).all()
+
+        if not expenses:
+            return {"has_data": False, "insights": []}
+
+        insights = []
+
+        by_day_of_week = {i: [] for i in range(7)}
+        for e in expenses:
+            by_day_of_week[e.date.weekday()].append(e.amount)
+
+        day_names = [
+            "Lunes",
+            "Martes",
+            "Miércoles",
+            "Jueves",
+            "Viernes",
+            "Sábado",
+            "Domingo",
+        ]
+        avg_by_day = [
+            (day, sum(amounts) / len(amounts) if amounts else 0)
+            for day, amounts in by_day_of_week.items()
+        ]
+        avg_by_day.sort(key=lambda x: x[1], reverse=True)
+
+        if avg_by_day[0][1] > avg_by_day[-1][1] * 1.3:
+            highest_day = day_names[avg_by_day[0][0]]
+            lowest_day = day_names[avg_by_day[-1][0]]
+            insights.append(
+                {
+                    "type": "pattern",
+                    "severity": "info",
+                    "icon": "calendar",
+                    "title": f"Patron de gasto semanal",
+                    "description": f"Gastas más los {highest_day}s (${avg_by_day[0][1]:,.0f} promedio) y menos los {lowest_day}s (${avg_by_day[-1][1]:,.0f})",
+                    "action": f"Considera hacer tus compras importantes los {lowest_day}s para ahorrar",
+                }
+            )
+
+        impulse_threshold = sum(e.amount for e in expenses) / len(expenses) * 3
+        potential_impulse = [e for e in expenses if e.amount > impulse_threshold]
+        if len(potential_impulse) > 3:
+            total_impulse = sum(e.amount for e in potential_impulse)
+            insights.append(
+                {
+                    "type": "warning",
+                    "severity": "high",
+                    "icon": "shopping-cart",
+                    "title": "Posibles compras impulsivas",
+                    "description": f"{len(potential_impulse)} gastos superiores a ${impulse_threshold:,.0f} (3x promedio). Total: ${total_impulse:,.0f}",
+                    "action": "Antes de comprar algo mayor a tu gasto promedio x3, espera 24 horas",
+                }
+            )
+
+        category_trends = {}
+        for e in expenses:
+            cat = e.category
+            if cat not in category_trends:
+                category_trends[cat] = []
+            category_trends[cat].append((e.date, e.amount))
+
+        for cat, items in category_trends.items():
+            if len(items) >= 3:
+                items.sort(key=lambda x: x[0])
+                recent = [i[1] for i in items[-3:]]
+                older = [i[1] for i in items[:-3]] if len(items) > 3 else [recent[0]]
+
+                if older and sum(recent) / len(recent) > sum(older) / len(older) * 1.2:
+                    increase = (
+                        (sum(recent) / len(recent)) / (sum(older) / len(older)) - 1
+                    ) * 100
+                    insights.append(
+                        {
+                            "type": "trend",
+                            "severity": "warning",
+                            "icon": "trending-up",
+                            "title": f"Gasto creciente en {cat}",
+                            "description": f"Esta categoría ha aumentado {increase:.0f}% en los últimos meses",
+                            "action": f"Revisa si puedes reducir gastos en {cat}",
+                        }
+                    )
+
+        recurring_categories = {}
+        for e in expenses:
+            key = f"{e.category}_{e.description.lower().strip() if e.description else 'unknown'}"
+            if key not in recurring_categories:
+                recurring_categories[key] = []
+            recurring_categories[key].append(e.amount)
+
+        subscription_candidates = []
+        for key, amounts in recurring_categories.items():
+            if len(amounts) >= 2 and max(amounts) / min(amounts) < 1.1:
+                avg = sum(amounts) / len(amounts)
+                yearly = avg * 12
+                if yearly > 100:
+                    subscription_candidates.append((key.split("_")[0], avg))
+
+        if subscription_candidates:
+            subscription_candidates.sort(key=lambda x: x[1], reverse=True)
+            top_subs = subscription_candidates[:3]
+            total_subs = sum(s[1] for s in top_subs) * 12
+            insights.append(
+                {
+                    "type": "subscription",
+                    "severity": "info",
+                    "icon": "repeat",
+                    "title": f"Suscripciones detectadas ({len(top_subs)})",
+                    "description": f"~${sum(s[1] for s in top_subs):,.0f}/mes = ${total_subs:,.0f}/año",
+                    "action": "Revisa cuáles realmente usas y cancela las que no",
+                }
+            )
+
+        return {"has_data": True, "insights": insights}
+
+    def get_savings_coach(self):
+        """Provide personalized savings guidance with goals."""
+        today = date.today()
+        first_of_month = today.replace(day=1)
+
+        incomes = self.db.query(Income).filter(Income.date >= first_of_month).all()
+        expenses = self.db.query(Expense).filter(Expense.date >= first_of_month).all()
+
+        if not incomes:
+            return {"has_data": False}
+
+        monthly_income = sum(i.amount for i in incomes)
+
+        needs_budget = monthly_income * 0.50
+        wants_budget = monthly_income * 0.30
+        savings_target = monthly_income * 0.20
+
+        needs_spent = sum(e.amount for e in expenses if e.category == "needs")
+        wants_spent = sum(e.amount for e in expenses if e.category == "wants")
+        savings_actual = monthly_income - sum(e.amount for e in expenses)
+
+        coach = {
+            "has_data": True,
+            "monthly_income": round(monthly_income, 2),
+            "budget": {
+                "needs": {
+                    "budget": round(needs_budget, 2),
+                    "spent": round(needs_spent, 2),
+                    "remaining": round(max(0, needs_budget - needs_spent), 2),
+                },
+                "wants": {
+                    "budget": round(wants_budget, 2),
+                    "spent": round(wants_spent, 2),
+                    "remaining": round(max(0, wants_budget - wants_spent), 2),
+                },
+                "savings": {
+                    "target": round(savings_target, 2),
+                    "actual": round(max(0, savings_actual), 2),
+                    "gap": round(max(0, savings_target - savings_actual), 2),
+                },
+            },
+            "tips": [],
+        }
+
+        if savings_actual < savings_target:
+            shortfall = savings_target - savings_actual
+            if wants_spent > wants_budget:
+                overspend = wants_spent - wants_budget
+                coach["tips"].append(
+                    {
+                        "priority": "high",
+                        "icon": "scissors",
+                        "tip": f"Reduce gastos en 'Deseos' en ${overspend:,.0f} para alcanzar tu meta de ahorro",
+                    }
+                )
+            else:
+                coach["tips"].append(
+                    {
+                        "priority": "medium",
+                        "icon": "target",
+                        "tip": f"Reduce ${shortfall:,.0f} adicionales para cumplir la regla 50/30/20",
+                    }
+                )
+
+        if needs_spent > needs_budget * 1.1:
+            coach["tips"].append(
+                {
+                    "priority": "high",
+                    "icon": "home",
+                    "tip": "Gastos en necesidades están muy altos. Revisa servicios fijos y mercado",
+                }
+            )
+
+        if savings_actual >= savings_target:
+            coach["tips"].append(
+                {
+                    "priority": "success",
+                    "icon": "trophy",
+                    "tip": f"Excelente! Ya ahorraste ${savings_actual:,.0f} este mes ({savings_actual / monthly_income * 100:.0f}% del ingreso)",
+                }
+            )
+
+        days_remaining = 30 - today.day
+        days_passed = today.day
+        if days_remaining > 0:
+            daily_budget_wants = coach["budget"]["wants"]["remaining"] / days_remaining
+            if daily_budget_wants < 5:
+                coach["tips"].append(
+                    {
+                        "priority": "warning",
+                        "icon": "alert-circle",
+                        "tip": f"Te quedan ${coach['budget']['wants']['remaining']:,.0f} para {days_remaining} días. Solo ${daily_budget_wants:,.0f}/día disponible",
+                    }
+                )
+
+        return coach
+
+    def get_actionable_insights(self):
+        """Generate top 5 actionable insights for the family."""
+        insights = []
+
+        cashflow = self.get_cashflow_timeline()
+        behavioral = self.get_behavioral_insights()
+        coach = self.get_savings_coach()
+
+        if cashflow.get("warning"):
+            w = cashflow["warning"]
+            if w["type"] == "critical":
+                insights.append(
+                    {
+                        "priority": 1,
+                        "type": "urgent",
+                        "icon": "alert-octagon",
+                        "title": "Emergencia Financiera",
+                        "description": w["message"],
+                        "action": "Reduce gastos inmediatamente o busca ingresos extra",
+                    }
+                )
+            elif w["type"] == "warning":
+                insights.append(
+                    {
+                        "priority": 2,
+                        "type": "warning",
+                        "icon": "alert-triangle",
+                        "title": "Reserva Baja",
+                        "description": w["message"],
+                        "action": "Prioriza generar reserva de emergencia",
+                    }
+                )
+
+        for bi in behavioral.get("insights", []):
+            if bi.get("severity") == "high" and len(insights) < 5:
+                insights.append(
+                    {
+                        "priority": 3,
+                        "type": "behavior",
+                        "icon": bi.get("icon", "lightbulb"),
+                        "title": bi.get("title", "Patrón Detectado"),
+                        "description": bi.get("description", ""),
+                        "action": bi.get("action", ""),
+                    }
+                )
+
+        if coach.get("tips"):
+            for tip in coach["tips"]:
+                if tip.get("priority") == "high" and len(insights) < 5:
+                    insights.append(
+                        {
+                            "priority": 4,
+                            "type": "savings",
+                            "icon": tip.get("icon", "piggy-bank"),
+                            "title": "Oportunidad de Ahorro",
+                            "description": tip.get("tip", ""),
+                            "action": "Implementa este cambio esta semana",
+                        }
+                    )
+                    break
+
+        debts = self.db.query(Debt).filter(Debt.is_paid == False).all()
+        if debts:
+            high_rate = max(debts, key=lambda d: d.interest_rate)
+            if high_rate.interest_rate > 15:
+                yearly_interest = high_rate.current_amount * (
+                    high_rate.interest_rate / 100
+                )
+                insights.append(
+                    {
+                        "priority": 5,
+                        "type": "debt",
+                        "icon": "landmark",
+                        "title": "Deuda de Alto Costo",
+                        "description": f"'{high_rate.name}' a {high_rate.interest_rate}% TNA = ${yearly_interest:,.0f}/año en intereses",
+                        "action": "Considera refinanciar o hacer pagos extra",
+                    }
+                )
+
+        insights.sort(key=lambda x: x["priority"])
+        return insights[:5]
