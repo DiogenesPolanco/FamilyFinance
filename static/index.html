@@ -119,6 +119,153 @@
             background: linear-gradient(135deg, #6b7a9a 0%, #5a6a8a 100%);
         }
         
+        /* Debt Card Styles */
+        .debt-card {
+            width: 100%;
+            height: 200px;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #4a6fa5 0%, #3d5a80 50%, #2c4a6e 100%);
+        }
+        
+        .debt-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.08), transparent);
+            transform: rotate(30deg);
+        }
+        
+        .debt-card .debt-shine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .debt-card .debt-icon {
+            font-size: 28px;
+        }
+        
+        .debt-card .debt-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .debt-card .debt-amount {
+            font-size: 26px;
+            font-weight: bold;
+            margin-top: 6px;
+        }
+        
+        .debt-card .debt-footer {
+            position: absolute;
+            bottom: 16px;
+            left: 20px;
+            right: 20px;
+        }
+        
+        .debt-card .debt-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 16px;
+        }
+        
+        .debt-card .debt-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .debt-card .debt-info-label {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+        
+        .debt-card .debt-info-value {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .debt-card .debt-menu-container {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 50;
+        }
+        
+        .debt-menu-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: rgba(0,0,0,0.3);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            font-size: 16px;
+            color: white;
+        }
+        
+        .debt-menu-btn:hover {
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .debt-menu-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            min-width: 150px;
+            z-index: 100;
+            overflow: hidden;
+            display: none;
+            margin-top: 4px;
+        }
+        
+        .debt-menu-dropdown.show {
+            display: block;
+        }
+        
+        .debt-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+        
+        .debt-menu-item:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .debt-menu-item.danger {
+            color: var(--accent-coral);
+        }
+        
+        .debt-menu-item.danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
         .credit-card .card-shine {
             position: absolute;
             top: 0;
@@ -1282,6 +1429,8 @@ border-radius: 3px;
             spent_label: { es: 'Gastado', en: 'Spent' },
             remaining_label: { es: 'Restante', en: 'Remaining' },
             exceeded_label: { es: 'Excedido', en: 'Exceeded' },
+            initial_label: { es: 'Inicial', en: 'Initial' },
+            paid_label: { es: 'Pagado', en: 'Paid' },
             debt_history: { es: 'Historial de Deudas', en: 'Debt History' },
             rate_label: { es: 'Tasa', en: 'Rate' },
             original_label: { es: 'Original', en: 'Original' },
@@ -1561,6 +1710,8 @@ border-radius: 3px;
                 recommended_budget: 'Presupuesto Recomendado (Regla 50/30/20)',
                 remaining: 'Restante',
                 exceeded: 'Excedido',
+                initial: 'Inicial',
+                paid_trans: 'Pagado',
                 debt_history: 'Historial de Deudas',
                 original: 'Original',
                 actual: 'Actual',
@@ -1791,6 +1942,8 @@ border-radius: 3px;
                 recommended_budget: 'Recommended Budget (Rule 50/30/20)',
                 remaining: 'Remaining',
                 exceeded: 'Exceeded',
+                initial: 'Initial',
+                paid_trans: 'Paid',
                 debt_history: 'Debt History',
                 original: 'Original',
                 actual: 'Actual',
@@ -2469,7 +2622,7 @@ border-radius: 3px;
                                         <div class="card-menu-item" onclick="editCard(${c.id}); toggleCardMenu('menu-${c.id}');">
                                             <span>✏️</span><span>${t('edit')}</span>
                                         </div>
-                                        <div class="card-menu-item" onclick="showCardProjection(${c.id}); toggleCardMenu('menu-${c.id}');">
+                                        <div class="card-menu-item" onclick="showCardProjection(${c.id});">
                                             <span>📊</span><span>${t('view_projection_short')}</span>
                                         </div>
                                         <div class="card-menu-item danger" onclick="deleteCardConfirm(${c.id});">
@@ -3042,31 +3195,78 @@ border-radius: 3px;
                 list.innerHTML = '<p class="text-[var(--text-secondary)] text-center py-8" data-i18n="no_debts">' + t('no_debts') + '</p>';
                 return;
             }
-            list.innerHTML = debts.map(d => {
-                const paid = d.is_paid ? 'badge-green' : 'badge-coral';
-                return `<div class="card p-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <div>
-                            <p class="font-semibold">${d.name}</p>
-                            <p class="text-sm text-[var(--text-secondary)]">${tr('amount_of', { current: formatMoney(d.current_amount), initial: formatMoney(d.initial_amount), rate: d.interest_rate })}</p>
+            
+            list.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">` + debts.map(d => {
+                const lastPayment = d.last_payment_date ? formatDate(d.last_payment_date) : '-';
+                
+                return `<div class="h-full">
+                    <div class="debt-card">
+                        <div class="debt-shine"></div>
+                        <div class="debt-menu-container">
+                            <button onclick="toggleDebtMenu('debt-menu-${d.id}')" class="debt-menu-btn">⋮</button>
+                            <div id="debt-menu-${d.id}" class="debt-menu-dropdown">
+                                <div class="debt-menu-item" onclick="payDebt(${d.id}); toggleDebtMenu('debt-menu-${d.id}');">
+                                    <span>💰</span><span>${t('pay')}</span>
+                                </div>
+                                <div class="debt-menu-item" onclick="showDebtProjection(${d.id});">
+                                    <span>📊</span><span>${t('view_projection_short')}</span>
+                                </div>
+                                <div class="debt-menu-item" onclick="editDebt(${d.id}); toggleDebtMenu('debt-menu-${d.id}');">
+                                    <span>✏️</span><span>${t('edit')}</span>
+                                </div>
+                                <div class="debt-menu-item danger" onclick="deleteDebtConfirm(${d.id});">
+                                    <span>🗑️</span><span>${t('delete')}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <span class="badge ${paid}">${d.is_paid ? t('paid') : t('active')}</span>
-                            <p class="text-sm text-[var(--text-secondary)] mt-1">${tr('payment_month', { amount: formatMoney(d.monthly_payment) })}</p>
+                        <div class="debt-header">
+                            <div class="debt-icon">📑</div>
                         </div>
+                        <div class="debt-name">${d.name}</div>
+                        <div class="debt-amount">${formatMoney(d.current_amount)}</div>
+                        <div class="debt-footer">
+                            <div class="debt-info-grid">
+                                <div class="debt-info-item">
+                                    <span class="debt-info-label">${t('monthly_payment')}</span>
+                                    <span class="debt-info-value">${formatMoney(d.monthly_payment)}</span>
+                                </div>
+                                <div class="debt-info-item">
+                                    <span class="debt-info-label">${t('rate')}</span>
+                                    <span class="debt-info-value">${d.interest_rate}%</span>
+                                </div>
+                                <div class="debt-info-item" style="grid-column: span 2;">
+                                    <span class="debt-info-label">${t('last_payment') || 'Último Pago'}</span>
+                                    <span class="debt-info-value">${lastPayment}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="debt-projection-${d.id}" class="hidden mt-2"></div>
                     </div>
-                    <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-2 mb-3">
-                        <div class="h-2 rounded-full bg-[var(--accent-green)]" style="width: ${((1 - d.current_amount / d.initial_amount) * 100).toFixed(0)}%"></div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="payDebt(${d.id})" class="btn-pay flex-1">${t('pay')}</button>
-                        <button onclick="showDebtProjection(${d.id})" class="btn text-xs flex-1">${t('view_projection_short')}</button>
-                        <button onclick="editDebt(${d.id})" class="btn text-xs flex-1">${t('edit')}</button>
-                    </div>
-                    <div id="debt-projection-${d.id}" class="hidden mt-3"></div>
                 </div>`;
-            }).join('');
+            }).join('') + `</div>`;
+            
             if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+        
+        function toggleDebtMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const allMenus = document.querySelectorAll('.debt-menu-dropdown');
+            allMenus.forEach(m => {
+                if (m.id !== menuId) m.classList.remove('show');
+            });
+            menu.classList.toggle('show');
+        }
+        
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.debt-menu-container')) {
+                document.querySelectorAll('.debt-menu-dropdown').forEach(m => m.classList.remove('show'));
+            }
+        });
+        
+        function deleteDebtConfirm(debtId) {
+            if (confirm(t('confirm_delete_debt'))) {
+                deleteDebt(debtId);
+            }
         }
 
         async function loadDebtPaymentHistory() {
@@ -4005,141 +4205,137 @@ border-radius: 3px;
         }
 
         async function showCardProjection(cardId) {
-            const container = document.getElementById(`card-projection-${cardId}`);
-            container.classList.toggle('hidden');
-            if (container.classList.contains('hidden')) return;
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const form = document.getElementById('modal-form');
             
-            container.innerHTML = '<p class="text-sm text-[var(--text-secondary)]">' + t('loading') + '</p>';
+            title.textContent = t('card_projection') || 'Proyección de Tarjeta';
+            form.innerHTML = '<p class="text-center py-4">' + t('loading') + '</p>';
+            modal.classList.remove('hidden');
             
             try {
                 const data = await fetch(`/api/credit-card/${cardId}/projection`).then(r => r.json());
                 
-                let html = '<div class="mt-2 p-3 bg-[var(--bg-tertiary)] rounded-xl text-sm">';
-                html += `<p class="font-semibold mb-2">${t('card_projection')}</p>`;
+                let html = '<div class="space-y-4">';
                 
                 if (data.months_until_paidoff !== undefined) {
-                    html += `<p>${t('months_to_pay_label')}: ${data.months_until_paidoff}</p>`;
-                    html += `<p>${t('total_interest_label')}: ${formatMoney(data.total_interest)}</p>`;
-                    html += `<p>${t('cost_total_label')}: ${formatMoney(data.total_cost)}</p>`;
+                    html += `<div class="grid grid-cols-3 gap-3 mb-4">
+                        <div class="card p-3 text-center">
+                            <p class="text-xs text-[var(--text-secondary)]">${t('months_to_pay') || 'Meses para Pagar'}</p>
+                            <p class="text-2xl font-bold">${data.months_until_paidoff}</p>
+                        </div>
+                        <div class="card p-3 text-center">
+                            <p class="text-xs text-[var(--text-secondary)]">${t('total_interest') || 'Total Intereses'}</p>
+                            <p class="text-2xl font-bold">${formatMoney(data.total_interest)}</p>
+                        </div>
+                        <div class="card p-3 text-center">
+                            <p class="text-xs text-[var(--text-secondary)]">${t('total_cost') || 'Costo Total'}</p>
+                            <p class="text-2xl font-bold">${formatMoney(data.total_cost)}</p>
+                        </div>
+                    </div>`;
                 }
                 
                 if (data.warning) {
-                    html += `<p class="text-[var(--accent-coral)] mt-2">${data.warning}</p>`;
+                    html += `<div class="card p-3 bg-[rgba(239,68,68,0.1)] border border-[var(--accent-coral)]">
+                        <p class="text-[var(--accent-coral)]">${data.warning}</p>
+                    </div>`;
                 }
                 
                 if (data.schedule && data.schedule.length) {
-                    const total = data.schedule.length;
-                    const perPage = 6;
-                    const pages = Math.ceil(total / perPage);
-                    window[`cardSched_${cardId}`] = { data: data.schedule, page: 1, pages, perPage };
-                    html += `<div class="mt-2 pt-2 border-t border-[var(--border)]">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs text-[var(--text-secondary)]">${tr('payments_count', { total: total })}</span>`;
-                    if (pages > 1) {
-                        html += `<div class="flex gap-1 items-center">
-                            <button onclick="cardSchedNav(${cardId}, -1)" class="px-2 py-1 text-xs bg-[var(--bg-secondary)] rounded hover:bg-[var(--border)]">&#8592;</button>
-                            <span class="px-2 py-1 text-xs" id="card-page-${cardId}">1/${pages}</span>
-                            <button onclick="cardSchedNav(${cardId}, 1)" class="px-2 py-1 text-xs bg-[var(--bg-secondary)] rounded hover:bg-[var(--border)]">&#8594;</button>
-                        </div>`;
-                    }
-                    html += `</div><div class="space-y-1" id="card-sched-list-${cardId}">`;
-                    data.schedule.slice(0, perPage).forEach(s => {
-                        html += `<div class="flex justify-between text-xs">
-                            <span>Mes ${s.month}</span>
-                            <span>Saldo: ${formatMoney(s.balance)}</span>
-                            <span>Interes: ${formatMoney(s.interest)}</span>
-                        </div>`;
+                    html += `<p class="font-semibold">${t('payment_schedule') || 'Calendario de Pagos'}</p>`;
+                    html += `<div class="overflow-x-auto">
+                        <table class="w-full text-sm mt-2">
+                            <thead>
+                                <tr class="border-b border-[var(--border)]">
+                                    <th class="py-2 px-2 text-left text-xs text-[var(--text-secondary)]">${t('month') || 'Mes'}</th>
+                                    <th class="py-2 px-2 text-right text-xs text-[var(--text-secondary)]">${t('balance') || 'Saldo'}</th>
+                                    <th class="py-2 px-2 text-right text-xs text-[var(--text-secondary)]">${t('payment') || 'Pago'}</th>
+                                    <th class="py-2 px-2 text-right text-xs text-[var(--text-secondary)]">${t('interest') || 'Interés'}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="space-y-1">`;
+                    
+                    data.schedule.forEach(s => {
+                        html += `<tr class="border-b border-[var(--bg-tertiary)] hover:bg-[var(--bg-tertiary)]">
+                            <td class="py-2 px-2">${s.month}</td>
+                            <td class="py-2 px-2 text-right">${formatMoney(s.balance)}</td>
+                            <td class="py-2 px-2 text-right text-[var(--accent-green)]">${formatMoney(s.payment)}</td>
+                            <td class="py-2 px-2 text-right text-[var(--accent-coral)]">${formatMoney(s.interest)}</td>
+                        </tr>`;
                     });
-                    html += `</div></div>`;
+                    
+                    html += `</tbody></table></div>`;
                 }
                 
+                html += `<button onclick="closeModal()" class="btn btn-primary w-full mt-4">${t('close') || 'Cerrar'}</button>`;
                 html += '</div>';
-                container.innerHTML = html;
+                form.innerHTML = html;
             } catch (e) {
-                container.innerHTML = '<p class="text-[var(--accent-coral)]">' + t('error_loading_projection') + '</p>';
-            }
-        }
-
-        function cardSchedNav(cardId, dir) {
-            const sched = window[`cardSched_${cardId}`];
-            if (!sched) return;
-            const newPage = sched.page + dir;
-            if (newPage < 1 || newPage > sched.pages) return;
-            sched.page = newPage;
-            const start = (newPage - 1) * sched.perPage;
-            const list = document.getElementById(`card-sched-list-${cardId}`);
-            const pageInfo = document.getElementById(`card-page-${cardId}`);
-            if (list && pageInfo) {
-                list.innerHTML = sched.data.slice(start, start + sched.perPage).map(s => 
-                    `<div class="flex justify-between text-xs"><span>Mes ${s.month}</span><span>Saldo: ${formatMoney(s.balance)}</span><span>Interes: ${formatMoney(s.interest)}</span></div>`
-                ).join('');
-                pageInfo.textContent = `${newPage}/${sched.pages}`;
+                form.innerHTML = `<p class="text-[var(--accent-coral)] text-center py-4">${t('error_loading_projection') || 'Error al cargar proyección'}</p>
+                    <button onclick="closeModal()" class="btn btn-primary w-full mt-4">${t('close') || 'Cerrar'}</button>`;
             }
         }
 
         async function showDebtProjection(debtId) {
-            const container = document.getElementById(`debt-projection-${debtId}`);
-            container.classList.toggle('hidden');
-            if (container.classList.contains('hidden')) return;
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const form = document.getElementById('modal-form');
             
-            container.innerHTML = '<p class="text-sm text-[var(--text-secondary)]">' + t('loading') + '</p>';
+            title.textContent = t('debt_projection') || 'Proyección de Préstamo';
+            form.innerHTML = '<p class="text-center py-4">' + t('loading') + '</p>';
+            modal.classList.remove('hidden');
             
             try {
                 const data = await fetch(`/api/debt/${debtId}/projection`).then(r => r.json());
                 
-                let html = '<div class="mt-2 p-3 bg-[var(--bg-tertiary)] rounded-xl text-sm">';
-                html += `<p class="font-semibold mb-2">${t('amortization_table')}</p>`;
-                html += `<p>${t('months_remaining_label')}: ${data.months_remaining || 'N/A'}</p>`;
-                html += `<p>${t('total_interest_label')}: ${formatMoney(data.total_interest || 0)}</p>`;
+                let html = '<div class="space-y-4">';
+                html += `<div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="card p-3 text-center">
+                        <p class="text-xs text-[var(--text-secondary)]">${t('months_remaining') || 'Meses Restantes'}</p>
+                        <p class="text-2xl font-bold">${data.months_remaining || 'N/A'}</p>
+                    </div>
+                    <div class="card p-3 text-center">
+                        <p class="text-xs text-[var(--text-secondary)]">${t('total_interest') || 'Total Intereses'}</p>
+                        <p class="text-2xl font-bold">${formatMoney(data.total_interest || 0)}</p>
+                    </div>
+                </div>`;
                 
                 if (data.schedule && data.schedule.length) {
                     const total = data.schedule.length;
-                    const perPage = 6;
-                    const pages = Math.ceil(total / perPage);
-                    window[`debtSched_${debtId}`] = { data: data.schedule, page: 1, pages, perPage };
-                    html += `<div class="mt-2 pt-2 border-t border-[var(--border)]">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs text-[var(--text-secondary)]">${tr('payments_count', { total: total })}</span>`;
-                    if (pages > 1) {
-                        html += `<div class="flex gap-1 items-center">
-                            <button onclick="debtSchedNav(${debtId}, -1)" class="px-2 py-1 text-xs bg-[var(--bg-secondary)] rounded hover:bg-[var(--border)]">&#8592;</button>
-                            <span class="px-2 py-1 text-xs" id="debt-page-${debtId}">1/${pages}</span>
-                            <button onclick="debtSchedNav(${debtId}, 1)" class="px-2 py-1 text-xs bg-[var(--bg-secondary)] rounded hover:bg-[var(--border)]">&#8594;</button>
-                        </div>`;
-                    }
-                    html += `</div><div class="space-y-1" id="debt-sched-list-${debtId}">`;
-                    data.schedule.slice(0, perPage).forEach(s => {
-                        html += `<div class="flex justify-between text-xs">
-                            <span>${t('month_label')} ${s.month}</span>
-                            <span>${t('payment_label')}: ${formatMoney(s.payment)}</span>
-                            <span>${t('interest_label')}: ${formatMoney(s.interest)}</span>
-                            <span>${t('balance_label_short')}: ${formatMoney(s.balance)}</span>
-                        </div>`;
+                    html += `<p class="font-semibold">${t('amortization_table') || 'Tabla de Amortización'}</p>`;
+                    html += `<div class="overflow-x-auto">
+                        <table class="w-full text-sm mt-2">
+                            <thead>
+                                <tr class="border-b border-[var(--border)]">
+                                    <th class="py-2 px-2 text-left text-xs text-[var(--text-secondary)]">${t('month') || 'Mes'}</th>
+                                    <th class="py-2 px-2 text-right text-xs text-[var(--text-secondary)]">${t('payment') || 'Pago'}</th>
+                                    <th class="py-2 px-2 text-right text-xs text-[var(--text-secondary)]">${t('interest') || 'Interés'}</th>
+                                    <th class="py-2 px-2 text-right text-xs text-[var(--text-secondary)]">${t('principal') || 'Capital'}</th>
+                                    <th class="py-2 px-2 text-right text-xs text-[var(--text-secondary)]">${t('balance') || 'Saldo'}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="space-y-1">`;
+                    
+                    data.schedule.forEach(s => {
+                        const principal = s.payment - s.interest;
+                        html += `<tr class="border-b border-[var(--bg-tertiary)] hover:bg-[var(--bg-tertiary)]">
+                            <td class="py-2 px-2">${s.month}</td>
+                            <td class="py-2 px-2 text-right">${formatMoney(s.payment)}</td>
+                            <td class="py-2 px-2 text-right text-[var(--accent-coral)]">${formatMoney(s.interest)}</td>
+                            <td class="py-2 px-2 text-right text-[var(--accent-green)]">${formatMoney(principal)}</td>
+                            <td class="py-2 px-2 text-right font-medium">${formatMoney(s.balance)}</td>
+                        </tr>`;
                     });
-                    html += `</div></div>`;
+                    
+                    html += `</tbody></table></div>`;
                 }
                 
+                html += `<button onclick="closeModal()" class="btn btn-primary w-full mt-4">${t('close') || 'Cerrar'}</button>`;
                 html += '</div>';
-                container.innerHTML = html;
+                form.innerHTML = html;
             } catch (e) {
-                container.innerHTML = '<p class="text-[var(--accent-coral)]">' + t('error_projection') + '</p>';
-            }
-        }
-
-        function debtSchedNav(debtId, dir) {
-            const sched = window[`debtSched_${debtId}`];
-            if (!sched) return;
-            const newPage = sched.page + dir;
-            if (newPage < 1 || newPage > sched.pages) return;
-            sched.page = newPage;
-            const start = (newPage - 1) * sched.perPage;
-            const list = document.getElementById(`debt-sched-list-${debtId}`);
-            const pageInfo = document.getElementById(`debt-page-${debtId}`);
-            if (list && pageInfo) {
-                list.innerHTML = sched.data.slice(start, start + sched.perPage).map(s => 
-                    `<div class="flex justify-between text-xs"><span>Mes ${s.month}</span><span>Pago: ${formatMoney(s.payment)}</span><span>Interes: ${formatMoney(s.interest)}</span><span>Saldo: ${formatMoney(s.balance)}</span></div>`
-                ).join('');
-                pageInfo.textContent = `${newPage}/${sched.pages}`;
+                form.innerHTML = `<p class="text-[var(--accent-coral)] text-center py-4">${t('error_projection') || 'Error al cargar proyección'}</p>
+                    <button onclick="closeModal()" class="btn btn-primary w-full mt-4">${t('close') || 'Cerrar'}</button>`;
             }
         }
 
