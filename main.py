@@ -1894,3 +1894,314 @@ def seed_dummy_data(
             "services": len(services),
         },
     }
+
+
+# Seed May 2026 Data
+@app.post("/api/seed/may")
+def seed_may_data(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    # Incomes for May
+    incomes = [
+        {
+            "amount": 15000,
+            "description": "Salario quincena 1",
+            "category": "salary",
+            "date": date(2026, 5, 1),
+        },
+        {
+            "amount": 15000,
+            "description": "Salario quincena 2",
+            "category": "salary",
+            "date": date(2026, 5, 15),
+        },
+        {
+            "amount": 4500,
+            "description": "Freelance desarrollo web",
+            "category": "freelance",
+            "date": date(2026, 5, 8),
+        },
+        {
+            "amount": 2500,
+            "description": "Renta departamento Airbnb",
+            "category": "investment",
+            "date": date(2026, 5, 5),
+        },
+        {
+            "amount": 1000,
+            "description": "Regalo cumpleaños",
+            "category": "gift",
+            "date": date(2026, 5, 10),
+        },
+    ]
+    for inc in incomes:
+        db.add(Income(**inc, created_at=datetime.now()))
+
+    # Expenses for May
+    expenses = [
+        # Needs - fixed
+        {
+            "amount": 5500,
+            "description": "Renta departamento",
+            "category": "needs",
+            "kakebo_type": "fixed",
+            "date": date(2026, 5, 1),
+        },
+        {
+            "amount": 800,
+            "description": "Internet fibra optica",
+            "category": "needs",
+            "kakebo_type": "fixed",
+            "date": date(2026, 5, 5),
+        },
+        # Needs - variable
+        {
+            "amount": 3200,
+            "description": "Supermercado semana 1",
+            "category": "needs",
+            "kakebo_type": "variable",
+            "date": date(2026, 5, 3),
+        },
+        {
+            "amount": 2800,
+            "description": "Supermercado semana 2",
+            "category": "needs",
+            "kakebo_type": "variable",
+            "date": date(2026, 5, 10),
+        },
+        {
+            "amount": 1500,
+            "description": "Gasolina",
+            "category": "needs",
+            "kakebo_type": "variable",
+            "date": date(2026, 5, 4),
+        },
+        {
+            "amount": 600,
+            "description": "Transporte publico",
+            "category": "needs",
+            "kakebo_type": "variable",
+            "date": date(2026, 5, 7),
+        },
+        {
+            "amount": 450,
+            "description": "Luz CFE",
+            "category": "needs",
+            "kakebo_type": "variable",
+            "date": date(2026, 5, 6),
+        },
+        {
+            "amount": 350,
+            "description": "Agua",
+            "category": "needs",
+            "kakebo_type": "variable",
+            "date": date(2026, 5, 8),
+        },
+        # Wants
+        {
+            "amount": 850,
+            "description": "Cena cumplea\u00f1os Mam\u00e1",
+            "category": "wants",
+            "kakebo_type": "variable",
+            "date": date(2026, 5, 10),
+        },
+        {
+            "amount": 1200,
+            "description": "Zapatos nuevos",
+            "category": "wants",
+            "kakebo_type": "variable",
+            "date": date(2026, 5, 12),
+        },
+        {
+            "amount": 350,
+            "description": "Netflix + Spotify",
+            "category": "wants",
+            "kakebo_type": "fixed",
+            "date": date(2026, 5, 12),
+        },
+        {
+            "amount": 500,
+            "description": "Cine + palomitas",
+            "category": "wants",
+            "kakebo_type": "variable",
+            "date": date(2026, 5, 14),
+        },
+        # Culture
+        {
+            "amount": 750,
+            "description": "Curso Udemy React Avanzado",
+            "category": "culture",
+            "kakebo_type": "occasional",
+            "date": date(2026, 5, 2),
+        },
+        {
+            "amount": 280,
+            "description": "Libro Atomic Habits",
+            "category": "culture",
+            "kakebo_type": "occasional",
+            "date": date(2026, 5, 9),
+        },
+        # Unexpected
+        {
+            "amount": 1800,
+            "description": "Reparacion llanta ponchada",
+            "category": "unexpected",
+            "kakebo_type": "occasional",
+            "date": date(2026, 5, 6),
+        },
+        {
+            "amount": 950,
+            "description": "Medicina dental",
+            "category": "unexpected",
+            "kakebo_type": "occasional",
+            "date": date(2026, 5, 11),
+        },
+    ]
+    for exp in expenses:
+        db.add(Expense(**exp, created_at=datetime.now()))
+
+    # Debts (with May payments)
+    debts = [
+        {
+            "name": "Prestamo Auto",
+            "initial_amount": 150000,
+            "current_amount": 110000,
+            "interest_rate": 12,
+            "monthly_payment": 5000,
+            "start_date": date(2025, 1, 1),
+            "next_payment_date": date(2026, 5, 15),
+            "created_at": datetime.now(),
+        },
+        {
+            "name": "Tarjeta Tienda",
+            "initial_amount": 25000,
+            "current_amount": 18000,
+            "interest_rate": 48,
+            "monthly_payment": 2000,
+            "start_date": date(2025, 6, 1),
+            "next_payment_date": date(2026, 5, 10),
+            "created_at": datetime.now(),
+        },
+        {
+            "name": "Prestamo Personal",
+            "initial_amount": 50000,
+            "current_amount": 42000,
+            "interest_rate": 24,
+            "monthly_payment": 3000,
+            "start_date": date(2026, 1, 1),
+            "next_payment_date": date(2026, 5, 20),
+            "created_at": datetime.now(),
+        },
+    ]
+    for debt in debts:
+        db.add(Debt(**debt))
+
+    # Credit Cards
+    cards = [
+        {
+            "name": "Visa Oro",
+            "limit": 50000,
+            "current_balance": 28500,
+            "interest_rate": 3.5,
+            "due_date": 15,
+            "created_at": datetime.now(),
+        },
+        {
+            "name": "Mastercard Black",
+            "limit": 35000,
+            "current_balance": 15200,
+            "interest_rate": 3.2,
+            "due_date": 22,
+            "created_at": datetime.now(),
+        },
+        {
+            "name": "Amex Platino",
+            "limit": 80000,
+            "current_balance": 42300,
+            "interest_rate": 2.8,
+            "due_date": 5,
+            "created_at": datetime.now(),
+        },
+    ]
+    for card in cards:
+        db.add(CreditCard(**card))
+
+    # Household Services
+    services = [
+        {
+            "name": "Internet Fibra",
+            "provider": "Telecom",
+            "amount": 800,
+            "due_day": 5,
+            "reminder_days": 3,
+            "is_active": True,
+            "last_paid_date": date(2026, 4, 5),
+            "created_at": datetime.now(),
+        },
+        {
+            "name": "Netflix",
+            "provider": "Netflix Inc",
+            "amount": 350,
+            "due_day": 12,
+            "reminder_days": 3,
+            "is_active": True,
+            "last_paid_date": date(2026, 4, 12),
+            "created_at": datetime.now(),
+        },
+        {
+            "name": "Spotify",
+            "provider": "Spotify AB",
+            "amount": 180,
+            "due_day": 15,
+            "reminder_days": 3,
+            "is_active": True,
+            "last_paid_date": date(2026, 4, 15),
+            "created_at": datetime.now(),
+        },
+        {
+            "name": "Gym Premium",
+            "provider": "FitClub",
+            "amount": 1200,
+            "due_day": 1,
+            "reminder_days": 5,
+            "is_active": True,
+            "last_paid_date": date(2026, 3, 8),
+            "created_at": datetime.now(),
+        },
+        {
+            "name": "Luz CFE",
+            "provider": "CFE",
+            "amount": 450,
+            "due_day": 20,
+            "reminder_days": 3,
+            "is_active": True,
+            "last_paid_date": date(2026, 4, 20),
+            "created_at": datetime.now(),
+        },
+        {
+            "name": "Agua",
+            "provider": "SAPAL",
+            "amount": 350,
+            "due_day": 25,
+            "reminder_days": 3,
+            "is_active": True,
+            "last_paid_date": date(2026, 4, 25),
+            "created_at": datetime.now(),
+        },
+    ]
+    for svc in services:
+        db.add(HouseholdService(**svc))
+
+    db.commit()
+
+    return {
+        "message": "Datos de Mayo 2026 cargados",
+        "counts": {
+            "incomes": len(incomes),
+            "expenses": len(expenses),
+            "debts": len(debts),
+            "cards": len(cards),
+            "services": len(services),
+        },
+    }

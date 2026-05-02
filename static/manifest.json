@@ -1,0 +1,28 @@
+{
+  "name": "FamilyFinance",
+  "short_name": "FamilyFinance",
+  "description": "Gestión financiera familiar sin complicaciones",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F6F3",
+  "theme_color": "#55A991",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "lang": "es",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}

@@ -2,7 +2,17 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#55A991">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FamilyFinance">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.svg">
+    <link rel="icon" type="image/svg+xml" href="/icon-192.svg">
     <title>FamilyFinance</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -714,7 +724,7 @@
         .toast-error { background: var(--accent-coral); border-left: 4px solid #c4513e; }
         .toast-info { background: var(--accent-blue); border-left: 4px solid #5a9fd9; }
         .toast-warning { background: var(--accent-yellow); color: var(--text-primary); border-left: 4px solid #d4a83a; }
-        @keyframes toastIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(-20px) translateX(-50%); } to { opacity: 1; transform: translateY(0) translateX(-50%); } }
         @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
         /* Confirm dialog - Global styles */
         #confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 9998; display: none; align-items: center; justify-content: center; }
@@ -743,6 +753,299 @@
         #prompt-cancel:hover { background: #e0ddd8; }
         #prompt-ok { background: var(--accent-green); color: white; }
         #prompt-ok:hover { background: #4a9580; transform: translateY(-1px); }
+/* Mobile-first responsive */
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 100%;
+    }
+    body {
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    .main-content {
+        padding: 12px;
+        padding-bottom: 120px;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+    .card {
+        border-radius: 16px;
+        padding: 14px;
+    }
+    .input {
+        padding: 14px;
+        font-size: 16px;
+        min-height: 48px;
+    }
+    .btn {
+        padding: 12px 20px;
+        min-height: 48px;
+        font-size: 15px;
+        -webkit-tap-highlight-color: transparent;
+        tap-highlight-color: transparent;
+    }
+    h1 {
+        font-size: 22px;
+    }
+    h2 {
+        font-size: 18px;
+    }
+    .grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+    .grid-cols-4 {
+        grid-template-columns: 1fr 1fr;
+    }
+    /* Scroll horizontal para tablas y contenido ancho */
+    .table-scroll, .overflow-x-auto {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    /* Dashboard header - stack buttons on mobile */
+    .main-content .flex.items-center.justify-between {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .main-content .flex.items-center.justify-between > .flex.gap-2 {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    .main-content .flex.items-center.justify-between > .flex.gap-2 .btn {
+        flex: 1;
+        min-width: 0;
+        justify-content: center;
+    }
+    #app {
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+    #toast-container {
+        top: env(safe-area-inset-top, 20px);
+        left: 16px;
+        right: 16px;
+        transform: none;
+        max-width: none;
+    }
+    .toast {
+        max-width: 100%;
+        margin-left: 0;
+    }
+    /* Sidebar como bottom nav con 2 filas scrollables */
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: auto;
+        height: auto;
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 4px 4px;
+        padding-bottom: env(safe-area-inset-bottom, 4px);
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border);
+        border-radius: 16px 16px 0 0;
+        z-index: 1000;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+        gap: 0;
+        max-height: 110px;
+        overflow-y: auto;
+    }
+    .sidebar .nav-btn, .sidebar button[title] {
+        padding: 6px 4px;
+        border-radius: 12px;
+        flex-direction: column;
+        gap: 2px;
+        min-height: 48px;
+        min-width: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .sidebar .nav-btn i, .sidebar button[title] i {
+        width: 22px;
+        height: 22px;
+    }
+    .sidebar .nav-btn span {
+        font-size: 9px;
+        line-height: 1;
+    }
+    .sidebar .nav-btn.active {
+        background: var(--accent-green);
+        color: white;
+    }
+    .sidebar .nav-btn.active::before {
+        left: 50%;
+        top: -1px;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 3px;
+        border-radius: 0 0 4px 4px;
+    }
+    /* Bottom nav - compact 2-row layout */
+    .bottom-nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 4px 2px;
+        padding-bottom: env(safe-area-inset-bottom, 4px);
+        max-height: 110px;
+        overflow-y: auto;
+    }
+    .bottom-nav .nav-btn {
+        padding: 6px 4px;
+        min-height: 48px;
+        min-width: 48px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        -webkit-tap-highlight-color: transparent;
+        position: relative;
+    }
+    .bottom-nav .nav-btn i {
+        width: 22px;
+        height: 22px;
+    }
+    .bottom-nav .nav-btn span {
+        font-size: 9px;
+        line-height: 1;
+        color: var(--text-secondary);
+    }
+    .bottom-nav .nav-btn.active span {
+        color: var(--accent-green);
+        font-weight: 600;
+    }
+    .bottom-nav .nav-btn.active {
+        background: rgba(85, 169, 145, 0.08);
+        border-radius: 10px;
+    }
+    .main-content {
+        margin-left: 0;
+        margin-bottom: 110px;
+    }
+    /* Credit/debt cards - auto height on mobile */
+    .credit-card, .debt-card {
+        height: auto;
+        min-height: 160px;
+        padding: 16px;
+    }
+    .debt-card .debt-amount {
+        font-size: 22px;
+    }
+    .credit-card .card-balance {
+        top: 12px;
+        right: 40px;
+    }
+    .credit-card .balance-amount {
+        font-size: 16px;
+    }
+    .credit-card .card-chip {
+        width: 40px;
+        height: 32px;
+        margin-bottom: 20px;
+    }
+    .credit-card .card-number {
+        font-size: 14px;
+    }
+    /* Modal mobile */
+    .modal-content {
+        width: 95%;
+        max-height: 85vh;
+        max-height: 85dvh;
+        border-radius: 24px;
+        margin-top: env(safe-area-inset-top, 16px);
+    }
+    #modal .card {
+        width: 95vw;
+        max-width: 400px;
+        max-height: 85vh;
+        max-height: 85dvh;
+        overflow-y: auto;
+        border-radius: 20px;
+        padding: 20px;
+    }
+    #prompt-overlay, #confirm-overlay {
+        align-items: center;
+        padding: 16px;
+        padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+    #prompt-dialog, #confirm-dialog {
+        border-radius: 20px;
+        max-width: 100%;
+        width: 100%;
+        padding: 24px;
+    }
+    /* Pie chart smaller on mobile */
+    .pie-chart {
+        width: 160px;
+        height: 160px;
+    }
+    .pie-chart-inner {
+        width: 64px;
+        height: 64px;
+    }
+    /* Upcoming payments compact */
+    #upcoming-payments .flex {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    #upcoming-payments .flex > div {
+        min-width: 0;
+    }
+    /* Fix inline pay buttons on mobile */
+    #upcoming-payments button[onclick] {
+        min-height: 40px;
+        min-width: 44px;
+        font-size: 14px !important;
+        padding: 10px 14px !important;
+        margin-top: 8px;
+    }
+    /* Income/Expense/Service cards - stack on mobile */
+    .card.flex.items-center.justify-between,
+    .card.flex.justify-between {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .card.flex.items-center.justify-between > div:first-child,
+    .card.flex.justify-between > div:first-child {
+        flex: 1;
+        min-width: 0;
+    }
+    .card.flex.items-center.justify-between > div:last-child,
+    .card.flex.justify-between > div:last-child {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    /* Delete buttons in lists - ensure touch target */
+    button[onclick*="delete"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    /* Service cards buttons */
+    .btn-pay {
+        min-height: 44px;
+        font-size: 14px !important;
+        padding: 10px 16px !important;
+    }
+    /* Kakebo grid single column on very small */
+    @media (max-width: 400px) {
+        .grid-cols-4 {
+            grid-template-columns: 1fr;
+        }
+        .sidebar, .bottom-nav {
+            gap: 0;
+        }
+        .sidebar .nav-btn, .bottom-nav .nav-btn {
+            padding: 6px 2px;
+        }
+    }
+}
+
 @media (min-width: 769px) {
 .sidebar {
 position: fixed;
@@ -869,15 +1172,16 @@ border-radius: 3px;
     <div id="app" class="min-h-screen">
         <!-- Login Screen -->
         <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 hidden">
-            <div class="card p-8 w-full max-w-md">
-                <div class="text-center mb-8">
-                    <div class="w-16 h-16 bg-[var(--accent-green)] rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="wallet" class="w-8 h-8 text-white"></i>
+            <div class="card p-6 sm:p-8 w-full max-w-md">
+                <div class="text-center mb-6 sm:mb-8">
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 bg-[var(--accent-green)] rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                        <i data-lucide="wallet" class="w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
                     </div>
-                    <h1 class="text-2xl font-semibold">FamilyFinance</h1>
-                    <p class="text-[var(--text-secondary)] mt-2" data-i18n="stress_free_finance">Gestión financiera sin estrés</p>
+                    <h1 class="text-xl sm:text-2xl font-semibold">FamilyFinance</h1>
+                    <p class="text-sm sm:text-base text-[var(--text-secondary)] mt-2" data-i18n="stress_free_finance">Gestión financiera sin estrés</p>
                 </div>
                 <div id="login-form" class="hidden">
+                    <label class="block text-sm font-medium mb-1" data-i18n="password">Contraseña</label>
                     <input type="password" id="login-password" class="input mb-4" data-i18n-placeholder="password" placeholder="1234" value="1234">
                     <button onclick="login()" class="btn btn-primary w-full" data-i18n="enter">Entrar</button>
                     <p id="login-error" class="text-[var(--accent-coral)] text-sm mt-3 text-center hidden" data-i18n="incorrect_password">Contraseña incorrecta</p>
@@ -934,13 +1238,16 @@ border-radius: 3px;
             <main class="main-content p-4 md:p-8 max-w-4xl mx-auto">
                 <!-- Dashboard -->
                 <section id="section-dashboard" class="fade-in">
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
                         <h1 class="text-2xl font-semibold" data-i18n="summary">Resumen</h1>
-                        <div class="flex gap-2">
-                            <button onclick="loadDummyData()" class="btn" style="background: var(--accent-purple); color: white;">
-                                <i data-lucide="database" class="w-4 h-4 inline mr-1"></i>Datos Demo
+                        <div class="flex gap-2 w-full sm:w-auto flex-wrap">
+                            <button onclick="loadMayData()" class="btn flex-1 sm:flex-initial" style="background: var(--accent-green); color: white;">
+                                <i data-lucide="calendar" class="w-4 h-4 inline mr-1"></i><span class="hidden sm:inline">Datos Mayo</span><span class="sm:hidden">Mayo</span>
                             </button>
-                            <button onclick="openQuickAdd()" class="btn btn-primary">
+                            <button onclick="loadDummyData()" class="btn flex-1 sm:flex-initial" style="background: var(--accent-purple); color: white;">
+                                <i data-lucide="database" class="w-4 h-4 inline mr-1"></i><span class="hidden sm:inline">Datos Demo</span><span class="sm:hidden">Demo</span>
+                            </button>
+                            <button onclick="openQuickAdd()" class="btn btn-primary flex-1 sm:flex-initial">
                                 <i data-lucide="plus" class="w-4 h-4 inline mr-1"></i><span data-i18n="add">Agregar</span>
                             </button>
                         </div>
@@ -949,26 +1256,26 @@ border-radius: 3px;
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                         <div class="card p-4">
                             <p class="text-sm text-[var(--text-secondary)]" data-i18n="balance">Balance</p>
-                            <p id="dash-balance" class="text-2xl font-semibold mt-1">$0</p>
+                            <p id="dash-balance" class="text-xl sm:text-2xl font-semibold mt-1 break-words">$0</p>
                         </div>
                         <div class="card p-4">
                             <p class="text-sm text-[var(--text-secondary)]" data-i18n="income">Ingresos</p>
-                            <p id="dash-income" class="text-2xl font-semibold mt-1 text-[var(--accent-green)]">$0</p>
+                            <p id="dash-income" class="text-xl sm:text-2xl font-semibold mt-1 text-[var(--accent-green)] break-words">$0</p>
                         </div>
                         <div class="card p-4">
                             <p class="text-sm text-[var(--text-secondary)]" data-i18n="expenses">Gastos</p>
-                            <p id="dash-expenses" class="text-2xl font-semibold mt-1 text-[var(--accent-coral)]">$0</p>
+                            <p id="dash-expenses" class="text-xl sm:text-2xl font-semibold mt-1 text-[var(--accent-coral)] break-words">$0</p>
                         </div>
                         <div class="card p-4">
                             <p class="text-sm text-[var(--text-secondary)]" data-i18n="debt">Deuda</p>
-                            <p id="dash-debt" class="text-2xl font-semibold mt-1 text-[var(--accent-coral)]">$0</p>
+                            <p id="dash-debt" class="text-xl sm:text-2xl font-semibold mt-1 text-[var(--accent-coral)] break-words">$0</p>
                         </div>
                     </div>
 
                     <!-- Kakebo Quick View -->
-                    <div class="card p-6 mb-6">
+                    <div class="card p-4 sm:p-6 mb-6">
                         <h2 class="text-lg font-semibold mb-4" data-i18n="kakebo_this_month">Kakebo Este Mes</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                             <div class="text-center cursor-pointer hover:bg-[var(--bg-tertiary)] rounded-xl p-2 transition-colors" onclick="showExpensesByCategory('needs')">
                                 <div class="w-12 h-12 bg-[var(--accent-blue)] rounded-full flex items-center justify-center mx-auto mb-2">
                                     <i data-lucide="home" class="w-6 h-6 text-white"></i>
@@ -1001,7 +1308,7 @@ border-radius: 3px;
                     </div>
 
                     <!-- Upcoming Payments -->
-                    <div class="card p-6">
+                    <div class="card p-4 sm:p-6">
                         <h2 class="text-lg font-semibold mb-4" data-i18n="upcoming_payments">Próximos Pagos</h2>
                         <div id="upcoming-payments" class="space-y-3">
                             <p class="text-[var(--text-secondary)] text-sm" data-i18n="no_upcoming">No hay pagos próximos</p>
@@ -1037,9 +1344,9 @@ border-radius: 3px;
 
                 <!-- Debts -->
                 <section id="section-debts" class="fade-in hidden">
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
                         <h1 class="text-2xl font-semibold" data-i18n="debt">Deudas</h1>
-                        <button onclick="loadFullComparison()" class="btn" style="background: var(--accent-yellow); color: #000;">
+                        <button onclick="loadFullComparison()" class="btn w-full sm:w-auto" style="background: var(--accent-yellow); color: #000;">
                             <i data-lucide="bar-chart-2" class="w-4 h-4 inline mr-1"></i><span data-i18n="compare_all">Comparar Todo</span>
                         </button>
                     </div>
@@ -1104,16 +1411,16 @@ border-radius: 3px;
 
                 <!-- Reports -->
                 <section id="section-reports" class="fade-in hidden">
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
                         <h1 class="text-2xl font-semibold" data-i18n="reports">Reportes</h1>
-                        <button onclick="exportCSV()" class="btn btn-primary">
+                        <button onclick="exportCSV()" class="btn btn-primary w-full sm:w-auto">
                             <i data-lucide="download" class="w-4 h-4 inline mr-1"></i><span data-i18n="export_csv">Exportar CSV</span>
                         </button>
                     </div>
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        <button onclick="loadReport('monthly')" class="tab-btn whitespace-nowrap" id="tab-monthly" data-i18n="monthly">Mensual</button>
-                        <button onclick="loadReport('kakebo')" class="tab-btn whitespace-nowrap" id="tab-kakebo" data-i18n="kakebo">Kakebo</button>
-                        <button onclick="loadReport('debts')" class="tab-btn whitespace-nowrap" id="tab-debts" data-i18n="debts">Deudas</button>
+                    <div class="flex overflow-x-auto gap-2 mb-6 pb-1 -mx-1 px-1" style="-webkit-overflow-scrolling: touch;">
+                        <button onclick="loadReport('monthly')" class="tab-btn whitespace-nowrap flex-shrink-0" id="tab-monthly" data-i18n="monthly">Mensual</button>
+                        <button onclick="loadReport('kakebo')" class="tab-btn whitespace-nowrap flex-shrink-0" id="tab-kakebo" data-i18n="kakebo">Kakebo</button>
+                        <button onclick="loadReport('debts')" class="tab-btn whitespace-nowrap flex-shrink-0" id="tab-debts" data-i18n="debts">Deudas</button>
                     </div>
                     <div id="report-content" class="space-y-4">
                         <p class="text-[var(--text-secondary)] text-center py-8" data-i18n="select_period">Selecciona un período</p>
@@ -1132,14 +1439,14 @@ border-radius: 3px;
 
                 <!-- AI -->
                 <section id="section-ai" class="fade-in hidden">
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 bg-[var(--accent-purple)] rounded-lg flex items-center justify-center">
                                 <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
                             </div>
                             <h1 class="text-2xl font-semibold" data-i18n="ai_assistant">Asistente IA</h1>
                         </div>
-                        <button onclick="toggleAISound()" id="ai-sound-btn" class="w-10 h-10 rounded-full bg-[var(--accent-purple)] bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-colors" title="Activar/Desactivar sonidos">
+                        <button onclick="toggleAISound()" id="ai-sound-btn" class="w-12 h-12 rounded-full bg-[var(--accent-purple)] bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-colors" title="Activar/Desactivar sonidos">
                             <i data-lucide="volume-2" class="w-5 h-5 text-[var(--accent-purple)]" id="ai-sound-icon"></i>
                         </button>
                     </div>
@@ -1258,32 +1565,41 @@ border-radius: 3px;
 
             <!-- Bottom Nav (Mobile) -->
             <nav class="bottom-nav md:hidden">
-                <button onclick="showSection('dashboard')" class="nav-btn p-2" data-section="dashboard">
+                <button onclick="showSection('dashboard')" class="nav-btn" data-section="dashboard">
                     <i data-lucide="home" class="w-5 h-5"></i>
+                    <span data-i18n="summary">Inicio</span>
                 </button>
-                <button onclick="showSection('income')" class="nav-btn p-2" data-section="income">
+                <button onclick="showSection('income')" class="nav-btn" data-section="income">
                     <i data-lucide="trending-up" class="w-5 h-5"></i>
+                    <span data-i18n="income">Ingresos</span>
                 </button>
-                <button onclick="showSection('expenses')" class="nav-btn p-2" data-section="expenses">
+                <button onclick="showSection('expenses')" class="nav-btn" data-section="expenses">
                     <i data-lucide="trending-down" class="w-5 h-5"></i>
+                    <span data-i18n="expenses">Gastos</span>
                 </button>
-                <button onclick="showSection('debts')" class="nav-btn p-2" data-section="debts">
+                <button onclick="showSection('debts')" class="nav-btn" data-section="debts">
                     <i data-lucide="landmark" class="w-5 h-5"></i>
+                    <span data-i18n="debts">Deudas</span>
                 </button>
-                <button onclick="showSection('cards')" class="nav-btn p-2" data-section="cards">
+                <button onclick="showSection('cards')" class="nav-btn" data-section="cards">
                     <i data-lucide="credit-card" class="w-5 h-5"></i>
+                    <span>Tarjetas</span>
                 </button>
-                <button onclick="showSection('services')" class="nav-btn p-2" data-section="services">
+                <button onclick="showSection('services')" class="nav-btn" data-section="services">
                     <i data-lucide="zap" class="w-5 h-5"></i>
+                    <span>Servicios</span>
                 </button>
-                <button onclick="showSection('reports')" class="nav-btn p-2" data-section="reports">
+                <button onclick="showSection('reports')" class="nav-btn" data-section="reports">
                     <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    <span data-i18n="reports">Reportes</span>
                 </button>
-                <button onclick="showSection('budget')" class="nav-btn p-2" data-section="budget">
+                <button onclick="showSection('budget')" class="nav-btn" data-section="budget">
                     <i data-lucide="piggy-bank" class="w-5 h-5"></i>
+                    <span data-i18n="budgets">Presup.</span>
                 </button>
-                <button onclick="showSection('ai')" class="nav-btn p-2" data-section="ai">
+                <button onclick="showSection('ai')" class="nav-btn" data-section="ai">
                     <i data-lucide="sparkles" class="w-5 h-5"></i>
+                    <span>IA</span>
                 </button>
             </nav>
         </div>
@@ -1737,9 +2053,18 @@ border-radius: 3px;
                 all_income_label: 'Todos los Ingresos',
                 calculating: 'Calculando...',
                 no_debts_excellent: 'No hay deudas activas. ¡Excelente!',
+                financial_situation_good: 'Tu situación financiera se ve bien. Sigue así!',
+                pay_immediately: 'Pagar de Inmediato',
+                pay_overdue: 'Pagar Vencido',
+                pay_early: 'Pagar Adelantado',
+                keep_tracking_expenses: 'Continúa registrando gastos para detectar patrones',
             },
             en: {
                 app_name: 'FamilyFinance',
+                pay_immediately: 'Pay Immediately',
+                pay_overdue: 'Pay Overdue',
+                pay_early: 'Pay Early',
+                keep_tracking_expenses: 'Keep tracking expenses to detect patterns',
                 app_slogan: 'Stress-free financial management',
                 enter: 'Enter',
                 incorrect_password: 'Incorrect password',
@@ -2050,6 +2375,10 @@ border-radius: 3px;
                 // Note: Simulator translations are in bilingualTranslations above
                 add_income_title: 'Add Income',
                 add_expense_title: 'Add Expense',
+                pay_immediately: 'Pay Immediately',
+                pay_overdue: 'Pay Overdue',
+                pay_early: 'Pay Early',
+                financial_situation_good: 'Your financial situation looks good. Keep it up!',
             },
             es: {
                 // === CLAVES BÁSICAS FALTANTES ===
@@ -2431,11 +2760,7 @@ border-radius: 3px;
         };
 
         // Force Spanish as default - ignore any stored English preference
-        let currentLang = 'es';
-        // Still store the preference for future sessions
-        if (localStorage.getItem('ff-lang')) {
-            currentLang = localStorage.getItem('ff-lang');
-        }
+        let currentLang = localStorage.getItem('ff-lang') || 'es';
 
         function t(key) {
             // Check bilingualTranslations first for {es, en} objects
@@ -2986,22 +3311,18 @@ border-radius: 3px;
                     const daysUntil = Math.ceil((new Date(p.due_date) - new Date()) / (1000 * 60 * 60 * 24));
                     const isToday = daysUntil === 0;
                     const isPast = daysUntil < 0;
-                    const isSoon = daysUntil > 0 && daysUntil <= 3;
                     
-                    let label, btnColor, btnBg, btnHover;
+                    let label, btnBg, btnHover;
                     if (isToday) {
                         label = t('pay_immediately');
-                        btnColor = 'white';
                         btnBg = 'var(--accent-green)';
                         btnHover = '#4a9580';
                     } else if (isPast) {
                         label = t('pay_overdue');
-                        btnColor = 'white';
                         btnBg = 'var(--accent-coral)';
                         btnHover = '#d35f45';
                     } else {
                         label = t('pay_early');
-                        btnColor = 'white';
                         btnBg = 'var(--accent-blue)';
                         btnHover = '#5a9fd9';
                     }
@@ -3009,16 +3330,27 @@ border-radius: 3px;
                     const statusColor = isToday ? 'var(--accent-green)' : (isPast ? 'var(--accent-coral)' : 'var(--accent-blue)');
                     const statusText = isToday ? t('today_urgent') : (isPast ? t('overdue_label') : tr('in_days', { days: daysUntil, daysPlural: daysUntil > 1 ? 's' : '' }));
                     
-                    const payAction = p.type === 'debt' ? `payDebt(${p.id})` : `payService(${p.id})`;
-                    const payBtn = `<button onclick="${payAction}" style="background: ${btnBg}; color: ${btnColor}; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" onmouseover="this.style.background='${btnHover}'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='${btnBg}'; this.style.transform='translateY(0)'">${label}</button>`;
+                    const typeIcons = { debt: '📑', service: '⚡', card: '💳' };
+                    const typeLabel = p.type || '';
+                    const typeIcon = typeIcons[typeLabel] || '💰';
+                    const dueDateStr = formatDate(p.due_date);
+                    
+                    const payAction = p.type === 'debt' ? `payDebt(${p.id})` : (p.type === 'card' ? `payCard(${p.id})` : `payService(${p.id})`);
                     
                     return `<div class="flex items-center justify-between p-3 bg-[var(--bg-tertiary)] rounded-xl mb-2" style="${isToday ? 'border-left: 3px solid var(--accent-green)' : (isPast ? 'border-left: 3px solid var(--accent-coral)' : 'border-left: 3px solid var(--accent-blue)')}">
                         <div class="flex-1 min-w-0">
-                            <p class="font-semibold truncate">${p.name}</p>
-                            <p class="text-sm font-medium" style="color: ${statusColor}">${statusText}</p>
-                            <p class="text-base font-bold">${formatMoney(p.amount)}</p>
+                            <p class="font-semibold truncate">${typeIcon} ${p.name}</p>
+                            <div class="flex items-center gap-2 text-xs text-[var(--text-secondary)] mt-1">
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="calendar" class="w-3 h-3"></i>
+                                    ${dueDateStr}
+                                </span>
+                                <span class="text-[var(--text-tertiary)]">|</span>
+                                <span style="color: ${statusColor}">${statusText}</span>
+                            </div>
+                            <p class="text-base font-bold mt-1">${formatMoney(p.amount)}</p>
                         </div>
-                        ${payBtn}
+                        <button onclick="${payAction}" style="background: ${btnBg}; color: white; padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.15); flex-shrink: 0;" onmouseover="this.style.background='${btnHover}'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='${btnBg}'; this.style.transform='translateY(0)'">${label}</button>
                     </div>`;
                 }).join('');
                 
@@ -3561,7 +3893,7 @@ border-radius: 3px;
                     </div>`;
                 }).join('');
             } else {
-                actionableContainer.innerHTML = '<p class="text-[var(--text-secondary)]">Tu situación financiera se ve bien. ¡Sígue así!</p>';
+                actionableContainer.innerHTML = `<p class="text-[var(--text-secondary)]">${t('financial_situation_good')}</p>`;
             }
             if (cardActionable) {
                 cardActionable.classList.remove('ai-card-loading');
@@ -3715,7 +4047,7 @@ border-radius: 3px;
                     </div>`;
                 }).join('');
             } else {
-                behaviorContainer.innerHTML = '<p class="text-[var(--text-secondary)]">Continúa registrando gastos para detectar patrones</p>';
+                behaviorContainer.innerHTML = `<p class="text-[var(--text-secondary)]">${t('keep_tracking_expenses')}</p>`;
             }
             if (cardBehavior) {
                 cardBehavior.classList.remove('ai-card-loading');
@@ -4121,6 +4453,7 @@ border-radius: 3px;
                 if (sum.total_debts > 0) {
                     html += `<div class="card p-6 mb-4">
                         <h3 class="font-semibold mb-4">${t('loans_label')}</h3>
+                        <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="text-left text-[var(--text-secondary)] border-b">
@@ -4152,12 +4485,14 @@ border-radius: 3px;
                                 </tr>
                             </tfoot>
                         </table>
+                        </div>
                     </div>`;
                 }
                 
                 if (sum.total_cards > 0) {
                     html += `<div class="card p-6">
                         <h3 class="font-semibold mb-4">${t('credit_cards_label')}</h3>
+                        <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="text-left text-[var(--text-secondary)] border-b">
@@ -4194,6 +4529,7 @@ border-radius: 3px;
                                 </tr>
                             </tfoot>
                         </table>
+                        </div>
                     </div>`;
                 }
                 
@@ -4398,7 +4734,7 @@ border-radius: 3px;
                 </div>
                 <div class="flex gap-2 mt-4">
                     <button type="button" onclick="deleteExpense(${expenseId})" class="btn flex-1" style="background: var(--accent-coral); color: white;">${t('delete')}</button>
-                    <button type="submit" class="btn btn-primary flex-1">${t('save')}</button>
+                    <button type="submit" class="btn btn-primary flex-1" data-i18n="save">${t('save')}</button>
                 </div>
             `;
             form.dataset.endpoint = '/api/expense';
@@ -5004,6 +5340,38 @@ border-radius: 3px;
             }
         }
 
+        async function loadMayData() {
+            const ok = await showConfirm(
+                'Datos Mayo',
+                '¿Cargar datos de demostración para Mayo 2026?'
+            );
+            if (!ok) return;
+            
+            try {
+                showToast(t('loading_data'), 'info');
+                const resp = await apiFetch('/api/seed/may', { method: 'POST' });
+                const data = await resp.json();
+                
+                if (resp.ok) {
+                    const counts = data.counts || {};
+                    const msg = Object.entries(counts)
+                        .map(([k, v]) => `${k}: ${v}`)
+                        .join(', ');
+                    showToast('Datos Mayo cargados: ' + msg, 'success');
+                    loadDashboard();
+                    loadIncome();
+                    loadExpenses();
+                    loadDebts();
+                    loadCards();
+                    loadServices();
+                } else {
+                    showToast('Error al cargar datos Mayo: ' + (data.detail || ''), 'error');
+                }
+            } catch (e) {
+                showToast(t('connection_error'), 'error');
+            }
+        }
+
         async function exportCSV() {
             const resource = await showPrompt(t('export_csv'), t('export_prompt'), 'transactions');
             if (!resource) return;
@@ -5106,5 +5474,10 @@ border-radius: 3px;
         }
         setTimeout(startApp, 3000);
     </script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
 </body>
 </html>
